@@ -32,17 +32,20 @@ export default async function handler(
 
   if (req.method === "POST") {
     const {
-      name,
       company,
       amount_owed,
       total_amount,
+      monthly_amount,
       category,
+      arrangement,
       direct_debit_date,
       account_reference,
       company_email,
     } = req.body;
 
-    if (!name || !company || !amount_owed || !total_amount || !category) {
+    console.log("Request body:", req.body);
+
+    if (!company || !total_amount || !category) {
       return res.status(400).json({ error: "Missing required fields" });
     }
 
@@ -52,14 +55,18 @@ export default async function handler(
         .insert([
           {
             user_id: session.user.id,
-            name,
+            name: company,
             company,
-            amount_owed: parseFloat(amount_owed),
+            amount_owed: parseFloat(total_amount), // starts at full amount
             total_amount: parseFloat(total_amount),
+            monthly_amount: monthly_amount ? parseFloat(monthly_amount) : null,
             category,
-            direct_debit_date,
-            account_reference,
-            company_email,
+            arrangement: arrangement || null,
+            direct_debit_date: direct_debit_date
+              ? parseInt(direct_debit_date)
+              : null,
+            account_reference: account_reference || null,
+            company_email: company_email || null,
           },
         ])
         .select()

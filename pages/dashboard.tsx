@@ -6,38 +6,14 @@ import { useRouter } from "next/router";
 import { useDebts } from "@/lib/hooks/useDebts";
 import { ChevronDown, X, Plus, LogOut } from "lucide-react";
 import type { Debt } from "@/lib/types";
+import { useTracker, getMonthStatus } from "@/lib/hooks/useTracker";
 
-const statusConfig = {
-  "on-track": {
-    label: "On track",
-    bgColor: "bg-emerald-500/20",
-    textColor: "text-emerald-300",
-    borderColor: "border-emerald-500/30",
-  },
-  "payment-plan": {
-    label: "Payment plan",
-    bgColor: "bg-blue-500/20",
-    textColor: "text-blue-300",
-    borderColor: "border-blue-500/30",
-  },
-  "awaiting-response": {
-    label: "Awaiting response",
-    bgColor: "bg-amber-500/20",
-    textColor: "text-amber-300",
-    borderColor: "border-amber-500/30",
-  },
-  overdue: {
-    label: "Overdue",
-    bgColor: "bg-red-500/20",
-    textColor: "text-red-300",
-    borderColor: "border-red-500/30",
-  },
-  resolved: {
-    label: "Resolved",
-    bgColor: "bg-slate-500/20",
-    textColor: "text-slate-300",
-    borderColor: "border-slate-500/30",
-  },
+const arrangementConfig: Record<string, { label: string; dot: string }> = {
+  "payment-plan": { label: "Payment plan in place", dot: "bg-emerald-400" },
+  "needs-setting-up": { label: "Needs setting up", dot: "bg-blue-400" },
+  "awaiting-response": { label: "Awaiting response", dot: "bg-amber-400" },
+  "account-in-default": { label: "Account in default", dot: "bg-red-400" },
+  default: { label: "Not set", dot: "bg-slate-400" },
 };
 
 const categoryIcons: Record<string, string> = {
@@ -66,7 +42,8 @@ const months = [
 export default function DashboardPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
-  const { debts, isLoading, updateDebt, deleteDebt } = useDebts();
+  const { debts, isLoading, updateDebt } = useDebts();
+  const { data: trackerData, isLoading: isTrackerLoading } = useTracker();
 
   const [selectedDebt, setSelectedDebt] = useState<Debt | null>(null);
   const [logPaymentDebt, setLogPaymentDebt] = useState<Debt | null>(null);
@@ -77,7 +54,6 @@ export default function DashboardPage() {
   const [paymentLoading, setPaymentLoading] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
 
-  // Redirect if not logged in
   if (status === "unauthenticated") {
     router.push("/auth/login");
     return null;
@@ -90,17 +66,17 @@ export default function DashboardPage() {
       ((debt.total_amount - debt.amount_owed) / debt.total_amount) * 100,
     );
 
-  const toggleStatus = async (debt: Debt) => {
-    const statuses: Debt["status"][] = [
-      "on-track",
+  const toggleArrangement = async (debt: Debt) => {
+    const arrangements: Debt["arrangement"][] = [
       "payment-plan",
+      "needs-setting-up",
       "awaiting-response",
-      "overdue",
-      "resolved",
+      "account-in-default",
     ];
-    const nextStatus =
-      statuses[(statuses.indexOf(debt.status) + 1) % statuses.length];
-    await updateDebt(debt.id, { status: nextStatus });
+    const current = debt.arrangement ?? "payment-plan";
+    const next =
+      arrangements[(arrangements.indexOf(current) + 1) % arrangements.length];
+    await updateDebt(debt.id, { arrangement: next });
   };
 
   const handleLogPayment = async () => {
@@ -120,7 +96,6 @@ export default function DashboardPage() {
 
       if (!response.ok) throw new Error("Failed to log payment");
 
-      // Update debt in state
       await updateDebt(logPaymentDebt.id, {
         amount_owed: Math.max(
           0,
@@ -145,17 +120,13 @@ export default function DashboardPage() {
     }
   };
 
+  const earliestDebt =
+    trackerData.debts.length > 0
+      ? new Date(trackerData.debts[trackerData.debts.length - 1].created_at)
+      : new Date();
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 p-4 md:p-6">
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
-        * { font-family: 'Inter', sans-serif; }
-        .debt-card { transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
-        .debt-card:hover { transform: translateY(-4px); box-shadow: 0 24px 48px rgba(139, 92, 246, 0.15); }
-        .progress-bar { background: linear-gradient(90deg, #8b5cf6 0%, #6366f1 100%); transition: width 0.6s ease; }
-        .text-accent { background: linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
-      `}</style>
-
       {/* Header */}
       <div className="max-w-6xl mx-auto mb-8 flex items-start justify-between">
         <div>
@@ -178,23 +149,76 @@ export default function DashboardPage() {
         <div className="bg-slate-900/50 border border-slate-800 rounded-2xl p-6 backdrop-blur-sm">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-sm font-semibold text-slate-400 uppercase tracking-wider">
-              Payment History
+              {new Date().getFullYear()} Payment History
             </h2>
-            <button className="text-sm text-purple-400 hover:text-purple-300 transition-colors font-medium flex items-center gap-1">
-              View detailed tracker <ChevronDown size={14} />
+            <button
+              onClick={() => router.push("/tracker")}
+              className="text-sm text-purple-400 hover:text-purple-300 transition-colors font-medium flex items-center gap-1"
+            >
+              View yearly tracker <ChevronDown size={14} />
             </button>
           </div>
+
           <div className="flex gap-3 flex-wrap">
-            {months.map((month, idx) => (
-              <div key={month} className="flex flex-col items-center gap-2">
-                <div className="text-xs text-slate-400 font-medium">
-                  {month}
+            {months.map((month, idx) => {
+              const monthDate = new Date(new Date().getFullYear(), idx, 1);
+              const isBeforeSignup = monthDate;
+              new Date(earliestDebt.getFullYear(), earliestDebt.getMonth(), 1);
+
+              const monthStatus =
+                isTrackerLoading || isBeforeSignup
+                  ? "future"
+                  : getMonthStatus(
+                      trackerData.debts,
+                      trackerData.payments,
+                      idx,
+                      new Date().getFullYear(),
+                    );
+
+              return (
+                <div key={month} className="flex flex-col items-center gap-2">
+                  <div className="text-xs text-slate-400 font-medium">
+                    {month}
+                  </div>
+                  <button
+                    onClick={() =>
+                      !isBeforeSignup &&
+                      (monthStatus === "missed" || monthStatus === "partial") &&
+                      router.push(`/tracker/${idx + 1}`)
+                    }
+                    className={`w-12 h-12 rounded-lg border flex items-center justify-center transition-all ${
+                      isBeforeSignup
+                        ? "bg-slate-800/30 border-slate-800 text-slate-700 cursor-default"
+                        : monthStatus === "current"
+                          ? "bg-orange-500/10 border-orange-500/30 text-orange-400 cursor-default"
+                          : monthStatus === "paid"
+                            ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-400"
+                            : monthStatus === "partial"
+                              ? "bg-amber-500/10 border-amber-500/30 text-amber-400 hover:bg-amber-500/20 cursor-pointer"
+                              : monthStatus === "missed"
+                                ? "bg-red-500/10 border-red-500/30 text-red-400 hover:bg-red-500/20 cursor-pointer"
+                                : "bg-slate-800 border-slate-700 text-slate-600"
+                    }`}
+                  >
+                    {!isBeforeSignup && monthStatus === "paid" && (
+                      <span className="text-lg">✓</span>
+                    )}
+                    {!isBeforeSignup && monthStatus === "missed" && (
+                      <span className="text-lg">✕</span>
+                    )}
+                    {!isBeforeSignup && monthStatus === "partial" && (
+                      <span className="text-lg">~</span>
+                    )}
+                    {!isBeforeSignup && monthStatus === "current" && (
+                      <span className="text-lg">📍</span>
+                    )}
+                    {(isBeforeSignup || monthStatus === "future") && (
+                      <span className="text-xs">—</span>
+                    )}
+                  </button>
                 </div>
-                <div className="w-12 h-12 rounded-lg bg-slate-800 border border-slate-700 flex items-center justify-center">
-                  <span className="text-slate-600 text-xs">—</span>
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </div>
@@ -250,33 +274,38 @@ export default function DashboardPage() {
                     <div className="text-2xl">
                       {categoryIcons[debt.category]}
                     </div>
-                    <div className="flex-1">
+                    <div>
                       <h3 className="font-semibold text-white text-base">
-                        {debt.name}
+                        {debt.company}
                       </h3>
-                      <p className="text-xs text-slate-400 mt-0.5">
-                        {debt.direct_debit_date
-                          ? `DD due: ${debt.direct_debit_date}th`
-                          : debt.company}
-                      </p>
+                      {debt.direct_debit_date && (
+                        <p className="text-xs text-slate-400 mt-0.5">
+                          DD due: {debt.direct_debit_date}th
+                        </p>
+                      )}
                     </div>
                   </div>
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
-                      toggleStatus(debt);
+                      toggleArrangement(debt);
                     }}
-                    className={`flex-shrink-0 px-3 py-1.5 rounded-lg ${statusConfig[debt.status].bgColor} ${statusConfig[debt.status].textColor} ${statusConfig[debt.status].borderColor} border text-xs font-medium hover:opacity-80 transition-all`}
+                    className="flex-shrink-0 flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-800 border border-slate-700 hover:border-slate-600 transition-all"
                   >
-                    {statusConfig[debt.status].label}
+                    <div
+                      className={`w-2 h-2 rounded-full ${arrangementConfig[debt.arrangement ?? "default"].dot}`}
+                    />
+                    <span className="text-xs font-medium text-slate-300">
+                      {arrangementConfig[debt.arrangement ?? "default"].label}
+                    </span>
                   </button>
                 </div>
 
                 <div>
                   <div className="flex justify-between items-baseline mb-2">
                     <p className="text-sm text-white font-medium">
-                      £{debt.amount_owed.toLocaleString()} / £
-                      {debt.total_amount.toLocaleString()}
+                      £{(debt.total_amount - debt.amount_owed).toLocaleString()}{" "}
+                      paid of £{debt.total_amount.toLocaleString()}
                     </p>
                     <p className="text-sm font-semibold text-accent">
                       {getProgressPercent(debt)}%
@@ -288,7 +317,7 @@ export default function DashboardPage() {
                       style={{ width: `${getProgressPercent(debt)}%` }}
                     />
                   </div>
-                  <div className="flex items-center justify-between">
+                  <div className="flex items-center justify-between mt-3">
                     <p className="text-xs text-slate-400 opacity-0 group-hover:opacity-100 transition-opacity">
                       Click to see details
                     </p>
@@ -299,9 +328,9 @@ export default function DashboardPage() {
                         setPaymentAmount("");
                         setPaymentDate(new Date().toISOString().split("T")[0]);
                       }}
-                      className="text-xs font-semibold text-purple-400 hover:text-purple-300 transition-colors opacity-0 group-hover:opacity-100"
+                      className="flex items-center gap-2 px-4 py-2 bg-purple-600/20 hover:bg-purple-600/40 border border-purple-500/30 text-purple-300 text-xs font-semibold rounded-lg transition-all"
                     >
-                      Log payment →
+                      + Log payment
                     </button>
                   </div>
                 </div>
@@ -333,7 +362,7 @@ export default function DashboardPage() {
             onClick={(e) => e.stopPropagation()}
           >
             <h3 className="text-xl font-bold text-white mb-1">
-              {logPaymentDebt.name}
+              {logPaymentDebt.company}
             </h3>
             <p className="text-sm text-slate-400 mb-6">
               {logPaymentDebt.company}
@@ -415,9 +444,8 @@ export default function DashboardPage() {
             <div className="flex items-start justify-between mb-6">
               <div>
                 <h2 className="text-2xl font-bold text-white mb-1">
-                  {selectedDebt.name}
+                  {selectedDebt.company}
                 </h2>
-                <p className="text-sm text-slate-400">{selectedDebt.company}</p>
               </div>
               <button
                 onClick={() => setSelectedDebt(null)}
@@ -443,8 +471,11 @@ export default function DashboardPage() {
                 />
               </div>
               <p className="text-sm text-white font-medium">
-                £{selectedDebt.amount_owed.toLocaleString()} / £
-                {selectedDebt.total_amount.toLocaleString()}
+                £
+                {(
+                  selectedDebt.total_amount - selectedDebt.amount_owed
+                ).toLocaleString()}{" "}
+                paid of £{selectedDebt.total_amount.toLocaleString()}
               </p>
             </div>
 
@@ -474,9 +505,13 @@ export default function DashboardPage() {
                   <p className="text-xs text-slate-400 uppercase tracking-wider font-semibold mb-2">
                     Email
                   </p>
-                  <p className="text-white font-medium">
+
+                  <a
+                    href={`mailto:${selectedDebt.company_email}`}
+                    className="text-purple-400 hover:text-purple-300 transition-colors"
+                  >
                     {selectedDebt.company_email}
-                  </p>
+                  </a>
                 </div>
               )}
             </div>
