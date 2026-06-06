@@ -11,28 +11,21 @@
     "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
     "resolveJsonModule": true,
-    "declaration": true,
-    "declarationMap": true,
-    "sourceMap": true,
-    "outDir": "./dist",
     "strict": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "noImplicitReturns": true,
     "skipLibCheck": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true,
+    "noEmit": true,
+    "incremental": true,
+    "isolatedModules": true,
     "baseUrl": ".",
     "paths": {
       "@/*": [
         "./*"
       ]
     },
-    "allowJs": true,
-    "noEmit": true,
-    "incremental": true,
-    "isolatedModules": true
+    "allowJs": true
   },
   "include": [
     "next-env.d.ts",

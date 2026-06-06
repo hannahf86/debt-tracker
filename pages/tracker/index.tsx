@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/router";
 import { useTracker, getDebtMonthStatus } from "@/lib/hooks/useTracker";
-import type { Debt } from "@/lib/types";
+import { Check, X, Minus, MapPin } from "lucide-react";
 
 const months = [
   "Jan",
@@ -27,7 +27,14 @@ export default function YearlyTrackerPage() {
     debtId: string;
     month: number;
   } | null>(null);
+
   const year = new Date().getFullYear();
+  const currentMonth = new Date().getMonth();
+
+  const earliestDebt =
+    data.debts.length > 0
+      ? new Date(data.debts[data.debts.length - 1].created_at)
+      : null;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 p-4 md:p-6">
@@ -64,12 +71,19 @@ export default function YearlyTrackerPage() {
                   <th className="text-left text-xs text-slate-400 uppercase tracking-wider font-semibold pb-4 pr-6 min-w-40">
                     Debt
                   </th>
-                  {months.map((month) => (
+                  {months.map((month, idx) => (
                     <th
                       key={month}
-                      className="text-xs text-slate-400 uppercase tracking-wider font-semibold pb-4 px-2 text-center"
+                      className={`text-xs uppercase tracking-wider font-semibold pb-4 px-2 text-center ${
+                        idx === currentMonth
+                          ? "text-orange-400"
+                          : "text-slate-400"
+                      }`}
                     >
                       {month}
+                      {idx === currentMonth && (
+                        <div className="w-1 h-1 rounded-full bg-orange-400 mx-auto mt-1" />
+                      )}
                     </th>
                   ))}
                 </tr>
@@ -86,12 +100,21 @@ export default function YearlyTrackerPage() {
                       </p>
                     </td>
                     {months.map((month, idx) => {
-                      const status = getDebtMonthStatus(
-                        debt,
-                        data.payments,
-                        idx,
-                        year,
-                      );
+                      const monthDate = new Date(year, idx, 1);
+
+                      const isBeforeSignup = earliestDebt
+                        ? monthDate <
+                          new Date(
+                            earliestDebt.getFullYear(),
+                            earliestDebt.getMonth(),
+                            1,
+                          )
+                        : false;
+
+                      const status = isBeforeSignup
+                        ? "before-signup"
+                        : getDebtMonthStatus(debt, data.payments, idx, year);
+
                       const isPopoverOpen =
                         popover?.debtId === debt.id && popover?.month === idx;
 
@@ -102,7 +125,7 @@ export default function YearlyTrackerPage() {
                         >
                           <button
                             onClick={() => {
-                              if (status === "missed") {
+                              if (status === "missed" || status === "partial") {
                                 setPopover(
                                   isPopoverOpen
                                     ? null
@@ -111,16 +134,25 @@ export default function YearlyTrackerPage() {
                               }
                             }}
                             className={`w-10 h-10 rounded-lg border flex items-center justify-center mx-auto transition-all ${
-                              status === "paid"
-                                ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-400"
-                                : status === "missed"
-                                  ? "bg-red-500/10 border-red-500/30 text-red-400 hover:bg-red-500/20 cursor-pointer"
-                                  : "bg-slate-800 border-slate-700 text-slate-600"
+                              status === "before-signup"
+                                ? "bg-slate-800/30 border-slate-800 text-slate-700 cursor-default"
+                                : status === "current"
+                                  ? "bg-orange-500/10 border-orange-500/30 text-orange-400 cursor-default"
+                                  : status === "paid"
+                                    ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-400"
+                                    : status === "partial"
+                                      ? "bg-amber-500/10 border-amber-500/30 text-amber-400 hover:bg-amber-500/20 cursor-pointer"
+                                      : status === "missed"
+                                        ? "bg-red-500/10 border-red-500/30 text-red-400 hover:bg-red-500/20 cursor-pointer"
+                                        : "bg-slate-800 border-slate-700 text-slate-600"
                             }`}
                           >
-                            {status === "paid" && <span>✓</span>}
-                            {status === "missed" && <span>✕</span>}
-                            {status === "future" && (
+                            {status === "paid" && <Check size={14} />}
+                            {status === "partial" && <Minus size={14} />}
+                            {status === "missed" && <X size={14} />}
+                            {status === "current" && <MapPin size={14} />}
+                            {(status === "future" ||
+                              status === "before-signup") && (
                               <span className="text-xs">—</span>
                             )}
                           </button>
@@ -129,10 +161,14 @@ export default function YearlyTrackerPage() {
                           {isPopoverOpen && (
                             <div className="absolute z-10 top-14 left-1/2 -translate-x-1/2 w-56 bg-slate-800 border border-slate-700 rounded-xl p-4 shadow-xl text-left">
                               <p className="text-white text-sm font-semibold mb-1">
-                                Payment not logged
+                                {status === "partial"
+                                  ? "Partial payment logged"
+                                  : "Payment not logged"}
                               </p>
                               <p className="text-slate-400 text-xs mb-3">
-                                Check your bank, what happened here?
+                                {status === "partial"
+                                  ? "You paid less than the agreed amount. Want to log what happened?"
+                                  : "Check your bank — what happened here?"}
                               </p>
                               <button
                                 onClick={() =>
