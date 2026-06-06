@@ -28,9 +28,7 @@ export default async function handler(
         .eq("user_id", session.user.id)
         .single();
 
-      if (!debt) {
-        return res.status(403).json({ error: "Forbidden" });
-      }
+      if (!debt) return res.status(403).json({ error: "Forbidden" });
 
       const { data: payments, error } = await supabase
         .from("payments")
@@ -48,7 +46,15 @@ export default async function handler(
   }
 
   if (req.method === "POST") {
-    const { debt_id, amount, payment_date } = req.body;
+    const {
+      debt_id,
+      amount,
+      payment_date,
+      payment_type,
+      expected_amount,
+      late_reason,
+      short_reason,
+    } = req.body;
 
     if (!debt_id || !amount || !payment_date) {
       return res.status(400).json({ error: "Missing required fields" });
@@ -57,15 +63,14 @@ export default async function handler(
     try {
       const { data: debt } = await supabase
         .from("debts")
-        .select("id, amount_owed")
+        .select("id, amount_owed, monthly_amount")
         .eq("id", debt_id)
         .eq("user_id", session.user.id)
         .single();
 
-      if (!debt) {
-        return res.status(403).json({ error: "Forbidden" });
-      }
+      if (!debt) return res.status(403).json({ error: "Forbidden" });
 
+      // Create payment
       const { data: payment, error: paymentError } = await supabase
         .from("payments")
         .insert([
@@ -73,6 +78,10 @@ export default async function handler(
             debt_id,
             amount: parseFloat(amount),
             payment_date,
+            payment_type: payment_type || "on-time",
+            expected_amount: expected_amount
+              ? parseFloat(expected_amount)
+              : null,
           },
         ])
         .select()
@@ -80,6 +89,7 @@ export default async function handler(
 
       if (paymentError) throw paymentError;
 
+      // Update amount owed
       const newAmount = Math.max(0, debt.amount_owed - parseFloat(amount));
       const { error: updateError } = await supabase
         .from("debts")
@@ -87,6 +97,26 @@ export default async function handler(
         .eq("id", debt_id);
 
       if (updateError) throw updateError;
+
+      // If late or short, log a missed payment note
+      if (
+        (late_reason || short_reason) &&
+        (payment_type === "late" ||
+          payment_type === "partial" ||
+          payment_type === "partial-late")
+      ) {
+        const paymentDateObj = new Date(payment_date);
+        await supabase.from("missed_payments").insert([
+          {
+            user_id: session.user.id,
+            debt_id,
+            month: paymentDateObj.getMonth() + 1,
+            year: paymentDateObj.getFullYear(),
+            reason: late_reason || short_reason,
+            due_date: payment_date,
+          },
+        ]);
+      }
 
       return res.status(201).json(payment);
     } catch (error) {

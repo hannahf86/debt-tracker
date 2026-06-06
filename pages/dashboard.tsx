@@ -4,9 +4,23 @@ import { useState } from "react";
 import { useSession, signOut } from "next-auth/react";
 import { useRouter } from "next/router";
 import { useDebts } from "@/lib/hooks/useDebts";
-import { ChevronDown, X, Plus, LogOut } from "lucide-react";
 import type { Debt } from "@/lib/types";
 import { useTracker, getMonthStatus } from "@/lib/hooks/useTracker";
+import LogPaymentModal from "@/components/LogPaymentModal";
+import {
+  ChevronDown,
+  X,
+  Plus,
+  LogOut,
+  CreditCard,
+  FileText,
+  Zap,
+  BarChart2,
+  Pin,
+  Check,
+  Minus,
+  MapPin,
+} from "lucide-react";
 
 const arrangementConfig: Record<string, { label: string; dot: string }> = {
   "payment-plan": { label: "Payment plan in place", dot: "bg-emerald-400" },
@@ -16,12 +30,20 @@ const arrangementConfig: Record<string, { label: string; dot: string }> = {
   default: { label: "Not set", dot: "bg-slate-400" },
 };
 
-const categoryIcons: Record<string, string> = {
-  "credit-card": "💳",
-  loan: "📋",
-  utilities: "⚡",
-  tax: "📊",
-  other: "📌",
+const categoryIcon = (category: string) => {
+  const cls = "w-6 h-6";
+  switch (category) {
+    case "credit-card":
+      return <CreditCard className={cls} />;
+    case "loan":
+      return <FileText className={cls} />;
+    case "utilities":
+      return <Zap className={cls} />;
+    case "tax":
+      return <BarChart2 className={cls} />;
+    default:
+      return <Pin className={cls} />;
+  }
 };
 
 const months = [
@@ -47,12 +69,6 @@ export default function DashboardPage() {
 
   const [selectedDebt, setSelectedDebt] = useState<Debt | null>(null);
   const [logPaymentDebt, setLogPaymentDebt] = useState<Debt | null>(null);
-  const [paymentAmount, setPaymentAmount] = useState("");
-  const [paymentDate, setPaymentDate] = useState(
-    new Date().toISOString().split("T")[0],
-  );
-  const [paymentLoading, setPaymentLoading] = useState(false);
-  const [successMessage, setSuccessMessage] = useState("");
 
   if (status === "unauthenticated") {
     router.push("/auth/login");
@@ -77,47 +93,6 @@ export default function DashboardPage() {
     const next =
       arrangements[(arrangements.indexOf(current) + 1) % arrangements.length];
     await updateDebt(debt.id, { arrangement: next });
-  };
-
-  const handleLogPayment = async () => {
-    if (!paymentAmount || !logPaymentDebt) return;
-    setPaymentLoading(true);
-
-    try {
-      const response = await fetch("/api/payments", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          debt_id: logPaymentDebt.id,
-          amount: parseFloat(paymentAmount),
-          payment_date: paymentDate,
-        }),
-      });
-
-      if (!response.ok) throw new Error("Failed to log payment");
-
-      await updateDebt(logPaymentDebt.id, {
-        amount_owed: Math.max(
-          0,
-          logPaymentDebt.amount_owed - parseFloat(paymentAmount),
-        ),
-      });
-
-      setSuccessMessage(
-        `Done! That's £${paymentAmount} less between you and what's next ✓`,
-      );
-      setPaymentAmount("");
-
-      setTimeout(() => {
-        setLogPaymentDebt(null);
-        setSuccessMessage("");
-        setPaymentDate(new Date().toISOString().split("T")[0]);
-      }, 2000);
-    } catch (error) {
-      console.error("Error logging payment:", error);
-    } finally {
-      setPaymentLoading(false);
-    }
   };
 
   const earliestDebt =
@@ -162,9 +137,13 @@ export default function DashboardPage() {
           <div className="flex gap-3 flex-wrap">
             {months.map((month, idx) => {
               const monthDate = new Date(new Date().getFullYear(), idx, 1);
-              const isBeforeSignup = monthDate;
-              new Date(earliestDebt.getFullYear(), earliestDebt.getMonth(), 1);
-
+              const isBeforeSignup =
+                monthDate <
+                new Date(
+                  earliestDebt.getFullYear(),
+                  earliestDebt.getMonth(),
+                  1,
+                );
               const monthStatus =
                 isTrackerLoading || isBeforeSignup
                   ? "future"
@@ -201,16 +180,16 @@ export default function DashboardPage() {
                     }`}
                   >
                     {!isBeforeSignup && monthStatus === "paid" && (
-                      <span className="text-lg">✓</span>
+                      <Check size={18} />
                     )}
                     {!isBeforeSignup && monthStatus === "missed" && (
-                      <span className="text-lg">✕</span>
+                      <X size={18} />
                     )}
                     {!isBeforeSignup && monthStatus === "partial" && (
-                      <span className="text-lg">~</span>
+                      <Minus size={18} />
                     )}
                     {!isBeforeSignup && monthStatus === "current" && (
-                      <span className="text-lg">📍</span>
+                      <MapPin size={18} />
                     )}
                     {(isBeforeSignup || monthStatus === "future") && (
                       <span className="text-xs">—</span>
@@ -272,7 +251,9 @@ export default function DashboardPage() {
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex items-start gap-3 flex-1">
                     <div className="text-2xl">
-                      {categoryIcons[debt.category]}
+                      <div className="text-slate-400">
+                        {categoryIcon(debt.category)}
+                      </div>{" "}
                     </div>
                     <div>
                       <h3 className="font-semibold text-white text-base">
@@ -325,8 +306,6 @@ export default function DashboardPage() {
                       onClick={(e) => {
                         e.stopPropagation();
                         setLogPaymentDebt(debt);
-                        setPaymentAmount("");
-                        setPaymentDate(new Date().toISOString().split("T")[0]);
                       }}
                       className="flex items-center gap-2 px-4 py-2 bg-purple-600/20 hover:bg-purple-600/40 border border-purple-500/30 text-purple-300 text-xs font-semibold rounded-lg transition-all"
                     >
@@ -353,76 +332,14 @@ export default function DashboardPage() {
 
       {/* Log Payment Modal */}
       {logPaymentDebt && (
-        <div
-          className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4"
-          onClick={() => setLogPaymentDebt(null)}
-        >
-          <div
-            className="w-full max-w-sm bg-gradient-to-br from-slate-900 to-slate-950 border border-slate-800 rounded-2xl p-6"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <h3 className="text-xl font-bold text-white mb-1">
-              {logPaymentDebt.company}
-            </h3>
-            <p className="text-sm text-slate-400 mb-6">
-              {logPaymentDebt.company}
-            </p>
-
-            {successMessage ? (
-              <div className="text-center py-6">
-                <div className="text-4xl mb-3">✓</div>
-                <p className="text-white text-sm">{successMessage}</p>
-              </div>
-            ) : (
-              <>
-                <div className="space-y-4">
-                  <div>
-                    <label className="text-xs text-slate-400 uppercase tracking-wider font-semibold block mb-2">
-                      Amount
-                    </label>
-                    <div className="flex items-center">
-                      <span className="text-white font-semibold mr-2">£</span>
-                      <input
-                        type="number"
-                        value={paymentAmount}
-                        onChange={(e) => setPaymentAmount(e.target.value)}
-                        placeholder="0.00"
-                        className="flex-1 bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white placeholder-slate-500 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
-                        autoFocus
-                      />
-                    </div>
-                  </div>
-                  <div>
-                    <label className="text-xs text-slate-400 uppercase tracking-wider font-semibold block mb-2">
-                      Date
-                    </label>
-                    <input
-                      type="date"
-                      value={paymentDate}
-                      onChange={(e) => setPaymentDate(e.target.value)}
-                      className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
-                    />
-                  </div>
-                </div>
-                <div className="flex gap-3 mt-6">
-                  <button
-                    onClick={() => setLogPaymentDebt(null)}
-                    className="flex-1 bg-slate-800 text-white font-medium py-2 rounded-lg hover:bg-slate-700 transition-colors text-sm"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    onClick={handleLogPayment}
-                    disabled={!paymentAmount || paymentLoading}
-                    className="flex-1 bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-medium py-2 rounded-lg hover:from-purple-500 hover:to-indigo-500 transition-all disabled:opacity-50 disabled:cursor-not-allowed text-sm"
-                  >
-                    {paymentLoading ? "Saving..." : "Log payment"}
-                  </button>
-                </div>
-              </>
-            )}
-          </div>
-        </div>
+        <LogPaymentModal
+          debt={logPaymentDebt}
+          onClose={() => setLogPaymentDebt(null)}
+          onSuccess={(newAmountOwed) => {
+            updateDebt(logPaymentDebt.id, { amount_owed: newAmountOwed });
+            setTimeout(() => setLogPaymentDebt(null), 2500);
+          }}
+        />
       )}
 
       {/* Detail Modal */}
@@ -442,11 +359,9 @@ export default function DashboardPage() {
               ← Back
             </button>
             <div className="flex items-start justify-between mb-6">
-              <div>
-                <h2 className="text-2xl font-bold text-white mb-1">
-                  {selectedDebt.company}
-                </h2>
-              </div>
+              <h2 className="text-2xl font-bold text-white">
+                {selectedDebt.company}
+              </h2>
               <button
                 onClick={() => setSelectedDebt(null)}
                 className="text-slate-400 hover:text-white transition-colors"
@@ -505,7 +420,6 @@ export default function DashboardPage() {
                   <p className="text-xs text-slate-400 uppercase tracking-wider font-semibold mb-2">
                     Email
                   </p>
-
                   <a
                     href={`mailto:${selectedDebt.company_email}`}
                     className="text-purple-400 hover:text-purple-300 transition-colors"
