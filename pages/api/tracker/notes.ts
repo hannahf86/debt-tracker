@@ -20,26 +20,32 @@ export default async function handler(
       return res.status(400).json({ error: "Missing required fields" });
     }
 
-    try {
-      // Get payments for this debt/month
-      const monthStr = `${year}-${String(parseInt(month as string)).padStart(2, "0")}`;
+    const monthNum = parseInt(month as string);
+    const yearNum = parseInt(year as string);
 
+    // Build date range for the month
+    const startDate = `${yearNum}-${String(monthNum).padStart(2, "0")}-01`;
+    const endMonth = monthNum === 12 ? 1 : monthNum + 1;
+    const endYear = monthNum === 12 ? yearNum + 1 : yearNum;
+    const endDate = `${endYear}-${String(endMonth).padStart(2, "0")}-01`;
+
+    try {
       const { data: payments, error: paymentsError } = await supabase
         .from("payments")
         .select("*")
         .eq("debt_id", debtId)
-        .like("payment_date", `${monthStr}%`)
+        .gte("payment_date", startDate)
+        .lt("payment_date", endDate)
         .order("payment_date", { ascending: false });
 
       if (paymentsError) throw paymentsError;
 
-      // Get missed payment notes
       const { data: notes, error: notesError } = await supabase
         .from("missed_payments")
         .select("*")
         .eq("debt_id", debtId)
-        .eq("month", parseInt(month as string))
-        .eq("year", parseInt(year as string));
+        .eq("month", monthNum)
+        .eq("year", yearNum);
 
       if (notesError) throw notesError;
 

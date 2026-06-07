@@ -24,12 +24,6 @@ export function getMonthStatus(
   const currentMonth = now.getMonth();
   const currentYear = now.getFullYear();
 
-  // Current month in progress
-  if (year === currentYear && monthIndex === currentMonth) {
-    return "current";
-  }
-
-  // Future month
   if (
     year > currentYear ||
     (year === currentYear && monthIndex > currentMonth)
@@ -38,13 +32,21 @@ export function getMonthStatus(
   }
 
   const monthStr = `${year}-${String(monthIndex + 1).padStart(2, "0")}`;
-
   const activeDebts = debts.filter((d) => d.arrangement !== null);
 
   if (activeDebts.length === 0) return "future";
 
+  const hasAnyPayments = payments.some(
+    (p) =>
+      p.payment_date.startsWith(monthStr) &&
+      activeDebts.some((d) => d.id === p.debt_id),
+  );
+
+  if (year === currentYear && monthIndex === currentMonth && !hasAnyPayments) {
+    return "current";
+  }
+
   let allPaid = true;
-  let anyPaid = false;
   let anyPartial = false;
 
   for (const debt of activeDebts) {
@@ -59,16 +61,12 @@ export function getMonthStatus(
       allPaid = false;
     } else if (expected > 0 && totalPaid < expected) {
       anyPartial = true;
-      anyPaid = true;
       allPaid = false;
-    } else {
-      anyPaid = true;
     }
   }
 
   if (allPaid) return "paid";
-  if (anyPartial && !allPaid) return "partial";
-  if (anyPaid && !allPaid) return "missed";
+  if (anyPartial) return "partial";
   return "missed";
 }
 
@@ -81,10 +79,6 @@ export function getDebtMonthStatus(
   const now = new Date();
   const currentMonth = now.getMonth();
   const currentYear = now.getFullYear();
-
-  if (year === currentYear && monthIndex === currentMonth) {
-    return "current";
-  }
 
   if (
     year > currentYear ||
@@ -100,6 +94,10 @@ export function getDebtMonthStatus(
 
   const totalPaid = debtPayments.reduce((sum, p) => sum + p.amount, 0);
   const expected = debt.monthly_amount || 0;
+
+  if (year === currentYear && monthIndex === currentMonth && totalPaid === 0) {
+    return "current";
+  }
 
   if (totalPaid === 0) return "missed";
   if (expected > 0 && totalPaid < expected) return "partial";

@@ -246,7 +246,7 @@ export default function DashboardPage() {
               <div
                 key={debt.id}
                 className="debt-card bg-slate-900/50 border border-slate-800 rounded-xl p-6 cursor-pointer group"
-                onClick={() => setSelectedDebt(debt)}
+                onClick={() => router.push(`/debts/${debt.id}`)}
               >
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex items-start gap-3 flex-1">
@@ -267,10 +267,7 @@ export default function DashboardPage() {
                     </div>
                   </div>
                   <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      toggleArrangement(debt);
-                    }}
+                    onClick={() => router.push(`/debts/${debt.id}`)}
                     className="flex-shrink-0 flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-800 border border-slate-700 hover:border-slate-600 transition-all"
                   >
                     <div
@@ -346,14 +343,14 @@ export default function DashboardPage() {
       {selectedDebt && (
         <div
           className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-end z-50 p-4"
-          onClick={() => setSelectedDebt(null)}
+          onClick={() => router.push(`/debts/${selectedDebt.id}`)}
         >
           <div
             className="w-full max-w-2xl bg-gradient-to-br from-slate-900 to-slate-950 border-t border-slate-800 rounded-t-2xl p-6 max-h-[90vh] overflow-y-auto"
             onClick={(e) => e.stopPropagation()}
           >
             <button
-              onClick={() => setSelectedDebt(null)}
+              onClick={() => router.push(`/debts/${selectedDebt.id}`)}
               className="text-slate-400 hover:text-white transition-colors flex items-center gap-1 text-sm font-medium mb-4"
             >
               ← Back
@@ -363,7 +360,7 @@ export default function DashboardPage() {
                 {selectedDebt.company}
               </h2>
               <button
-                onClick={() => setSelectedDebt(null)}
+                onClick={() => router.push(`/debts/${selectedDebt.id}`)}
                 className="text-slate-400 hover:text-white transition-colors"
               >
                 <X size={24} />
@@ -433,8 +430,7 @@ export default function DashboardPage() {
             <div className="flex gap-3">
               <button
                 onClick={() => {
-                  setSelectedDebt(null);
-                  setLogPaymentDebt(selectedDebt);
+                  router.push(`/debts/${selectedDebt.id}/log-payment`);
                 }}
                 className="flex-1 bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-medium py-3 rounded-lg hover:from-purple-500 hover:to-indigo-500 transition-all"
               >
