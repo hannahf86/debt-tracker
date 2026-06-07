@@ -160,18 +160,18 @@ export default function DashboardPage() {
                     {month}
                   </div>
                   <button
-                    onClick={() =>
-                      !isBeforeSignup &&
-                      (monthStatus === "missed" || monthStatus === "partial") &&
-                      router.push(`/tracker/${idx + 1}`)
-                    }
+                    onClick={() => {
+                      if (!isBeforeSignup && monthStatus !== "future") {
+                        router.push(`/tracker/${idx + 1}`);
+                      }
+                    }}
                     className={`w-12 h-12 rounded-lg border flex items-center justify-center transition-all ${
                       isBeforeSignup
                         ? "bg-slate-800/30 border-slate-800 text-slate-700 cursor-default"
                         : monthStatus === "current"
-                          ? "bg-orange-500/10 border-orange-500/30 text-orange-400 cursor-default"
+                          ? "bg-orange-500/10 border-orange-500/30 text-orange-400 cursor-pointer hover:bg-orange-500/20 hover:shadow-lg hover:shadow-orange-500/20 hover:-translate-y-0.5"
                           : monthStatus === "paid"
-                            ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-400"
+                            ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-400 cursor-pointer hover:bg-emerald-500/20 hover:shadow-lg hover:shadow-emerald-500/20 hover:-translate-y-0.5"
                             : monthStatus === "partial"
                               ? "bg-amber-500/10 border-amber-500/30 text-amber-400 hover:bg-amber-500/20 cursor-pointer"
                               : monthStatus === "missed"

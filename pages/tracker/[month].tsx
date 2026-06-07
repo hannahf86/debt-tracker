@@ -5,6 +5,9 @@ import { useRouter } from "next/router";
 import { useTracker, getDebtMonthStatus } from "@/lib/hooks/useTracker";
 import { Check, Minus, X, ChevronRight } from "lucide-react";
 
+import LogPaymentModal from "@/components/LogPaymentModal";
+import type { Debt } from "@/lib/types";
+
 const monthNames = [
   "January",
   "February",
@@ -50,6 +53,8 @@ export default function MonthTrackerPage() {
 
   const [debtDetails, setDebtDetails] = useState<DebtDetails>({});
   const [loadingDetails, setLoadingDetails] = useState(false);
+
+  const [logPaymentDebt, setLogPaymentDebt] = useState<Debt | null>(null);
 
   useEffect(() => {
     if (!data.debts.length || isNaN(monthIndex)) return;
@@ -136,7 +141,7 @@ export default function MonthTrackerPage() {
           onClick={() => router.push("/tracker")}
           className="text-slate-400 hover:text-white transition-colors flex items-center gap-1 text-sm font-medium mb-8"
         >
-          ← Back to tracker
+          ← Back to the monthly tracker
         </button>
 
         <div className="mb-8">
@@ -162,7 +167,7 @@ export default function MonthTrackerPage() {
         )}
 
         {/* Debt overview */}
-        <div className="space-y-4">
+        <div className="flex flex-wrap gap-4">
           {data.debts.map((debt) => {
             const details = debtDetails[debt.id] || { payments: [], notes: [] };
 
@@ -181,8 +186,9 @@ export default function MonthTrackerPage() {
             return (
               <div
                 key={debt.id}
-                className="bg-slate-900/50 border border-slate-800 rounded-2xl p-6"
+                className="bg-slate-900/50 border border-slate-800 rounded-2xl p-6 w-full md:w-[calc(50%-8px)]"
               >
+                {" "}
                 {/* Debt header */}
                 <div className="flex items-start justify-between mb-4 pb-4 border-b border-slate-800">
                   <div>
@@ -205,7 +211,6 @@ export default function MonthTrackerPage() {
                     {displayStatus === "missed" && <X size={14} />}
                   </div>
                 </div>
-
                 {/* Payments */}
                 {details.payments.length > 0 ? (
                   <div className="space-y-2 mb-4">
@@ -243,7 +248,6 @@ export default function MonthTrackerPage() {
                     No payment logged
                   </p>
                 )}
-
                 {/* Notes */}
                 {details.notes.length > 0 && (
                   <div className="space-y-2 mb-4 pt-3 border-t border-slate-800">
@@ -262,7 +266,6 @@ export default function MonthTrackerPage() {
                     ))}
                   </div>
                 )}
-
                 {/* Supportive message */}
                 {hasPayments &&
                   details.notes.length === 0 &&
@@ -271,19 +274,14 @@ export default function MonthTrackerPage() {
                       You're all good — payment made on time. Keep it up! 💪
                     </p>
                   )}
-
                 {/* Action button for missed/partial */}
                 {(displayStatus === "missed" ||
                   displayStatus === "partial") && (
                   <button
-                    onClick={() =>
-                      router.push(
-                        `/tracker/${monthIndex + 1}/log?debtId=${debt.id}`,
-                      )
-                    }
-                    className="w-full mt-2 bg-purple-600/20 border border-purple-500/30 text-purple-300 text-xs font-medium py-2 rounded-lg hover:bg-purple-600/40 transition-all"
+                    onClick={() => setLogPaymentDebt(debt)}
+                    className="w-full mt-2 bg-gradient-to-r from-purple-600 to-indigo-600 text-white text-xs font-medium py-2 rounded-lg hover:from-purple-500 hover:to-indigo-500 transition-all"
                   >
-                    Log what happened →
+                    + Log payment
                   </button>
                 )}
               </div>
@@ -297,6 +295,16 @@ export default function MonthTrackerPage() {
         >
           Back to dashboard
         </button>
+
+        {logPaymentDebt && (
+          <LogPaymentModal
+            debt={logPaymentDebt}
+            onClose={() => setLogPaymentDebt(null)}
+            onSuccess={(newAmountOwed) => {
+              setLogPaymentDebt(null);
+            }}
+          />
+        )}
       </div>
     </div>
   );
