@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { CheckCircle, X } from "lucide-react";
+import { X, CheckCircle } from "lucide-react";
 import type { Debt } from "@/lib/types";
 
 type Step =
@@ -46,16 +46,10 @@ export default function LogPaymentModal({ debt, onClose, onSuccess }: Props) {
 
   const handleAmountNext = () => {
     if (!amount || parsedAmount <= 0) return;
-
-    if (isOver) {
-      setStep("overpaid-confirm");
-    } else if (isShort) {
-      setStep("short-reason");
-    } else if (isLate) {
-      setStep("confirm-late");
-    } else {
-      handleSubmit("on-time");
-    }
+    if (isOver) setStep("overpaid-confirm");
+    else if (isShort) setStep("short-reason");
+    else if (isLate) setStep("confirm-late");
+    else handleSubmit("on-time");
   };
 
   const handleSubmit = async (overrideType?: string) => {
@@ -109,15 +103,15 @@ export default function LogPaymentModal({ debt, onClose, onSuccess }: Props) {
   };
 
   const ContactBox = () => (
-    <div className="p-4 bg-slate-800/50 rounded-xl">
-      <p className="text-xs text-slate-400 uppercase tracking-wider font-semibold mb-2">
+    <div className="p-4 bg-mint-50 border border-mint-200 rounded-xl">
+      <p className="text-xs text-sage-500 uppercase tracking-wider font-semibold mb-2">
         Contact
       </p>
-      <p className="text-white text-sm font-medium">{debt.company}</p>
+      <p className="text-sage-800 text-sm font-medium">{debt.company}</p>
       {debt.company_email && (
         <a
           href={`mailto:${debt.company_email}`}
-          className="text-purple-400 hover:text-purple-300 text-sm transition-colors"
+          className="text-sage-600 hover:text-sage-800 text-sm transition-colors"
         >
           {debt.company_email}
         </a>
@@ -127,26 +121,29 @@ export default function LogPaymentModal({ debt, onClose, onSuccess }: Props) {
 
   return (
     <div
-      className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+      className="fixed inset-0 bg-sage-900/40 backdrop-blur-sm flex items-center justify-center z-50 p-4"
       onClick={onClose}
     >
       <div
-        className="w-full max-w-sm bg-gradient-to-br from-slate-900 to-slate-950 border border-slate-800 rounded-2xl p-6"
+        className="w-full max-w-sm bg-white border border-mint-200 rounded-2xl p-6 shadow-xl"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
         <div className="flex items-start justify-between mb-6">
           <div>
-            <h3 className="text-xl font-bold text-white">{debt.company}</h3>
+            <h3 className="text-xl font-bold text-sage-800">{debt.company}</h3>
             {monthlyAmount > 0 && (
-              <p className="text-sm text-slate-400 mt-0.5">
-                £{monthlyAmount}/month agreed
+              <p className="text-sm text-sage-500 mt-0.5">
+                Your monthly DD is{" "}
+                <span className="text-sage-700 font-medium">
+                  £{monthlyAmount}
+                </span>
               </p>
             )}
           </div>
           <button
             onClick={onClose}
-            className="text-slate-400 hover:text-white transition-colors"
+            className="text-sage-400 hover:text-sage-600 transition-colors"
           >
             <X size={20} />
           </button>
@@ -156,31 +153,31 @@ export default function LogPaymentModal({ debt, onClose, onSuccess }: Props) {
         {step === "amount" && (
           <div className="space-y-4">
             <div>
-              <label className="text-xs text-slate-400 uppercase tracking-wider font-semibold block mb-2">
+              <label className="text-xs text-sage-500 uppercase tracking-wider font-semibold block mb-2">
                 Amount paid
               </label>
-              <div className="flex items-center bg-slate-800 border border-slate-700 rounded-lg px-4 py-2 focus-within:border-purple-500 focus-within:ring-1 focus-within:ring-purple-500">
-                <span className="text-white font-semibold mr-2">£</span>
+              <div className="flex items-center bg-white border border-mint-200 rounded-lg px-4 py-2 focus-within:border-sage-400 focus-within:ring-1 focus-within:ring-sage-400">
+                <span className="text-sage-400 mr-2">£</span>
                 <input
                   type="number"
                   value={amount}
                   onChange={(e) => setAmount(e.target.value)}
                   placeholder="0.00"
-                  className="flex-1 bg-transparent text-white placeholder-slate-500 focus:outline-none"
+                  className="flex-1 bg-transparent text-sage-800 placeholder-sage-300 focus:outline-none"
                   autoFocus
                 />
               </div>
             </div>
 
             <div>
-              <label className="text-xs text-slate-400 uppercase tracking-wider font-semibold block mb-2">
+              <label className="text-xs text-sage-500 uppercase tracking-wider font-semibold block mb-2">
                 Payment date
               </label>
               <input
                 type="date"
                 value={paymentDate}
                 onChange={(e) => setPaymentDate(e.target.value)}
-                className="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
+                className="w-full bg-white border border-mint-200 rounded-lg px-4 py-2 text-sage-800 focus:outline-none focus:border-sage-400 focus:ring-1 focus:ring-sage-400"
               />
             </div>
 
@@ -188,10 +185,10 @@ export default function LogPaymentModal({ debt, onClose, onSuccess }: Props) {
               <div
                 className={`p-3 rounded-lg text-sm ${
                   isOver
-                    ? "bg-blue-500/10 border border-blue-500/20 text-blue-300"
+                    ? "bg-sage-50 border border-sage-200 text-sage-700"
                     : isShort
-                      ? "bg-amber-500/10 border border-amber-500/20 text-amber-300"
-                      : "bg-emerald-500/10 border border-emerald-500/20 text-emerald-300"
+                      ? "bg-amber-50 border border-amber-200 text-amber-700"
+                      : "bg-emerald-50 border border-emerald-200 text-emerald-700"
                 }`}
               >
                 {isOver &&
@@ -208,14 +205,14 @@ export default function LogPaymentModal({ debt, onClose, onSuccess }: Props) {
             <div className="flex gap-3 pt-2">
               <button
                 onClick={onClose}
-                className="flex-1 bg-slate-800 text-white font-medium py-2 rounded-lg hover:bg-slate-700 transition-colors text-sm"
+                className="flex-1 bg-mint-100 hover:bg-mint-200 text-sage-700 font-medium py-2 rounded-lg transition-colors text-sm border border-mint-200"
               >
                 Cancel
               </button>
               <button
                 onClick={handleAmountNext}
                 disabled={!amount || parsedAmount <= 0}
-                className="flex-1 bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-medium py-2 rounded-lg hover:from-purple-500 hover:to-indigo-500 transition-all disabled:opacity-50 disabled:cursor-not-allowed text-sm"
+                className="flex-1 bg-sage-600 hover:bg-sage-700 text-white font-medium py-2 rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed text-sm"
               >
                 Next
               </button>
@@ -226,39 +223,37 @@ export default function LogPaymentModal({ debt, onClose, onSuccess }: Props) {
         {/* Step: Confirm late */}
         {step === "confirm-late" && (
           <div className="space-y-4">
-            <div className="p-4 bg-amber-500/10 border border-amber-500/20 rounded-xl">
-              <p className="text-amber-300 text-sm font-medium mb-1">
+            <div className="p-4 bg-amber-50 border border-amber-200 rounded-xl">
+              <p className="text-amber-700 text-sm font-medium mb-1">
                 Payment logged as late
               </p>
-              <p className="text-slate-400 text-xs">
+              <p className="text-amber-600 text-xs">
                 Date entered: {paymentDate}
               </p>
             </div>
-
-            <p className="text-slate-300 text-sm">
+            <p className="text-sage-600 text-sm">
               Was the payment actually late, or did you just log it late?
             </p>
-
             <div className="space-y-2">
               <button
                 onClick={() => setStep("late-reason")}
-                className="w-full p-3 bg-slate-800 border border-slate-700 hover:border-amber-500/50 rounded-lg text-left transition-all"
+                className="w-full p-3 bg-white border border-mint-200 hover:border-sage-300 rounded-lg text-left transition-all"
               >
-                <p className="text-white text-sm font-medium">
+                <p className="text-sage-800 text-sm font-medium">
                   It was genuinely late
                 </p>
-                <p className="text-slate-400 text-xs mt-0.5">
+                <p className="text-sage-400 text-xs mt-0.5">
                   I'll tell you why
                 </p>
               </button>
               <button
                 onClick={() => handleSubmit("on-time")}
-                className="w-full p-3 bg-slate-800 border border-slate-700 hover:border-emerald-500/50 rounded-lg text-left transition-all"
+                className="w-full p-3 bg-white border border-mint-200 hover:border-emerald-300 rounded-lg text-left transition-all"
               >
-                <p className="text-white text-sm font-medium">
+                <p className="text-sage-800 text-sm font-medium">
                   I just logged it late
                 </p>
-                <p className="text-slate-400 text-xs mt-0.5">
+                <p className="text-sage-400 text-xs mt-0.5">
                   Payment went out on time, I forgot to log it
                 </p>
               </button>
@@ -270,11 +265,11 @@ export default function LogPaymentModal({ debt, onClose, onSuccess }: Props) {
         {step === "late-reason" && (
           <div className="space-y-4">
             <ContactBox />
-            <p className="text-slate-400 text-xs">
+            <p className="text-sage-400 text-xs">
               💡 It's worth letting them know what happened
             </p>
             <div>
-              <label className="text-xs text-slate-400 uppercase tracking-wider font-semibold block mb-2">
+              <label className="text-xs text-sage-500 uppercase tracking-wider font-semibold block mb-2">
                 Why was it late?
               </label>
               <textarea
@@ -282,13 +277,13 @@ export default function LogPaymentModal({ debt, onClose, onSuccess }: Props) {
                 onChange={(e) => setLateReason(e.target.value)}
                 placeholder="No judgment — just helps to have it written down..."
                 rows={3}
-                className="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-2 text-white placeholder-slate-500 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 resize-none"
+                className="w-full bg-white border border-mint-200 rounded-lg px-4 py-2 text-sage-800 placeholder-sage-300 focus:outline-none focus:border-sage-400 focus:ring-1 focus:ring-sage-400 resize-none"
               />
             </div>
             <button
               onClick={() => handleSubmit("late")}
               disabled={!lateReason || isLoading}
-              className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-semibold py-3 rounded-xl hover:from-purple-500 hover:to-indigo-500 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full bg-sage-600 hover:bg-sage-700 text-white font-semibold py-3 rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isLoading ? "Saving..." : "Save"}
             </button>
@@ -298,18 +293,18 @@ export default function LogPaymentModal({ debt, onClose, onSuccess }: Props) {
         {/* Step: Short reason */}
         {step === "short-reason" && (
           <div className="space-y-4">
-            <div className="p-3 bg-amber-500/10 border border-amber-500/20 rounded-lg">
-              <p className="text-amber-300 text-sm">
+            <div className="p-3 bg-amber-50 border border-amber-200 rounded-lg">
+              <p className="text-amber-700 text-sm">
                 £{(monthlyAmount - parsedAmount).toFixed(2)} short of your
                 agreed amount
               </p>
             </div>
             <ContactBox />
-            <p className="text-slate-400 text-xs">
+            <p className="text-sage-400 text-xs">
               💡 Let them know you've paid what you can right now
             </p>
             <div>
-              <label className="text-xs text-slate-400 uppercase tracking-wider font-semibold block mb-2">
+              <label className="text-xs text-sage-500 uppercase tracking-wider font-semibold block mb-2">
                 Why was it short?
               </label>
               <textarea
@@ -317,13 +312,13 @@ export default function LogPaymentModal({ debt, onClose, onSuccess }: Props) {
                 onChange={(e) => setShortReason(e.target.value)}
                 placeholder="No judgment — just helps to have it written down..."
                 rows={3}
-                className="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-2 text-white placeholder-slate-500 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 resize-none"
+                className="w-full bg-white border border-mint-200 rounded-lg px-4 py-2 text-sage-800 placeholder-sage-300 focus:outline-none focus:border-sage-400 focus:ring-1 focus:ring-sage-400 resize-none"
               />
             </div>
             <button
               onClick={() => handleSubmit("partial")}
               disabled={!shortReason || isLoading}
-              className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-semibold py-3 rounded-xl hover:from-purple-500 hover:to-indigo-500 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full bg-sage-600 hover:bg-sage-700 text-white font-semibold py-3 rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isLoading ? "Saving..." : "Save"}
             </button>
@@ -333,11 +328,11 @@ export default function LogPaymentModal({ debt, onClose, onSuccess }: Props) {
         {/* Step: Overpaid confirm */}
         {step === "overpaid-confirm" && (
           <div className="space-y-4">
-            <div className="p-3 bg-blue-500/10 border border-blue-500/20 rounded-lg">
-              <p className="text-blue-300 text-sm font-medium">
+            <div className="p-3 bg-sage-50 border border-sage-200 rounded-lg">
+              <p className="text-sage-700 text-sm font-medium">
                 You paid £{(parsedAmount - monthlyAmount).toFixed(2)} extra 👀
               </p>
-              <p className="text-slate-400 text-xs mt-1">
+              <p className="text-sage-500 text-xs mt-1">
                 Double check this is right before we log it
               </p>
             </div>
@@ -345,23 +340,21 @@ export default function LogPaymentModal({ debt, onClose, onSuccess }: Props) {
               <button
                 onClick={() => handleSubmit("overpaid")}
                 disabled={isLoading}
-                className="w-full p-3 bg-slate-800 border border-slate-700 hover:border-emerald-500/50 rounded-lg text-left transition-all"
+                className="w-full p-3 bg-white border border-mint-200 hover:border-emerald-300 rounded-lg text-left transition-all"
               >
-                <p className="text-white text-sm font-medium">
+                <p className="text-sage-800 text-sm font-medium">
                   Yes, log it — I paid more 🎉
                 </p>
-                <p className="text-slate-400 text-xs mt-0.5">
-                  I'm celebrating!
-                </p>
+                <p className="text-sage-400 text-xs mt-0.5">I'm celebrating!</p>
               </button>
               <button
                 onClick={() => setStep("amount")}
-                className="w-full p-3 bg-slate-800 border border-slate-700 hover:border-slate-600 rounded-lg text-left transition-all"
+                className="w-full p-3 bg-white border border-mint-200 hover:border-sage-300 rounded-lg text-left transition-all"
               >
-                <p className="text-white text-sm font-medium">
+                <p className="text-sage-800 text-sm font-medium">
                   Let me check the amount
                 </p>
-                <p className="text-slate-400 text-xs mt-0.5">
+                <p className="text-sage-400 text-xs mt-0.5">
                   Go back and correct it
                 </p>
               </button>
@@ -373,9 +366,9 @@ export default function LogPaymentModal({ debt, onClose, onSuccess }: Props) {
         {step === "success" && (
           <div className="text-center py-6">
             <div className="flex justify-center mb-3">
-              <CheckCircle size={48} className="text-emerald-400" />
-            </div>{" "}
-            <p className="text-white text-sm">{successMessage}</p>
+              <CheckCircle size={48} className="text-sage-600" />
+            </div>
+            <p className="text-sage-700 text-sm">{successMessage}</p>
           </div>
         )}
       </div>

@@ -2,14 +2,18 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400;1,700&display=swap");
 
 * {
-  font-family: "Inter", sans-serif;
+  font-family: "Atkinson Hyperlegible", sans-serif;
 }
 
 html {
   scroll-behavior: smooth;
+}
+
+body {
+  background-color: #e7d8ca;
 }
 
 .debt-card {
@@ -18,21 +22,17 @@ html {
 
 .debt-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 24px 48px rgba(139, 92, 246, 0.15);
+  box-shadow: 0 24px 48px rgba(91, 125, 116, 0.15);
 }
 
 .progress-bar {
-  background: linear-gradient(90deg, #8b5cf6 0%, #6366f1 100%);
+  background: linear-gradient(90deg, #5b7d74 0%, #a7b89f 100%);
   transition: width 0.6s ease;
 }
 
 .text-accent {
-  background: linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%);
+  background: linear-gradient(135deg, #5b7d74 0%, #a7b89f 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-}
-
-:root {
-  --sidebar-width: 256px;
 }

@@ -2,51 +2,32 @@
 
 import { useState } from "react";
 import { useRouter } from "next/router";
-import {
-  CreditCard,
-  Landmark,
-  Zap,
-  Receipt,
-  Home,
-  MoreHorizontal,
-} from "lucide-react";
+import { CheckCircle, Moon, Clock } from "lucide-react";
 
-const categoryIcon = (category: string) => {
-  const cls = "w-5 h-5";
-  switch (category) {
-    case "credit-card":
-      return <CreditCard className={cls} />;
-    case "loan":
-      return <Landmark className={cls} />;
-    case "utilities":
-      return <Zap className={cls} />;
-    case "tax":
-      return <Receipt className={cls} />;
-    case "household":
-      return <Home className={cls} />;
-    default:
-      return <MoreHorizontal className={cls} />;
-  }
-};
+const categories = [
+  { value: "credit-card", label: "Credit Card" },
+  { value: "loan", label: "Loan" },
+  { value: "utilities", label: "Utilities" },
+  { value: "tax", label: "Tax" },
+  { value: "household", label: "Household" },
+  { value: "other", label: "Other" },
+];
 
 const arrangements = [
   {
     value: "payment-plan",
     label: "Payment plan in place",
-    icon: "✅",
-    color: "text-emerald-400",
+    icon: <CheckCircle size={16} className="text-emerald-500" />,
   },
   {
     value: "needs-setting-up",
     label: "Needs setting up",
-    icon: "🔵",
-    color: "text-blue-400",
+    icon: <Moon size={16} className="text-blue-400" />,
   },
   {
     value: "awaiting-response",
     label: "Awaiting response",
-    icon: "🟠",
-    color: "text-amber-400",
+    icon: <Clock size={16} className="text-amber-400" />,
   },
 ];
 
@@ -103,37 +84,36 @@ export default function NewDebtPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 p-4 md:p-6">
+    <div className="p-4 md:p-6">
       <div className="max-w-lg mx-auto">
         <button
           onClick={() => router.push("/dashboard")}
-          className="text-slate-400 hover:text-white transition-colors flex items-center gap-1 text-sm font-medium mb-8"
+          className="text-sage-500 hover:text-sage-700 transition-colors flex items-center gap-1 text-sm font-medium mb-8"
         >
           ← Back
         </button>
 
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-white mb-2">Add a debt</h1>
-          <p className="text-slate-400 text-sm">
+          <h1 className="text-3xl font-bold text-sage-800 mb-2">Add a debt</h1>
+          <p className="text-sage-500 text-sm">
             No judgment here. Let's get it tracked.
           </p>
         </div>
 
         {error && (
-          <div className="mb-6 p-4 bg-red-500/10 border border-red-500/30 rounded-lg">
-            <p className="text-sm text-red-400">{error}</p>
+          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+            <p className="text-sm text-red-600">{error}</p>
           </div>
         )}
 
         <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Required fields */}
-          <div className="bg-slate-900/50 border border-slate-800 rounded-2xl p-6 space-y-4">
-            <h2 className="text-sm font-semibold text-slate-400 uppercase tracking-wider">
+          <div className="bg-white/60 backdrop-blur-sm border border-mint-200 rounded-2xl p-6 space-y-4 shadow-sm">
+            <h2 className="text-sm font-semibold text-sage-500 uppercase tracking-wider">
               The basics
             </h2>
 
             <div>
-              <label className="text-xs text-slate-400 uppercase tracking-wider font-semibold block mb-2">
+              <label className="text-xs text-sage-500 uppercase tracking-wider font-semibold block mb-2">
                 Company *
               </label>
               <input
@@ -142,20 +122,20 @@ export default function NewDebtPage() {
                 value={form.company}
                 onChange={handleChange}
                 placeholder="e.g. Barclays"
-                className="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-2 text-white placeholder-slate-500 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
+                className="w-full bg-white border border-mint-200 rounded-lg px-4 py-2 text-sage-800 placeholder-sage-300 focus:outline-none focus:border-sage-400 focus:ring-1 focus:ring-sage-400"
                 required
               />
             </div>
 
             <div>
-              <label className="text-xs text-slate-400 uppercase tracking-wider font-semibold block mb-2">
+              <label className="text-xs text-sage-500 uppercase tracking-wider font-semibold block mb-2">
                 Category *
               </label>
               <select
                 name="category"
                 value={form.category}
                 onChange={handleChange}
-                className="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
+                className="w-full bg-white border border-mint-200 rounded-lg px-4 py-2 text-sage-800 focus:outline-none focus:border-sage-400 focus:ring-1 focus:ring-sage-400"
                 required
               >
                 <option value="" disabled>
@@ -170,7 +150,7 @@ export default function NewDebtPage() {
             </div>
 
             <div>
-              <label className="text-xs text-slate-400 uppercase tracking-wider font-semibold block mb-2">
+              <label className="text-xs text-sage-500 uppercase tracking-wider font-semibold block mb-2">
                 Arrangement *
               </label>
               <div className="space-y-2">
@@ -179,8 +159,8 @@ export default function NewDebtPage() {
                     key={arr.value}
                     className={`flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-all ${
                       form.arrangement === arr.value
-                        ? "border-purple-500 bg-purple-500/10"
-                        : "border-slate-700 bg-slate-800 hover:border-slate-600"
+                        ? "border-sage-400 bg-sage-50"
+                        : "border-mint-200 bg-white hover:border-sage-300"
                     }`}
                   >
                     <input
@@ -191,9 +171,9 @@ export default function NewDebtPage() {
                       onChange={handleChange}
                       className="hidden"
                     />
-                    <span className="text-lg">{arr.icon}</span>
+                    <span>{arr.icon}</span>
                     <span
-                      className={`text-sm font-medium ${form.arrangement === arr.value ? "text-white" : "text-slate-300"}`}
+                      className={`text-sm font-medium ${form.arrangement === arr.value ? "text-sage-800" : "text-sage-600"}`}
                     >
                       {arr.label}
                     </span>
@@ -204,36 +184,36 @@ export default function NewDebtPage() {
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="text-xs text-slate-400 uppercase tracking-wider font-semibold block mb-2">
+                <label className="text-xs text-sage-500 uppercase tracking-wider font-semibold block mb-2">
                   Total amount due *
                 </label>
-                <div className="flex items-center bg-slate-800 border border-slate-700 rounded-lg px-4 py-2 focus-within:border-purple-500 focus-within:ring-1 focus-within:ring-purple-500">
-                  <span className="text-slate-400 mr-2">£</span>
+                <div className="flex items-center bg-white border border-mint-200 rounded-lg px-4 py-2 focus-within:border-sage-400 focus-within:ring-1 focus-within:ring-sage-400">
+                  <span className="text-sage-400 mr-2">£</span>
                   <input
                     type="number"
                     name="total_amount"
                     value={form.total_amount}
                     onChange={handleChange}
                     placeholder="0.00"
-                    className="w-full bg-transparent text-white placeholder-slate-500 focus:outline-none"
+                    className="w-full bg-transparent text-sage-800 placeholder-sage-300 focus:outline-none"
                     required
                   />
                 </div>
               </div>
 
               <div>
-                <label className="text-xs text-slate-400 uppercase tracking-wider font-semibold block mb-2">
+                <label className="text-xs text-sage-500 uppercase tracking-wider font-semibold block mb-2">
                   Monthly amount due *
                 </label>
-                <div className="flex items-center bg-slate-800 border border-slate-700 rounded-lg px-4 py-2 focus-within:border-purple-500 focus-within:ring-1 focus-within:ring-purple-500">
-                  <span className="text-slate-400 mr-2">£</span>
+                <div className="flex items-center bg-white border border-mint-200 rounded-lg px-4 py-2 focus-within:border-sage-400 focus-within:ring-1 focus-within:ring-sage-400">
+                  <span className="text-sage-400 mr-2">£</span>
                   <input
                     type="number"
                     name="monthly_amount"
                     value={form.monthly_amount}
                     onChange={handleChange}
                     placeholder="0.00"
-                    className="w-full bg-transparent text-white placeholder-slate-500 focus:outline-none"
+                    className="w-full bg-transparent text-sage-800 placeholder-sage-300 focus:outline-none"
                     required
                   />
                 </div>
@@ -241,14 +221,13 @@ export default function NewDebtPage() {
             </div>
           </div>
 
-          {/* Optional fields */}
-          <div className="bg-slate-900/50 border border-slate-800 rounded-2xl p-6 space-y-4">
-            <h2 className="text-sm font-semibold text-slate-400 uppercase tracking-wider">
+          <div className="bg-white/60 backdrop-blur-sm border border-mint-200 rounded-2xl p-6 space-y-4 shadow-sm">
+            <h2 className="text-sm font-semibold text-sage-500 uppercase tracking-wider">
               Optional details
             </h2>
 
             <div>
-              <label className="text-xs text-slate-400 uppercase tracking-wider font-semibold block mb-2">
+              <label className="text-xs text-sage-500 uppercase tracking-wider font-semibold block mb-2">
                 Direct debit date
               </label>
               <input
@@ -259,12 +238,12 @@ export default function NewDebtPage() {
                 placeholder="e.g. 15 (for the 15th of the month)"
                 min="1"
                 max="31"
-                className="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-2 text-white placeholder-slate-500 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
+                className="w-full bg-white border border-mint-200 rounded-lg px-4 py-2 text-sage-800 placeholder-sage-300 focus:outline-none focus:border-sage-400 focus:ring-1 focus:ring-sage-400"
               />
             </div>
 
             <div>
-              <label className="text-xs text-slate-400 uppercase tracking-wider font-semibold block mb-2">
+              <label className="text-xs text-sage-500 uppercase tracking-wider font-semibold block mb-2">
                 Account reference
               </label>
               <input
@@ -273,12 +252,12 @@ export default function NewDebtPage() {
                 value={form.account_reference}
                 onChange={handleChange}
                 placeholder="e.g. 1234 5678"
-                className="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-2 text-white placeholder-slate-500 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
+                className="w-full bg-white border border-mint-200 rounded-lg px-4 py-2 text-sage-800 placeholder-sage-300 focus:outline-none focus:border-sage-400 focus:ring-1 focus:ring-sage-400"
               />
             </div>
 
             <div>
-              <label className="text-xs text-slate-400 uppercase tracking-wider font-semibold block mb-2">
+              <label className="text-xs text-sage-500 uppercase tracking-wider font-semibold block mb-2">
                 Company email
               </label>
               <input
@@ -287,7 +266,7 @@ export default function NewDebtPage() {
                 value={form.company_email}
                 onChange={handleChange}
                 placeholder="e.g. accounts@barclays.co.uk"
-                className="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-2 text-white placeholder-slate-500 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
+                className="w-full bg-white border border-mint-200 rounded-lg px-4 py-2 text-sage-800 placeholder-sage-300 focus:outline-none focus:border-sage-400 focus:ring-1 focus:ring-sage-400"
               />
             </div>
           </div>
@@ -295,7 +274,7 @@ export default function NewDebtPage() {
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-semibold py-3 rounded-xl hover:shadow-lg hover:from-purple-500 hover:to-indigo-500 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full bg-sage-600 hover:bg-sage-700 text-white font-semibold py-3 rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isLoading ? "Adding debt..." : "Add debt"}
           </button>

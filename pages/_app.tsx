@@ -17,7 +17,7 @@ export default function App({
 
   return (
     <SessionProvider session={session}>
-      <div className="flex min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
+      <div className="flex min-h-screen bg-gradient-to-br from-peach-300 via-peach-100 to-mint-100">
         {!isAuthRoute && (
           <Sidebar collapsed={collapsed} setCollapsed={setCollapsed} />
         )}

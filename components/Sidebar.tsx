@@ -13,6 +13,7 @@ import {
   ChevronRight,
 } from "lucide-react";
 import Link from "next/link";
+import logo from "../logo.svg";
 
 const navItems = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
@@ -34,22 +35,26 @@ export default function Sidebar({ collapsed, setCollapsed }: Props) {
 
   return (
     <div
-      className={`fixed top-0 left-0 h-screen z-40 flex flex-col bg-slate-950 border-r border-slate-800 transition-all duration-300 ${
+      className={`fixed top-0 left-0 h-screen z-40 flex flex-col bg-mint-100 border-r border-mint-200 transition-all duration-300 ${
         collapsed ? "w-16" : "w-64"
       }`}
     >
       {/* Logo */}
       <div
-        className={`flex items-center h-16 px-4 border-b border-slate-800 ${collapsed ? "justify-center" : "justify-between"}`}
+        className={`flex items-center h-16 px-4 border-b border-mint-200 ${collapsed ? "justify-center" : "justify-between"}`}
       >
         {!collapsed && (
-          <span className="text-white font-bold text-lg tracking-tight">
-            Debt Tracker
+          <span className="text-sage-800 font-bold text-lg tracking-tight">
+            <img
+              src={logo.src}
+              alt="Logo"
+              className="h-6 w-auto inline-block mr-2"
+            />
           </span>
         )}
         <button
           onClick={() => setCollapsed(!collapsed)}
-          className="text-slate-400 hover:text-white transition-colors p-1 rounded-lg hover:bg-slate-800"
+          className="text-sage-600 hover:text-sage-800 transition-colors p-1 rounded-lg hover:bg-mint-200"
         >
           {collapsed ? <ChevronRight size={18} /> : <ChevronLeft size={18} />}
         </button>
@@ -66,14 +71,11 @@ export default function Sidebar({ collapsed, setCollapsed }: Props) {
               href={href}
               className={`flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all group ${
                 isActive
-                  ? "bg-purple-600/20 text-purple-300 border border-purple-500/30"
-                  : "text-slate-400 hover:text-white hover:bg-slate-800"
+                  ? "bg-sage-600 text-white"
+                  : "text-sage-700 hover:text-sage-900 hover:bg-mint-200"
               }`}
             >
-              <Icon
-                size={20}
-                className={`flex-shrink-0 ${isActive ? "text-purple-400" : "group-hover:text-white"}`}
-              />
+              <Icon size={20} className="flex-shrink-0" />
               {!collapsed && (
                 <span className="text-sm font-medium truncate">{label}</span>
               )}
@@ -83,7 +85,7 @@ export default function Sidebar({ collapsed, setCollapsed }: Props) {
 
         <Link
           href="/debts/new"
-          className="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all mt-4 text-purple-300 hover:bg-slate-800 hover:text-white group"
+          className="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all mt-4 text-sage-600 hover:bg-mint-200 hover:text-sage-800 group"
         >
           <Plus size={20} className="flex-shrink-0" />
           {!collapsed && <span className="text-sm font-medium">Add debt</span>}
@@ -91,15 +93,15 @@ export default function Sidebar({ collapsed, setCollapsed }: Props) {
       </nav>
 
       {/* Sign out */}
-      <div className="px-2 py-4 border-t border-slate-800">
+      <div className="px-2 py-4 border-t border-mint-200">
         {!collapsed && session.user?.email && (
-          <p className="text-xs text-slate-500 px-3 mb-3 truncate">
+          <p className="text-xs text-sage-500 px-3 mb-3 truncate">
             {session.user.email}
           </p>
         )}
         <button
           onClick={() => signOut({ callbackUrl: "/auth/login" })}
-          className="flex items-center gap-3 px-3 py-2.5 rounded-xl w-full text-slate-400 hover:text-white hover:bg-slate-800 transition-all"
+          className="flex items-center gap-3 px-3 py-2.5 rounded-xl w-full text-sage-600 hover:text-sage-900 hover:bg-mint-200 transition-all"
         >
           <LogOut size={20} className="flex-shrink-0" />
           {!collapsed && <span className="text-sm font-medium">Sign out</span>}

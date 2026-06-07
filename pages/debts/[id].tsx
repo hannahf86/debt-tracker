@@ -4,9 +4,25 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
 import { useDebts } from "@/lib/hooks/useDebts";
-import { getDebtMonthStatus } from "@/lib/hooks/useTracker";
 import LogPaymentModal from "@/components/LogPaymentModal";
-import { Check, Minus, X, MapPin, Trash2, Pencil } from "lucide-react";
+import {
+  Check,
+  Minus,
+  X,
+  MapPin,
+  Trash2,
+  Pencil,
+  CreditCard,
+  Landmark,
+  Zap,
+  Receipt,
+  Home,
+  MoreHorizontal,
+  CheckCircle,
+  Moon,
+  Clock,
+  AlertTriangle,
+} from "lucide-react";
 import type { Debt, Payment } from "@/lib/types";
 
 const months = [
@@ -25,11 +41,29 @@ const months = [
 ];
 
 const arrangementConfig: Record<string, { label: string; dot: string }> = {
-  "payment-plan": { label: "Payment plan in place", dot: "bg-emerald-400" },
+  "payment-plan": { label: "Payment plan in place", dot: "bg-emerald-500" },
   "needs-setting-up": { label: "Needs setting up", dot: "bg-blue-400" },
   "awaiting-response": { label: "Awaiting response", dot: "bg-amber-400" },
   "account-in-default": { label: "Account in default", dot: "bg-red-400" },
-  default: { label: "Not set", dot: "bg-slate-400" },
+  default: { label: "Not set", dot: "bg-sage-400" },
+};
+
+const categoryIcon = (category: string) => {
+  const cls = "w-5 h-5 text-sage-600";
+  switch (category) {
+    case "credit-card":
+      return <CreditCard className={cls} />;
+    case "loan":
+      return <Landmark className={cls} />;
+    case "utilities":
+      return <Zap className={cls} />;
+    case "tax":
+      return <Receipt className={cls} />;
+    case "household":
+      return <Home className={cls} />;
+    default:
+      return <MoreHorizontal className={cls} />;
+  }
 };
 
 function calcClearedBy(
@@ -59,7 +93,7 @@ function ProgressRing({ percent }: { percent: number }) {
           cy="80"
           r={radius}
           fill="none"
-          stroke="#1e293b"
+          stroke="#dce5e1"
           strokeWidth="12"
         />
         <circle
@@ -76,14 +110,14 @@ function ProgressRing({ percent }: { percent: number }) {
         />
         <defs>
           <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="#8b5cf6" />
-            <stop offset="100%" stopColor="#6366f1" />
+            <stop offset="0%" stopColor="#5b7d74" />
+            <stop offset="100%" stopColor="#a7b89f" />
           </linearGradient>
         </defs>
       </svg>
       <div className="absolute text-center">
-        <p className="text-2xl font-bold text-white">{percent}%</p>
-        <p className="text-xs text-slate-400">paid</p>
+        <p className="text-2xl font-bold text-sage-800">{percent}%</p>
+        <p className="text-xs text-sage-500">paid</p>
       </div>
     </div>
   );
@@ -92,11 +126,9 @@ function ProgressRing({ percent }: { percent: number }) {
 export default function DebtDetailPage() {
   const router = useRouter();
   const { id } = router.query;
-  const { data: session } = useSession();
   const { debts, updateDebt, deleteDebt } = useDebts();
   const [payments, setPayments] = useState<Payment[]>([]);
   const [logPaymentDebt, setLogPaymentDebt] = useState<Debt | null>(null);
-  const [selectedMonth, setSelectedMonth] = useState<number | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
 
   const debt = debts.find((d) => d.id === id);
@@ -113,8 +145,8 @@ export default function DebtDetailPage() {
 
   if (!debt) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 flex items-center justify-center">
-        <p className="text-slate-400">Loading...</p>
+      <div className="min-h-screen flex items-center justify-center">
+        <p className="text-sage-500">Loading...</p>
       </div>
     );
   }
@@ -123,11 +155,6 @@ export default function DebtDetailPage() {
     ((debt.total_amount - debt.amount_owed) / debt.total_amount) * 100,
   );
   const clearedBy = calcClearedBy(debt.amount_owed, debt.monthly_amount);
-
-  const earliestPayment =
-    payments.length > 0
-      ? new Date(payments[payments.length - 1].payment_date)
-      : new Date();
 
   const handleDelete = async () => {
     if (
@@ -165,26 +192,25 @@ export default function DebtDetailPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 p-4 md:p-6">
+    <div className="p-4 md:p-6">
       <div className="max-w-5xl mx-auto">
         <button
           onClick={() => router.push("/dashboard")}
-          className="text-slate-400 hover:text-white transition-colors flex items-center gap-1 text-sm font-medium mb-8"
+          className="text-sage-500 hover:text-sage-700 transition-colors flex items-center gap-1 text-sm font-medium mb-8"
         >
           ← Back
         </button>
 
         {/* Main card */}
-        <div className="bg-slate-900/50 border border-slate-800 rounded-2xl p-6 mb-6">
+        <div className="bg-white/60 backdrop-blur-sm border border-mint-200 rounded-2xl p-6 mb-6 shadow-sm">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {/* Left column */}
             <div>
-              {/* CRUD + Arrangement */}
               <div className="flex items-center justify-between mb-6">
                 <div className="flex gap-2">
                   <button
                     onClick={() => router.push(`/debts/${debt.id}/edit`)}
-                    className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white rounded-lg text-xs font-medium transition-all"
+                    className="flex items-center gap-1.5 px-3 py-1.5 bg-mint-100 hover:bg-mint-200 text-sage-700 rounded-lg text-xs font-medium transition-all"
                   >
                     <Pencil size={12} />
                     Edit
@@ -192,63 +218,70 @@ export default function DebtDetailPage() {
                   <button
                     onClick={handleDelete}
                     disabled={isDeleting}
-                    className="flex items-center gap-1.5 px-3 py-1.5 bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/30 rounded-lg text-xs font-medium transition-all"
+                    className="flex items-center gap-1.5 px-3 py-1.5 bg-red-50 hover:bg-red-100 text-red-500 border border-red-200 rounded-lg text-xs font-medium transition-all"
                   >
                     <Trash2 size={12} />
                     Delete
                   </button>
                 </div>
+                <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-mint-100 border border-mint-200">
+                  <div
+                    className={`w-2 h-2 rounded-full ${arrangementConfig[debt.arrangement ?? "default"].dot}`}
+                  />
+                  <span className="text-xs font-medium text-sage-700">
+                    {arrangementConfig[debt.arrangement ?? "default"].label}
+                  </span>
+                </div>
               </div>
 
-              {/* Company name */}
-              <h1 className="text-3xl font-bold text-white mb-6">
-                {debt.company}
-              </h1>
+              <div className="flex items-center gap-3 mb-6">
+                {categoryIcon(debt.category)}
+                <h1 className="text-3xl font-bold text-sage-800">
+                  {debt.company}
+                </h1>
+              </div>
 
-              {/* Debt details */}
               <div className="space-y-4 mb-8">
-                <div className="flex justify-between items-center py-3 border-b border-slate-800">
-                  <p className="text-slate-400 text-sm">
-                    Total owed (original)
-                  </p>
-                  <p className="text-white font-medium">
+                <div className="flex justify-between items-center py-3 border-b border-mint-200">
+                  <p className="text-sage-500 text-sm">Total owed (original)</p>
+                  <p className="text-sage-800 font-medium">
                     £{debt.total_amount.toLocaleString()}
                   </p>
                 </div>
-                <div className="flex justify-between items-center py-3 border-b border-slate-800">
-                  <p className="text-slate-400 text-sm">Monthly DD</p>
-                  <p className="text-white font-medium">
+                <div className="flex justify-between items-center py-3 border-b border-mint-200">
+                  <p className="text-sage-500 text-sm">Monthly DD</p>
+                  <p className="text-sage-800 font-medium">
                     £{debt.monthly_amount?.toLocaleString() ?? "—"}
                   </p>
                 </div>
                 {debt.company_email && (
-                  <div className="flex justify-between items-center py-3 border-b border-slate-800">
-                    <p className="text-slate-400 text-sm">Contact email</p>
+                  <div className="flex justify-between items-center py-3 border-b border-mint-200">
+                    <p className="text-sage-500 text-sm">Contact email</p>
                     <a
                       href={`mailto:${debt.company_email}`}
-                      className="text-purple-400 hover:text-purple-300 text-sm transition-colors"
+                      className="text-sage-600 hover:text-sage-800 text-sm transition-colors"
                     >
                       {debt.company_email}
                     </a>
                   </div>
                 )}
                 {debt.account_reference && (
-                  <div className="flex justify-between items-center py-3 border-b border-slate-800">
-                    <p className="text-slate-400 text-sm">Account ref</p>
-                    <p className="text-white font-medium">
+                  <div className="flex justify-between items-center py-3 border-b border-mint-200">
+                    <p className="text-sage-500 text-sm">Account ref</p>
+                    <p className="text-sage-800 font-medium">
                       {debt.account_reference}
                     </p>
                   </div>
                 )}
                 <div className="flex justify-between items-center py-3">
-                  <p className="text-slate-400 text-sm">Debt cleared by</p>
-                  <p className="text-white font-medium">{clearedBy}</p>
+                  <p className="text-sage-500 text-sm">Debt cleared by</p>
+                  <p className="text-sage-800 font-medium">{clearedBy}</p>
                 </div>
               </div>
 
               <button
                 onClick={() => setLogPaymentDebt(debt)}
-                className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-semibold py-3 rounded-xl hover:from-purple-500 hover:to-indigo-500 transition-all"
+                className="w-full bg-sage-600 hover:bg-sage-700 text-white font-semibold py-3 rounded-xl transition-all"
               >
                 + Log payment
               </button>
@@ -256,23 +289,12 @@ export default function DebtDetailPage() {
 
             {/* Right column */}
             <div className="flex flex-col items-center justify-center gap-6">
-              {/* Arrangement pill */}
-              <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-800 border border-slate-700">
-                <div
-                  className={`w-2 h-2 rounded-full ${arrangementConfig[debt.arrangement ?? "default"].dot}`}
-                />
-                <span className="text-xs font-medium text-slate-300">
-                  {arrangementConfig[debt.arrangement ?? "default"].label}
-                </span>
-              </div>
-
               <ProgressRing percent={percent} />
-
               <div className="text-center">
-                <p className="text-slate-400 text-xs uppercase tracking-wider font-semibold mb-1">
+                <p className="text-sage-500 text-xs uppercase tracking-wider font-semibold mb-1">
                   Total remaining
                 </p>
-                <p className="text-4xl font-bold text-white">
+                <p className="text-4xl font-bold text-sage-800">
                   £{debt.amount_owed.toLocaleString()}
                 </p>
               </div>
@@ -280,41 +302,39 @@ export default function DebtDetailPage() {
           </div>
         </div>
 
-        {/* Yearly tracker for this debt */}
-        <div className="bg-slate-900/50 border border-slate-800 rounded-2xl p-6">
-          <h2 className="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-6">
+        {/* Yearly tracker */}
+        <div className="bg-white/60 backdrop-blur-sm border border-mint-200 rounded-2xl p-6 shadow-sm">
+          <h2 className="text-sm font-semibold text-sage-500 uppercase tracking-wider mb-6">
             {year} Payment History
           </h2>
           <div className="grid grid-cols-12 gap-3">
-            {" "}
             {months.map((month, idx) => {
               const status = getMonthStatus(idx);
-              const isClickable =
-                status !== "future" && status !== "before-signup";
+              const isClickable = status !== "future";
 
               return (
                 <div key={month} className="flex flex-col items-center gap-2">
                   <div
-                    className={`text-xs font-medium ${idx === currentMonth ? "text-orange-400" : "text-slate-400"}`}
+                    className={`text-xs font-medium ${idx === currentMonth ? "text-orange-500" : "text-sage-400"}`}
                   >
                     {month}
                   </div>
                   <button
                     onClick={() => isClickable && setLogPaymentDebt(debt)}
-                    className={`w-12 h-12 rounded-lg border flex items-center justify-center transition-all ${
+                    className={`w-full h-12 rounded-lg border flex items-center justify-center transition-all ${
                       status === "current"
-                        ? "bg-orange-500/20 border-orange-500/40 cursor-pointer hover:bg-orange-500/30"
+                        ? "bg-orange-100 border-orange-300 text-orange-500 cursor-pointer hover:bg-orange-200"
                         : status === "paid"
-                          ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/20 cursor-pointer"
+                          ? "bg-emerald-50 border-emerald-300 text-emerald-600 cursor-pointer hover:bg-emerald-100"
                           : status === "partial"
-                            ? "bg-amber-500/10 border-amber-500/30 text-amber-400 hover:bg-amber-500/20 cursor-pointer"
+                            ? "bg-amber-50 border-amber-300 text-amber-600 cursor-pointer hover:bg-amber-100"
                             : status === "missed"
-                              ? "bg-red-500/10 border-red-500/30 text-red-400 hover:bg-red-500/20 cursor-pointer"
-                              : "bg-slate-800 border-slate-700 text-slate-600 cursor-default"
+                              ? "bg-peach-100 border-peach-200 text-sage-400 cursor-pointer hover:bg-peach-200"
+                              : "bg-peach-100/50 border-peach-200 text-peach-300 cursor-default"
                     }`}
                   >
-                    {status === "paid" && <Check size={16} />}
-                    {status === "partial" && <Minus size={16} />}
+                    {status === "paid" && <Check size={14} />}
+                    {status === "partial" && <Minus size={14} />}
                     {status === "missed" && <span className="text-xs">—</span>}
                     {status === "current" && null}
                     {status === "future" && <span className="text-xs">—</span>}
@@ -326,7 +346,6 @@ export default function DebtDetailPage() {
         </div>
       </div>
 
-      {/* Log Payment Modal */}
       {logPaymentDebt && (
         <LogPaymentModal
           debt={logPaymentDebt}

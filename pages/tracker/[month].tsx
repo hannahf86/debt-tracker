@@ -4,7 +4,6 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import { useTracker, getDebtMonthStatus } from "@/lib/hooks/useTracker";
 import { Check, Minus, X, ChevronRight } from "lucide-react";
-
 import LogPaymentModal from "@/components/LogPaymentModal";
 import type { Debt } from "@/lib/types";
 
@@ -50,10 +49,8 @@ export default function MonthTrackerPage() {
   const monthIndex = parseInt(month as string) - 1;
   const year = new Date().getFullYear();
   const { data, isLoading } = useTracker();
-
   const [debtDetails, setDebtDetails] = useState<DebtDetails>({});
   const [loadingDetails, setLoadingDetails] = useState(false);
-
   const [logPaymentDebt, setLogPaymentDebt] = useState<Debt | null>(null);
 
   useEffect(() => {
@@ -91,40 +88,40 @@ export default function MonthTrackerPage() {
     if (type === "on-time")
       return {
         label: "On time",
-        color: "text-emerald-400",
+        color: "text-emerald-600",
         icon: <Check size={12} />,
       };
     if (type === "late")
       return {
         label: "Late",
-        color: "text-amber-400",
+        color: "text-amber-600",
         icon: <ChevronRight size={12} />,
       };
     if (type === "partial")
       return {
         label: "Short payment",
-        color: "text-amber-400",
+        color: "text-amber-600",
         icon: <Minus size={12} />,
       };
     if (type === "partial-late")
       return {
         label: "Short & late",
-        color: "text-red-400",
+        color: "text-red-500",
         icon: <X size={12} />,
       };
     if (type === "overpaid")
       return {
         label: "Overpaid 🎉",
-        color: "text-blue-400",
+        color: "text-sage-600",
         icon: <Check size={12} />,
       };
-    return { label: type, color: "text-slate-400", icon: null };
+    return { label: type, color: "text-sage-500", icon: null };
   };
 
   if (isLoading || loadingDetails) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 flex items-center justify-center">
-        <p className="text-slate-400">Loading...</p>
+      <div className="min-h-screen flex items-center justify-center">
+        <p className="text-sage-500">Loading...</p>
       </div>
     );
   }
@@ -135,42 +132,39 @@ export default function MonthTrackerPage() {
   });
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 p-4 md:p-6">
+    <div className="p-4 md:p-6">
       <div className="max-w-lg mx-auto">
         <button
           onClick={() => router.push("/tracker")}
-          className="text-slate-400 hover:text-white transition-colors flex items-center gap-1 text-sm font-medium mb-8"
+          className="text-sage-500 hover:text-sage-700 transition-colors flex items-center gap-1 text-sm font-medium mb-8"
         >
-          ← Back to the monthly tracker
+          ← Back to tracker
         </button>
 
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-white mb-2">
+          <h1 className="text-3xl font-bold text-sage-800 mb-2">
             {monthNames[monthIndex]} {year}
           </h1>
-          <p className="text-slate-400 text-sm">
+          <p className="text-sage-500 text-sm">
             Here's the full picture for this month
           </p>
         </div>
 
-        {/* Celebration banner */}
         {allGood && (
-          <div className="bg-emerald-500/10 border border-emerald-500/30 rounded-2xl p-6 text-center mb-6">
+          <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-6 text-center mb-6">
             <div className="text-4xl mb-3">🎉</div>
-            <h2 className="text-xl font-bold text-white mb-2">
+            <h2 className="text-xl font-bold text-emerald-700 mb-2">
               Nothing missed!
             </h2>
-            <p className="text-slate-400 text-sm">
+            <p className="text-emerald-600 text-sm">
               All payments were logged this month. Seriously, great work.
             </p>
           </div>
         )}
 
-        {/* Debt overview */}
         <div className="flex flex-wrap gap-4">
           {data.debts.map((debt) => {
             const details = debtDetails[debt.id] || { payments: [], notes: [] };
-
             const hasPayments = details.payments.length > 0;
             const isPartial =
               hasPayments && debt.monthly_amount
@@ -186,32 +180,34 @@ export default function MonthTrackerPage() {
             return (
               <div
                 key={debt.id}
-                className="bg-slate-900/50 border border-slate-800 rounded-2xl p-6 w-full md:w-[calc(50%-8px)]"
+                className="bg-white/60 backdrop-blur-sm border border-mint-200 rounded-2xl p-6 w-full md:w-[calc(50%-8px)] shadow-sm"
               >
-                {" "}
-                {/* Debt header */}
-                <div className="flex items-start justify-between mb-4 pb-4 border-b border-slate-800">
+                <div className="flex items-start justify-between mb-4 pb-4 border-b border-mint-100">
                   <div>
-                    <h3 className="text-white font-semibold">{debt.company}</h3>
-                    <p className="text-slate-400 text-xs mt-0.5">
+                    <h3 className="text-sage-800 font-semibold">
+                      {debt.company}
+                    </h3>
+                    <p className="text-sage-400 text-xs mt-0.5">
                       £{debt.monthly_amount}/month agreed
                     </p>
                   </div>
                   <div
                     className={`w-8 h-8 rounded-lg border flex items-center justify-center ${
                       displayStatus === "paid"
-                        ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-400"
+                        ? "bg-emerald-50 border-emerald-200 text-emerald-600"
                         : displayStatus === "partial"
-                          ? "bg-amber-500/10 border-amber-500/30 text-amber-400"
-                          : "bg-red-500/10 border-red-500/30 text-red-400"
+                          ? "bg-amber-50 border-amber-200 text-amber-600"
+                          : "bg-peach-100 border-peach-200 text-sage-400"
                     }`}
                   >
                     {displayStatus === "paid" && <Check size={14} />}
                     {displayStatus === "partial" && <Minus size={14} />}
-                    {displayStatus === "missed" && <X size={14} />}
+                    {displayStatus === "missed" && (
+                      <span className="text-xs">—</span>
+                    )}
                   </div>
                 </div>
-                {/* Payments */}
+
                 {details.payments.length > 0 ? (
                   <div className="space-y-2 mb-4">
                     {details.payments.map((payment, i) => {
@@ -219,17 +215,17 @@ export default function MonthTrackerPage() {
                       return (
                         <div
                           key={i}
-                          className="flex items-center justify-between p-3 bg-slate-800/50 rounded-lg"
+                          className="flex items-center justify-between p-3 bg-mint-50 rounded-lg"
                         >
                           <div className="flex items-center gap-2">
                             <span className={typeInfo.color}>
                               {typeInfo.icon}
                             </span>
                             <div>
-                              <p className="text-white text-sm font-medium">
+                              <p className="text-sage-800 text-sm font-medium">
                                 £{payment.amount}
                               </p>
-                              <p className="text-slate-400 text-xs">
+                              <p className="text-sage-400 text-xs">
                                 {payment.payment_date}
                               </p>
                             </div>
@@ -244,21 +240,21 @@ export default function MonthTrackerPage() {
                     })}
                   </div>
                 ) : (
-                  <p className="text-slate-400 text-sm mb-4">
+                  <p className="text-sage-400 text-sm mb-4">
                     No payment logged
                   </p>
                 )}
-                {/* Notes */}
+
                 {details.notes.length > 0 && (
-                  <div className="space-y-2 mb-4 pt-3 border-t border-slate-800">
+                  <div className="space-y-2 mb-4 pt-3 border-t border-mint-100">
                     {details.notes.map((note, i) => (
-                      <div key={i} className="p-3 bg-slate-800/50 rounded-lg">
-                        <p className="text-xs text-slate-400 uppercase tracking-wider font-semibold mb-1">
+                      <div key={i} className="p-3 bg-peach-100/50 rounded-lg">
+                        <p className="text-xs text-sage-400 uppercase tracking-wider font-semibold mb-1">
                           Note
                         </p>
-                        <p className="text-white text-sm">{note.reason}</p>
+                        <p className="text-sage-700 text-sm">{note.reason}</p>
                         {note.actions && (
-                          <p className="text-slate-400 text-xs mt-1">
+                          <p className="text-sage-400 text-xs mt-1">
                             → {note.actions}
                           </p>
                         )}
@@ -266,24 +262,21 @@ export default function MonthTrackerPage() {
                     ))}
                   </div>
                 )}
-                {/* Supportive message */}
+
                 {hasPayments &&
                   details.notes.length === 0 &&
                   displayStatus === "paid" && (
-                    <p className="text-emerald-400 text-sm">
+                    <p className="text-emerald-600 text-sm">
                       You're all good — payment made on time. Keep it up! 💪
                     </p>
                   )}
-                {/* Action button for missed/partial */}
-                {(displayStatus === "missed" ||
-                  displayStatus === "partial") && (
-                  <button
-                    onClick={() => setLogPaymentDebt(debt)}
-                    className="w-full mt-2 bg-gradient-to-r from-purple-600 to-indigo-600 text-white text-xs font-medium py-2 rounded-lg hover:from-purple-500 hover:to-indigo-500 transition-all"
-                  >
-                    + Log payment
-                  </button>
-                )}
+
+                <button
+                  onClick={() => setLogPaymentDebt(debt)}
+                  className="w-full mt-3 bg-sage-600 hover:bg-sage-700 text-white text-xs font-medium py-2 rounded-lg transition-all"
+                >
+                  + Log payment
+                </button>
               </div>
             );
           })}
@@ -291,21 +284,19 @@ export default function MonthTrackerPage() {
 
         <button
           onClick={() => router.push("/dashboard")}
-          className="w-full mt-6 bg-slate-800 text-white font-medium py-3 rounded-xl hover:bg-slate-700 transition-colors"
+          className="w-full mt-6 bg-mint-100 hover:bg-mint-200 text-sage-700 font-medium py-3 rounded-xl transition-colors border border-mint-200"
         >
           Back to dashboard
         </button>
-
-        {logPaymentDebt && (
-          <LogPaymentModal
-            debt={logPaymentDebt}
-            onClose={() => setLogPaymentDebt(null)}
-            onSuccess={(newAmountOwed) => {
-              setLogPaymentDebt(null);
-            }}
-          />
-        )}
       </div>
+
+      {logPaymentDebt && (
+        <LogPaymentModal
+          debt={logPaymentDebt}
+          onClose={() => setLogPaymentDebt(null)}
+          onSuccess={() => setLogPaymentDebt(null)}
+        />
+      )}
     </div>
   );
 }
