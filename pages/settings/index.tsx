@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useSession } from "next-auth/react";
+import { useSession, signOut } from "next-auth/react";
 import { useDebts } from "@/lib/hooks/useDebts";
 import { Save, AlertTriangle } from "lucide-react";
 
@@ -13,6 +13,14 @@ export default function SettingsPage() {
   const [budgetSaved, setBudgetSaved] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [deleteConfirm, setDeleteConfirm] = useState("");
+  const [isDeleteLoading, setIsDeleteLoading] = useState(false);
+
+  const [showChangePassword, setShowChangePassword] = useState(false);
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [passwordError, setPasswordError] = useState("");
+  const [passwordSaved, setPasswordSaved] = useState(false);
+  const [isPasswordLoading, setIsPasswordLoading] = useState(false);
 
   const totalMonthlyDD = debts.reduce(
     (sum, d) => sum + (d.monthly_amount || 0),
@@ -30,6 +38,55 @@ export default function SettingsPage() {
       setTimeout(() => setBudgetSaved(false), 2000);
     } catch (error) {
       console.error("Error saving budget:", error);
+    }
+  };
+
+  const handleChangePassword = async () => {
+    setPasswordError("");
+    if (newPassword !== confirmPassword) {
+      setPasswordError("Passwords do not match");
+      return;
+    }
+    if (newPassword.length < 6) {
+      setPasswordError("Password must be at least 6 characters");
+      return;
+    }
+
+    setIsPasswordLoading(true);
+    try {
+      const res = await fetch("/api/users/change-password", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ password: newPassword }),
+      });
+
+      if (!res.ok) throw new Error("Failed to change password");
+
+      setPasswordSaved(true);
+      setNewPassword("");
+      setConfirmPassword("");
+      setShowChangePassword(false);
+      setTimeout(() => setPasswordSaved(false), 3000);
+    } catch (error) {
+      setPasswordError("Something went wrong. Please try again.");
+    } finally {
+      setIsPasswordLoading(false);
+    }
+  };
+
+  const handleDeleteAccount = async () => {
+    setIsDeleteLoading(true);
+    try {
+      const res = await fetch("/api/users/delete", {
+        method: "DELETE",
+      });
+
+      if (!res.ok) throw new Error("Failed to delete account");
+
+      await signOut({ callbackUrl: "/auth/login" });
+    } catch (error) {
+      console.error("Error deleting account:", error);
+      setIsDeleteLoading(false);
     }
   };
 
@@ -64,9 +121,67 @@ export default function SettingsPage() {
               <label className="text-xs text-sage-500 uppercase tracking-wider font-semibold block mb-2">
                 Password
               </label>
-              <button className="px-4 py-2 bg-mint-100 hover:bg-mint-200 text-sage-700 rounded-lg text-sm font-medium transition-colors border border-mint-200">
-                Change password
-              </button>
+
+              {passwordSaved && (
+                <div className="mb-3 p-3 bg-emerald-50 border border-emerald-200 rounded-lg">
+                  <p className="text-emerald-700 text-sm">
+                    Password updated successfully!
+                  </p>
+                </div>
+              )}
+
+              {!showChangePassword ? (
+                <button
+                  onClick={() => setShowChangePassword(true)}
+                  className="px-4 py-2 bg-mint-100 hover:bg-mint-200 text-sage-700 rounded-lg text-sm font-medium transition-colors border border-mint-200"
+                >
+                  Change password
+                </button>
+              ) : (
+                <div className="space-y-3">
+                  {passwordError && (
+                    <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
+                      <p className="text-red-600 text-sm">{passwordError}</p>
+                    </div>
+                  )}
+                  <input
+                    type="password"
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                    placeholder="New password"
+                    className="w-full bg-white border border-mint-200 rounded-lg px-4 py-2 text-sage-800 placeholder-sage-300 focus:outline-none focus:border-sage-400 focus:ring-1 focus:ring-sage-400"
+                  />
+                  <input
+                    type="password"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    placeholder="Confirm new password"
+                    className="w-full bg-white border border-mint-200 rounded-lg px-4 py-2 text-sage-800 placeholder-sage-300 focus:outline-none focus:border-sage-400 focus:ring-1 focus:ring-sage-400"
+                  />
+                  <div className="flex gap-3">
+                    <button
+                      onClick={() => {
+                        setShowChangePassword(false);
+                        setPasswordError("");
+                        setNewPassword("");
+                        setConfirmPassword("");
+                      }}
+                      className="flex-1 bg-mint-100 hover:bg-mint-200 text-sage-700 font-medium py-2 rounded-lg transition-colors text-sm border border-mint-200"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      onClick={handleChangePassword}
+                      disabled={
+                        !newPassword || !confirmPassword || isPasswordLoading
+                      }
+                      className="flex-1 bg-sage-600 hover:bg-sage-700 text-white font-medium py-2 rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed text-sm"
+                    >
+                      {isPasswordLoading ? "Saving..." : "Update password"}
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -156,10 +271,13 @@ export default function SettingsPage() {
                   Cancel
                 </button>
                 <button
-                  disabled={deleteConfirm !== "delete my account"}
+                  onClick={handleDeleteAccount}
+                  disabled={
+                    deleteConfirm !== "delete my account" || isDeleteLoading
+                  }
                   className="flex-1 bg-red-100 hover:bg-red-200 text-red-500 border border-red-200 font-medium py-2 rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed text-sm"
                 >
-                  Confirm delete
+                  {isDeleteLoading ? "Deleting..." : "Confirm delete"}
                 </button>
               </div>
             </div>

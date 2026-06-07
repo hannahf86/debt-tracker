@@ -4,14 +4,6 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import { useDebts } from "@/lib/hooks/useDebts";
 import { CheckCircle, Moon, Clock } from "lucide-react";
-import {
-  CreditCard,
-  Landmark,
-  Zap,
-  Receipt,
-  Home,
-  MoreHorizontal,
-} from "lucide-react";
 
 const categories = [
   { value: "credit-card", label: "Credit Card" },
@@ -22,29 +14,11 @@ const categories = [
   { value: "other", label: "Other" },
 ];
 
-const categoryIcon = (category: string) => {
-  const cls = "w-5 h-5";
-  switch (category) {
-    case "credit-card":
-      return <CreditCard className={cls} />;
-    case "loan":
-      return <Landmark className={cls} />;
-    case "utilities":
-      return <Zap className={cls} />;
-    case "tax":
-      return <Receipt className={cls} />;
-    case "household":
-      return <Home className={cls} />;
-    default:
-      return <MoreHorizontal className={cls} />;
-  }
-};
-
 const arrangements = [
   {
     value: "payment-plan",
     label: "Payment plan in place",
-    icon: <CheckCircle size={16} className="text-emerald-400" />,
+    icon: <CheckCircle size={16} className="text-emerald-500" />,
   },
   {
     value: "needs-setting-up",
@@ -68,6 +42,7 @@ export default function EditDebtPage() {
     company: "",
     category: "",
     total_amount: "",
+    amount_owed: "",
     monthly_amount: "",
     arrangement: "",
     direct_debit_date: "",
@@ -83,6 +58,7 @@ export default function EditDebtPage() {
         company: debt.company || "",
         category: debt.category || "",
         total_amount: debt.total_amount?.toString() || "",
+        amount_owed: debt.amount_owed?.toString() || "",
         monthly_amount: debt.monthly_amount?.toString() || "",
         arrangement: debt.arrangement || "",
         direct_debit_date: debt.direct_debit_date?.toString() || "",
@@ -109,6 +85,7 @@ export default function EditDebtPage() {
         name: form.company,
         category: form.category as any,
         total_amount: parseFloat(form.total_amount),
+        amount_owed: parseFloat(form.amount_owed),
         monthly_amount: form.monthly_amount
           ? parseFloat(form.monthly_amount)
           : null,
@@ -129,8 +106,8 @@ export default function EditDebtPage() {
 
   if (!debt) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 flex items-center justify-center">
-        <p className="text-slate-400">Loading...</p>
+      <div className="min-h-screen flex items-center justify-center">
+        <p className="text-sage-500">Loading...</p>
       </div>
     );
   }
@@ -140,31 +117,30 @@ export default function EditDebtPage() {
       <div className="max-w-lg mx-auto">
         <button
           onClick={() => router.push(`/debts/${id}`)}
-          className="text-slate-400 hover:text-white transition-colors flex items-center gap-1 text-sm font-medium mb-8"
+          className="text-sage-500 hover:text-sage-700 transition-colors flex items-center gap-1 text-sm font-medium mb-8"
         >
           ← Back
         </button>
 
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-white mb-2">Edit debt</h1>
-          <p className="text-slate-400 text-sm">{debt.company}</p>
+          <h1 className="text-3xl font-bold text-sage-800 mb-2">Edit debt</h1>
+          <p className="text-sage-500 text-sm">{debt.company}</p>
         </div>
 
         {error && (
-          <div className="mb-6 p-4 bg-red-500/10 border border-red-500/30 rounded-lg">
-            <p className="text-sm text-red-400">{error}</p>
+          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+            <p className="text-sm text-red-600">{error}</p>
           </div>
         )}
 
         <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Required fields */}
-          <div className="bg-slate-900/50 border border-slate-800 rounded-2xl p-6 space-y-4">
-            <h2 className="text-sm font-semibold text-slate-400 uppercase tracking-wider">
+          <div className="bg-white/60 backdrop-blur-sm border border-mint-200 rounded-2xl p-6 space-y-4 shadow-sm">
+            <h2 className="text-sm font-semibold text-sage-500 uppercase tracking-wider">
               The basics
             </h2>
 
             <div>
-              <label className="text-xs text-slate-400 uppercase tracking-wider font-semibold block mb-2">
+              <label className="text-xs text-sage-500 uppercase tracking-wider font-semibold block mb-2">
                 Company *
               </label>
               <input
@@ -172,20 +148,20 @@ export default function EditDebtPage() {
                 name="company"
                 value={form.company}
                 onChange={handleChange}
-                className="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-2 text-white placeholder-slate-500 focus:outline-none focus:border-sage-500 focus:ring-1 focus:ring-sage-500"
+                className="w-full bg-white border border-mint-200 rounded-lg px-4 py-2 text-sage-800 placeholder-sage-300 focus:outline-none focus:border-sage-400 focus:ring-1 focus:ring-sage-400"
                 required
               />
             </div>
 
             <div>
-              <label className="text-xs text-slate-400 uppercase tracking-wider font-semibold block mb-2">
+              <label className="text-xs text-sage-500 uppercase tracking-wider font-semibold block mb-2">
                 Category *
               </label>
               <select
                 name="category"
                 value={form.category}
                 onChange={handleChange}
-                className="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-sage-500 focus:ring-1 focus:ring-sage-500"
+                className="w-full bg-white border border-mint-200 rounded-lg px-4 py-2 text-sage-800 focus:outline-none focus:border-sage-400 focus:ring-1 focus:ring-sage-400"
                 required
               >
                 <option value="" disabled>
@@ -200,7 +176,7 @@ export default function EditDebtPage() {
             </div>
 
             <div>
-              <label className="text-xs text-slate-400 uppercase tracking-wider font-semibold block mb-2">
+              <label className="text-xs text-sage-500 uppercase tracking-wider font-semibold block mb-2">
                 Arrangement *
               </label>
               <div className="space-y-2">
@@ -209,8 +185,8 @@ export default function EditDebtPage() {
                     key={arr.value}
                     className={`flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-all ${
                       form.arrangement === arr.value
-                        ? "border-sage-500 bg-sage-500/10"
-                        : "border-slate-700 bg-slate-800 hover:border-slate-600"
+                        ? "border-sage-400 bg-sage-50"
+                        : "border-mint-200 bg-white hover:border-sage-300"
                     }`}
                   >
                     <input
@@ -221,9 +197,9 @@ export default function EditDebtPage() {
                       onChange={handleChange}
                       className="hidden"
                     />
-                    <span className="text-lg">{arr.icon}</span>
+                    <span>{arr.icon}</span>
                     <span
-                      className={`text-sm font-medium ${form.arrangement === arr.value ? "text-white" : "text-slate-300"}`}
+                      className={`text-sm font-medium ${form.arrangement === arr.value ? "text-sage-800" : "text-sage-600"}`}
                     >
                       {arr.label}
                     </span>
@@ -234,51 +210,68 @@ export default function EditDebtPage() {
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="text-xs text-slate-400 uppercase tracking-wider font-semibold block mb-2">
-                  Total amount due *
+                <label className="text-xs text-sage-500 uppercase tracking-wider font-semibold block mb-2">
+                  Total amount *
                 </label>
-                <div className="flex items-center bg-slate-800 border border-slate-700 rounded-lg px-4 py-2 focus-within:border-sage-500 focus-within:ring-1 focus-within:ring-sage-500">
-                  <span className="text-slate-400 mr-2">£</span>
+                <div className="flex items-center bg-white border border-mint-200 rounded-lg px-4 py-2 focus-within:border-sage-400 focus-within:ring-1 focus-within:ring-sage-400">
+                  <span className="text-sage-400 mr-2">£</span>
                   <input
                     type="number"
                     name="total_amount"
                     value={form.total_amount}
                     onChange={handleChange}
                     placeholder="0.00"
-                    className="w-full bg-transparent text-white placeholder-slate-500 focus:outline-none"
+                    className="w-full bg-transparent text-sage-800 placeholder-sage-300 focus:outline-none"
                     required
                   />
                 </div>
               </div>
 
               <div>
-                <label className="text-xs text-slate-400 uppercase tracking-wider font-semibold block mb-2">
-                  Monthly amount due *
+                <label className="text-xs text-sage-500 uppercase tracking-wider font-semibold block mb-2">
+                  Amount remaining *
                 </label>
-                <div className="flex items-center bg-slate-800 border border-slate-700 rounded-lg px-4 py-2 focus-within:border-sage-500 focus-within:ring-1 focus-within:ring-sage-500">
-                  <span className="text-slate-400 mr-2">£</span>
+                <div className="flex items-center bg-white border border-mint-200 rounded-lg px-4 py-2 focus-within:border-sage-400 focus-within:ring-1 focus-within:ring-sage-400">
+                  <span className="text-sage-400 mr-2">£</span>
                   <input
                     type="number"
-                    name="monthly_amount"
-                    value={form.monthly_amount}
+                    name="amount_owed"
+                    value={form.amount_owed}
                     onChange={handleChange}
                     placeholder="0.00"
-                    className="w-full bg-transparent text-white placeholder-slate-500 focus:outline-none"
+                    className="w-full bg-transparent text-sage-800 placeholder-sage-300 focus:outline-none"
                     required
                   />
                 </div>
               </div>
             </div>
+
+            <div>
+              <label className="text-xs text-sage-500 uppercase tracking-wider font-semibold block mb-2">
+                Monthly amount due *
+              </label>
+              <div className="flex items-center bg-white border border-mint-200 rounded-lg px-4 py-2 focus-within:border-sage-400 focus-within:ring-1 focus-within:ring-sage-400">
+                <span className="text-sage-400 mr-2">£</span>
+                <input
+                  type="number"
+                  name="monthly_amount"
+                  value={form.monthly_amount}
+                  onChange={handleChange}
+                  placeholder="0.00"
+                  className="w-full bg-transparent text-sage-800 placeholder-sage-300 focus:outline-none"
+                  required
+                />
+              </div>
+            </div>
           </div>
 
-          {/* Optional fields */}
-          <div className="bg-slate-900/50 border border-slate-800 rounded-2xl p-6 space-y-4">
-            <h2 className="text-sm font-semibold text-slate-400 uppercase tracking-wider">
+          <div className="bg-white/60 backdrop-blur-sm border border-mint-200 rounded-2xl p-6 space-y-4 shadow-sm">
+            <h2 className="text-sm font-semibold text-sage-500 uppercase tracking-wider">
               Optional details
             </h2>
 
             <div>
-              <label className="text-xs text-slate-400 uppercase tracking-wider font-semibold block mb-2">
+              <label className="text-xs text-sage-500 uppercase tracking-wider font-semibold block mb-2">
                 Direct debit date
               </label>
               <input
@@ -289,12 +282,12 @@ export default function EditDebtPage() {
                 placeholder="e.g. 15 (for the 15th of the month)"
                 min="1"
                 max="31"
-                className="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-2 text-white placeholder-slate-500 focus:outline-none focus:border-sage-500 focus:ring-1 focus:ring-sage-500"
+                className="w-full bg-white border border-mint-200 rounded-lg px-4 py-2 text-sage-800 placeholder-sage-300 focus:outline-none focus:border-sage-400 focus:ring-1 focus:ring-sage-400"
               />
             </div>
 
             <div>
-              <label className="text-xs text-slate-400 uppercase tracking-wider font-semibold block mb-2">
+              <label className="text-xs text-sage-500 uppercase tracking-wider font-semibold block mb-2">
                 Account reference
               </label>
               <input
@@ -303,12 +296,12 @@ export default function EditDebtPage() {
                 value={form.account_reference}
                 onChange={handleChange}
                 placeholder="e.g. 1234 5678"
-                className="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-2 text-white placeholder-slate-500 focus:outline-none focus:border-sage-500 focus:ring-1 focus:ring-sage-500"
+                className="w-full bg-white border border-mint-200 rounded-lg px-4 py-2 text-sage-800 placeholder-sage-300 focus:outline-none focus:border-sage-400 focus:ring-1 focus:ring-sage-400"
               />
             </div>
 
             <div>
-              <label className="text-xs text-slate-400 uppercase tracking-wider font-semibold block mb-2">
+              <label className="text-xs text-sage-500 uppercase tracking-wider font-semibold block mb-2">
                 Company email
               </label>
               <input
@@ -317,7 +310,7 @@ export default function EditDebtPage() {
                 value={form.company_email}
                 onChange={handleChange}
                 placeholder="e.g. accounts@barclays.co.uk"
-                className="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-2 text-white placeholder-slate-500 focus:outline-none focus:border-sage-500 focus:ring-1 focus:ring-sage-500"
+                className="w-full bg-white border border-mint-200 rounded-lg px-4 py-2 text-sage-800 placeholder-sage-300 focus:outline-none focus:border-sage-400 focus:ring-1 focus:ring-sage-400"
               />
             </div>
           </div>
@@ -325,7 +318,7 @@ export default function EditDebtPage() {
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full bg-gradient-to-r from-sage-600 to-sage-400 text-white font-semibold py-3 rounded-xl hover:from-sage-700 hover:to-sage-500 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full bg-sage-600 hover:bg-sage-700 text-white font-semibold py-3 rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isLoading ? "Saving..." : "Save changes"}
           </button>
