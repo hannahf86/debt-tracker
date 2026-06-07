@@ -1,7 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
+import { useDebts } from "@/lib/hooks/useDebts";
+import { CheckCircle, Moon, Clock } from "lucide-react";
 import {
   CreditCard,
   Landmark,
@@ -10,6 +12,15 @@ import {
   Home,
   MoreHorizontal,
 } from "lucide-react";
+
+const categories = [
+  { value: "credit-card", label: "Credit Card" },
+  { value: "loan", label: "Loan" },
+  { value: "utilities", label: "Utilities" },
+  { value: "tax", label: "Tax" },
+  { value: "household", label: "Household" },
+  { value: "other", label: "Other" },
+];
 
 const categoryIcon = (category: string) => {
   const cls = "w-5 h-5";
@@ -33,38 +44,53 @@ const arrangements = [
   {
     value: "payment-plan",
     label: "Payment plan in place",
-    icon: "✅",
-    color: "text-emerald-400",
+    icon: <CheckCircle size={16} className="text-emerald-400" />,
   },
   {
     value: "needs-setting-up",
     label: "Needs setting up",
-    icon: "🔵",
-    color: "text-blue-400",
+    icon: <Moon size={16} className="text-blue-400" />,
   },
   {
     value: "awaiting-response",
     label: "Awaiting response",
-    icon: "🟠",
-    color: "text-amber-400",
+    icon: <Clock size={16} className="text-amber-400" />,
   },
 ];
 
-export default function NewDebtPage() {
+export default function EditDebtPage() {
   const router = useRouter();
+  const { id } = router.query;
+  const { debts, updateDebt } = useDebts();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [form, setForm] = useState({
     company: "",
-    amount_owed: "",
+    category: "",
     total_amount: "",
     monthly_amount: "",
-    category: "",
     arrangement: "",
     direct_debit_date: "",
     account_reference: "",
     company_email: "",
   });
+
+  const debt = debts.find((d) => d.id === id);
+
+  useEffect(() => {
+    if (debt) {
+      setForm({
+        company: debt.company || "",
+        category: debt.category || "",
+        total_amount: debt.total_amount?.toString() || "",
+        monthly_amount: debt.monthly_amount?.toString() || "",
+        arrangement: debt.arrangement || "",
+        direct_debit_date: debt.direct_debit_date?.toString() || "",
+        account_reference: debt.account_reference || "",
+        company_email: debt.company_email || "",
+      });
+    }
+  }, [debt]);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
@@ -78,45 +104,50 @@ export default function NewDebtPage() {
     setIsLoading(true);
 
     try {
-      const response = await fetch("/api/debts", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          ...form,
-          name: form.company,
-        }),
+      await updateDebt(id as string, {
+        company: form.company,
+        name: form.company,
+        category: form.category as any,
+        total_amount: parseFloat(form.total_amount),
+        monthly_amount: form.monthly_amount
+          ? parseFloat(form.monthly_amount)
+          : null,
+        arrangement: form.arrangement as any,
+        direct_debit_date: form.direct_debit_date
+          ? parseInt(form.direct_debit_date)
+          : null,
+        account_reference: form.account_reference || null,
+        company_email: form.company_email || null,
       });
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        setError(data.error || "Something went wrong");
-        setIsLoading(false);
-        return;
-      }
-
-      router.push("/dashboard");
+      router.push(`/debts/${id}`);
     } catch (err) {
-      setError("An error occurred. Please try again.");
+      setError("Something went wrong. Please try again.");
       setIsLoading(false);
     }
   };
 
+  if (!debt) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 flex items-center justify-center">
+        <p className="text-slate-400">Loading...</p>
+      </div>
+    );
+  }
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 p-4 md:p-6">
+    <div className="p-4 md:p-6">
       <div className="max-w-lg mx-auto">
         <button
-          onClick={() => router.push("/dashboard")}
+          onClick={() => router.push(`/debts/${id}`)}
           className="text-slate-400 hover:text-white transition-colors flex items-center gap-1 text-sm font-medium mb-8"
         >
           ← Back
         </button>
 
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-white mb-2">Add a debt</h1>
-          <p className="text-slate-400 text-sm">
-            No judgment here. Let's get it tracked.
-          </p>
+          <h1 className="text-3xl font-bold text-white mb-2">Edit debt</h1>
+          <p className="text-slate-400 text-sm">{debt.company}</p>
         </div>
 
         {error && (
@@ -141,7 +172,6 @@ export default function NewDebtPage() {
                 name="company"
                 value={form.company}
                 onChange={handleChange}
-                placeholder="e.g. Barclays"
                 className="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-2 text-white placeholder-slate-500 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
                 required
               />
@@ -295,9 +325,9 @@ export default function NewDebtPage() {
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-semibold py-3 rounded-xl hover:shadow-lg hover:from-purple-500 hover:to-indigo-500 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-semibold py-3 rounded-xl hover:from-purple-500 hover:to-indigo-500 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {isLoading ? "Adding debt..." : "Add debt"}
+            {isLoading ? "Saving..." : "Save changes"}
           </button>
         </form>
       </div>

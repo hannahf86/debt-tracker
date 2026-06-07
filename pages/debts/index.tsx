@@ -2,7 +2,15 @@
 
 import { useRouter } from "next/router";
 import { useDebts } from "@/lib/hooks/useDebts";
-import { Plus, CreditCard, FileText, Zap, BarChart2, Pin } from "lucide-react";
+import {
+  Plus,
+  CreditCard,
+  FileText,
+  Zap,
+  BarChart2,
+  Pin,
+  Home,
+} from "lucide-react";
 import type { Debt } from "@/lib/types";
 
 const arrangementConfig: Record<string, { label: string; dot: string }> = {
@@ -26,6 +34,8 @@ const categoryIcon = (category: string) => {
       return <BarChart2 className={cls} />;
     default:
       return <Pin className={cls} />;
+    case "household":
+      return <Home className={cls} />;
   }
 };
 

@@ -6,8 +6,15 @@ export type Debt = {
   amount_owed: number;
   total_amount: number;
   monthly_amount: number | null;
-  category: "credit-card" | "loan" | "utilities" | "tax" | "other";
+  category:
+    | "credit-card"
+    | "loan"
+    | "utilities"
+    | "tax"
+    | "household"
+    | "other";
   arrangement:
+    | "not-set"
     | "payment-plan"
     | "needs-setting-up"
     | "awaiting-response"

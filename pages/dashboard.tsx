@@ -20,6 +20,7 @@ import {
   Check,
   Minus,
   MapPin,
+  Home,
 } from "lucide-react";
 
 const arrangementConfig: Record<string, { label: string; dot: string }> = {
@@ -43,6 +44,8 @@ const categoryIcon = (category: string) => {
       return <BarChart2 className={cls} />;
     default:
       return <Pin className={cls} />;
+    case "household":
+      return <Home className={cls} />;
   }
 };
 
