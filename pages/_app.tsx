@@ -5,7 +5,12 @@ import { useState } from "react";
 import Sidebar from "@/components/Sidebar";
 import "@/styles/globals.css";
 
-const authRoutes = ["/auth/login", "/auth/signup", "/auth/callback"];
+const authRoutes = [
+  "/auth/login",
+  "/auth/signup",
+  "/auth/callback",
+  "/onboarding",
+];
 
 export default function App({
   Component,

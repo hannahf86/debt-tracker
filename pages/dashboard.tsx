@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import { useDebts } from "@/lib/hooks/useDebts";
@@ -68,8 +68,13 @@ export default function DashboardPage() {
   const router = useRouter();
   const { debts, isLoading, updateDebt } = useDebts();
   const { data: trackerData, isLoading: isTrackerLoading } = useTracker();
-
   const [logPaymentDebt, setLogPaymentDebt] = useState<Debt | null>(null);
+
+  useEffect(() => {
+    if (!isLoading && debts.length === 0) {
+      router.push("/onboarding");
+    }
+  }, [isLoading, debts, router]);
 
   if (status === "unauthenticated") {
     router.push("/auth/login");
@@ -130,9 +135,13 @@ export default function DashboardPage() {
           <div className="flex gap-3 flex-wrap">
             {months.map((month, idx) => {
               const monthDate = new Date(new Date().getFullYear(), idx, 1);
-              const isBeforeSignup = monthDate;
-              new Date(earliestDebt.getFullYear(), earliestDebt.getMonth(), 1);
-
+              const isBeforeSignup =
+                monthDate <
+                new Date(
+                  earliestDebt.getFullYear(),
+                  earliestDebt.getMonth(),
+                  1,
+                );
               const monthStatus =
                 isTrackerLoading || isBeforeSignup
                   ? "future"

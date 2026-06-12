@@ -10,8 +10,8 @@ export default function CallbackPage() {
   }, [router]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 flex items-center justify-center">
-      <p className="text-slate-400">Confirming your account...</p>
+    <div className="min-h-screen bg-gradient-to-br from-peach-300 via-peach-100 to-mint-100 flex items-center justify-center">
+      <p className="text-sage-500">Confirming your account...</p>
     </div>
   );
 }

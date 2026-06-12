@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
-import logo from "../../public/logo.png";
 
 export default function SignupPage() {
   const router = useRouter();
@@ -59,7 +58,7 @@ export default function SignupPage() {
       <div className="w-full max-w-sm">
         <div className="mb-8 text-center">
           <img
-            src={logo.src}
+            src="../public/logo-green.svg"
             alt="Logo"
             className="h-10 w-auto inline-block mr-2"
           />

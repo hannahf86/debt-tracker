@@ -13,7 +13,6 @@ import {
   ChevronRight,
 } from "lucide-react";
 import Link from "next/link";
-import logo from "../logo.svg";
 
 const navItems = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
@@ -46,8 +45,8 @@ export default function Sidebar({ collapsed, setCollapsed }: Props) {
         {!collapsed && (
           <span className="text-sage-800 font-bold text-lg tracking-tight">
             <img
-              src={logo.src}
-              alt="Logo"
+              src="../public/logo-green.svg"
+              alt="Mirian Logo"
               className="h-6 w-auto inline-block mr-2"
             />
           </span>
