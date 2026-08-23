@@ -44,7 +44,7 @@ const arrangementConfig: Record<string, { label: string; dot: string }> = {
   "payment-plan": { label: "Payment plan in place", dot: "bg-emerald-500" },
   "needs-setting-up": { label: "Needs setting up", dot: "bg-blue-400" },
   "awaiting-response": { label: "Awaiting response", dot: "bg-amber-400" },
-  "account-in-default": { label: "Account in default", dot: "bg-red-400" },
+  "account-in-default": { label: "Account in default", dot: "bg-alert-600" },
   default: { label: "Not set", dot: "bg-sage-400" },
 };
 
@@ -202,7 +202,7 @@ export default function DebtDetailPage() {
         </button>
 
         {/* Main card */}
-        <div className="bg-white/60 backdrop-blur-sm border border-mint-200 rounded-2xl p-6 mb-6 shadow-sm">
+        <div className="bg-white border border-mint-200 rounded-2xl p-6 mb-6 shadow-sm">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {/* Left column */}
             <div>
@@ -218,7 +218,7 @@ export default function DebtDetailPage() {
                   <button
                     onClick={handleDelete}
                     disabled={isDeleting}
-                    className="flex items-center gap-1.5 px-3 py-1.5 bg-red-50 hover:bg-red-100 text-red-500 border border-red-200 rounded-lg text-xs font-medium transition-all"
+                    className="flex items-center gap-1.5 px-3 py-1.5 bg-alert-100 hover:bg-alert-100 text-alert-600 border border-alert-200 rounded-lg text-xs font-medium transition-all"
                   >
                     <Trash2 size={12} />
                     Delete
@@ -303,7 +303,7 @@ export default function DebtDetailPage() {
         </div>
 
         {/* Yearly tracker */}
-        <div className="bg-white/60 backdrop-blur-sm border border-mint-200 rounded-2xl p-6 shadow-sm">
+        <div className="bg-white border border-mint-200 rounded-2xl p-6 shadow-sm">
           <h2 className="text-sm font-semibold text-sage-500 uppercase tracking-wider mb-6">
             {year} Payment History
           </h2>
@@ -315,7 +315,7 @@ export default function DebtDetailPage() {
               return (
                 <div key={month} className="flex flex-col items-center gap-2">
                   <div
-                    className={`text-xs font-medium ${idx === currentMonth ? "text-orange-500" : "text-sage-400"}`}
+                    className={`text-xs font-medium ${idx === currentMonth ? "text-orange-500" : "text-sage-500"}`}
                   >
                     {month}
                   </div>
@@ -329,7 +329,7 @@ export default function DebtDetailPage() {
                           : status === "partial"
                             ? "bg-amber-50 border-amber-300 text-amber-600 cursor-pointer hover:bg-amber-100"
                             : status === "missed"
-                              ? "bg-peach-100 border-peach-200 text-sage-400 cursor-pointer hover:bg-peach-200"
+                              ? "bg-peach-100 border-peach-200 text-sage-500 cursor-pointer hover:bg-peach-200"
                               : "bg-peach-100/50 border-peach-200 text-peach-300 cursor-default"
                     }`}
                   >

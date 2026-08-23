@@ -43,12 +43,9 @@ export default function Sidebar({ collapsed, setCollapsed }: Props) {
         className={`flex items-center h-16 px-4 border-b border-mint-200 ${collapsed ? "justify-center" : "justify-between"}`}
       >
         {!collapsed && (
-          <span className="text-sage-800 font-bold text-lg tracking-tight">
-            <img
-              src="../public/logo-green.svg"
-              alt="Mirian Logo"
-              className="h-6 w-auto inline-block mr-2"
-            />
+          <span className="text-sage-800 font-display font-bold text-lg tracking-tight flex items-center">
+            <img src="/mark.svg" alt="" className="h-7 w-7 mr-2" />
+            Mirian
           </span>
         )}
         <button

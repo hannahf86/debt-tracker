@@ -22,7 +22,7 @@ export default function App({
 
   return (
     <SessionProvider session={session}>
-      <div className="flex min-h-screen bg-gradient-to-br from-peach-300 via-peach-100 to-mint-100">
+      <div className="flex min-h-screen bg-page-accent">
         {!isAuthRoute && (
           <Sidebar collapsed={collapsed} setCollapsed={setCollapsed} />
         )}

@@ -128,13 +128,13 @@ export default function EditDebtPage() {
         </div>
 
         {error && (
-          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
-            <p className="text-sm text-red-600">{error}</p>
+          <div className="mb-6 p-4 bg-alert-100 border border-alert-200 rounded-lg">
+            <p className="text-sm text-alert-600">{error}</p>
           </div>
         )}
 
         <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="bg-white/60 backdrop-blur-sm border border-mint-200 rounded-2xl p-6 space-y-4 shadow-sm">
+          <div className="bg-white border border-mint-200 rounded-2xl p-6 space-y-4 shadow-sm">
             <h2 className="text-sm font-semibold text-sage-500 uppercase tracking-wider">
               The basics
             </h2>
@@ -148,7 +148,7 @@ export default function EditDebtPage() {
                 name="company"
                 value={form.company}
                 onChange={handleChange}
-                className="w-full bg-white border border-mint-200 rounded-lg px-4 py-2 text-sage-800 placeholder-sage-300 focus:outline-none focus:border-sage-400 focus:ring-1 focus:ring-sage-400"
+                className="w-full bg-white border border-mint-200 rounded-lg px-4 py-2 text-sage-800 placeholder-sage-500 focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand"
                 required
               />
             </div>
@@ -161,7 +161,7 @@ export default function EditDebtPage() {
                 name="category"
                 value={form.category}
                 onChange={handleChange}
-                className="w-full bg-white border border-mint-200 rounded-lg px-4 py-2 text-sage-800 focus:outline-none focus:border-sage-400 focus:ring-1 focus:ring-sage-400"
+                className="w-full bg-white border border-mint-200 rounded-lg px-4 py-2 text-sage-800 focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand"
                 required
               >
                 <option value="" disabled>
@@ -213,15 +213,15 @@ export default function EditDebtPage() {
                 <label className="text-xs text-sage-500 uppercase tracking-wider font-semibold block mb-2">
                   Total amount *
                 </label>
-                <div className="flex items-center bg-white border border-mint-200 rounded-lg px-4 py-2 focus-within:border-sage-400 focus-within:ring-1 focus-within:ring-sage-400">
-                  <span className="text-sage-400 mr-2">£</span>
+                <div className="flex items-center bg-white border border-mint-200 rounded-lg px-4 py-2 focus-within:border-brand focus-within:ring-2 focus-within:ring-brand">
+                  <span className="text-sage-500 mr-2">£</span>
                   <input
                     type="number"
                     name="total_amount"
                     value={form.total_amount}
                     onChange={handleChange}
                     placeholder="0.00"
-                    className="w-full bg-transparent text-sage-800 placeholder-sage-300 focus:outline-none"
+                    className="w-full bg-transparent text-sage-800 placeholder-sage-500 focus:outline-none"
                     required
                   />
                 </div>
@@ -231,15 +231,15 @@ export default function EditDebtPage() {
                 <label className="text-xs text-sage-500 uppercase tracking-wider font-semibold block mb-2">
                   Amount remaining *
                 </label>
-                <div className="flex items-center bg-white border border-mint-200 rounded-lg px-4 py-2 focus-within:border-sage-400 focus-within:ring-1 focus-within:ring-sage-400">
-                  <span className="text-sage-400 mr-2">£</span>
+                <div className="flex items-center bg-white border border-mint-200 rounded-lg px-4 py-2 focus-within:border-brand focus-within:ring-2 focus-within:ring-brand">
+                  <span className="text-sage-500 mr-2">£</span>
                   <input
                     type="number"
                     name="amount_owed"
                     value={form.amount_owed}
                     onChange={handleChange}
                     placeholder="0.00"
-                    className="w-full bg-transparent text-sage-800 placeholder-sage-300 focus:outline-none"
+                    className="w-full bg-transparent text-sage-800 placeholder-sage-500 focus:outline-none"
                     required
                   />
                 </div>
@@ -250,22 +250,22 @@ export default function EditDebtPage() {
               <label className="text-xs text-sage-500 uppercase tracking-wider font-semibold block mb-2">
                 Monthly amount due *
               </label>
-              <div className="flex items-center bg-white border border-mint-200 rounded-lg px-4 py-2 focus-within:border-sage-400 focus-within:ring-1 focus-within:ring-sage-400">
-                <span className="text-sage-400 mr-2">£</span>
+              <div className="flex items-center bg-white border border-mint-200 rounded-lg px-4 py-2 focus-within:border-brand focus-within:ring-2 focus-within:ring-brand">
+                <span className="text-sage-500 mr-2">£</span>
                 <input
                   type="number"
                   name="monthly_amount"
                   value={form.monthly_amount}
                   onChange={handleChange}
                   placeholder="0.00"
-                  className="w-full bg-transparent text-sage-800 placeholder-sage-300 focus:outline-none"
+                  className="w-full bg-transparent text-sage-800 placeholder-sage-500 focus:outline-none"
                   required
                 />
               </div>
             </div>
           </div>
 
-          <div className="bg-white/60 backdrop-blur-sm border border-mint-200 rounded-2xl p-6 space-y-4 shadow-sm">
+          <div className="bg-white border border-mint-200 rounded-2xl p-6 space-y-4 shadow-sm">
             <h2 className="text-sm font-semibold text-sage-500 uppercase tracking-wider">
               Optional details
             </h2>
@@ -282,7 +282,7 @@ export default function EditDebtPage() {
                 placeholder="e.g. 15 (for the 15th of the month)"
                 min="1"
                 max="31"
-                className="w-full bg-white border border-mint-200 rounded-lg px-4 py-2 text-sage-800 placeholder-sage-300 focus:outline-none focus:border-sage-400 focus:ring-1 focus:ring-sage-400"
+                className="w-full bg-white border border-mint-200 rounded-lg px-4 py-2 text-sage-800 placeholder-sage-500 focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand"
               />
             </div>
 
@@ -296,7 +296,7 @@ export default function EditDebtPage() {
                 value={form.account_reference}
                 onChange={handleChange}
                 placeholder="e.g. 1234 5678"
-                className="w-full bg-white border border-mint-200 rounded-lg px-4 py-2 text-sage-800 placeholder-sage-300 focus:outline-none focus:border-sage-400 focus:ring-1 focus:ring-sage-400"
+                className="w-full bg-white border border-mint-200 rounded-lg px-4 py-2 text-sage-800 placeholder-sage-500 focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand"
               />
             </div>
 
@@ -310,7 +310,7 @@ export default function EditDebtPage() {
                 value={form.company_email}
                 onChange={handleChange}
                 placeholder="e.g. accounts@barclays.co.uk"
-                className="w-full bg-white border border-mint-200 rounded-lg px-4 py-2 text-sage-800 placeholder-sage-300 focus:outline-none focus:border-sage-400 focus:ring-1 focus:ring-sage-400"
+                className="w-full bg-white border border-mint-200 rounded-lg px-4 py-2 text-sage-800 placeholder-sage-500 focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand"
               />
             </div>
           </div>

@@ -10,7 +10,7 @@ export default function CallbackPage() {
   }, [router]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-peach-300 via-peach-100 to-mint-100 flex items-center justify-center">
+    <div className="min-h-screen bg-page-accent flex items-center justify-center">
       <p className="text-sage-500">Confirming your account...</p>
     </div>
   );

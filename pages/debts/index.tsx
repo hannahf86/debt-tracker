@@ -17,7 +17,7 @@ const arrangementConfig: Record<string, { label: string; dot: string }> = {
   "payment-plan": { label: "Payment plan in place", dot: "bg-emerald-500" },
   "needs-setting-up": { label: "Needs setting up", dot: "bg-blue-400" },
   "awaiting-response": { label: "Awaiting response", dot: "bg-amber-400" },
-  "account-in-default": { label: "Account in default", dot: "bg-red-400" },
+  "account-in-default": { label: "Account in default", dot: "bg-alert-600" },
   default: { label: "Not set", dot: "bg-sage-400" },
 };
 
@@ -88,7 +88,7 @@ export default function DebtsPage() {
 
       {/* Summary cards */}
       <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-        <div className="bg-white/60 backdrop-blur-sm border border-mint-200 rounded-xl p-6 shadow-sm">
+        <div className="bg-white border border-mint-200 rounded-xl p-6 shadow-sm">
           <p className="text-sage-500 text-xs uppercase tracking-wider font-semibold mb-3">
             Total Remaining
           </p>
@@ -96,7 +96,7 @@ export default function DebtsPage() {
             £{totalOwed.toLocaleString()}
           </p>
         </div>
-        <div className="bg-white/60 backdrop-blur-sm border border-mint-200 rounded-xl p-6 shadow-sm">
+        <div className="bg-white border border-mint-200 rounded-xl p-6 shadow-sm">
           <p className="text-sage-500 text-xs uppercase tracking-wider font-semibold mb-3">
             Total Original
           </p>
@@ -104,7 +104,7 @@ export default function DebtsPage() {
             £{totalOriginal.toLocaleString()}
           </p>
         </div>
-        <div className="bg-white/60 backdrop-blur-sm border border-mint-200 rounded-xl p-6 shadow-sm">
+        <div className="bg-white border border-mint-200 rounded-xl p-6 shadow-sm">
           <p className="text-sage-500 text-xs uppercase tracking-wider font-semibold mb-3">
             Overall Progress
           </p>
@@ -127,7 +127,7 @@ export default function DebtsPage() {
         ) : debts.length === 0 ? (
           <div className="text-center py-12">
             <p className="text-sage-500 mb-2">No debts added yet</p>
-            <p className="text-sage-400 text-sm mb-6">
+            <p className="text-sage-500 text-sm mb-6">
               Add your first debt to get started
             </p>
             <button
@@ -150,7 +150,7 @@ export default function DebtsPage() {
                 <div
                   key={debt.id}
                   onClick={() => router.push(`/debts/${debt.id}`)}
-                  className="debt-card bg-white/60 backdrop-blur-sm border border-mint-200 rounded-xl p-6 cursor-pointer group hover:shadow-md shadow-sm transition-all"
+                  className="debt-card bg-white border border-mint-200 rounded-xl p-6 cursor-pointer group hover:shadow-md shadow-sm transition-all"
                 >
                   <div className="flex items-start justify-between mb-4">
                     <div className="flex items-center gap-3">

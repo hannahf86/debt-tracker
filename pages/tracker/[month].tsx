@@ -106,7 +106,7 @@ export default function MonthTrackerPage() {
     if (type === "partial-late")
       return {
         label: "Short & late",
-        color: "text-red-500",
+        color: "text-alert-600",
         icon: <X size={12} />,
       };
     if (type === "overpaid")
@@ -180,14 +180,14 @@ export default function MonthTrackerPage() {
             return (
               <div
                 key={debt.id}
-                className="bg-white/60 backdrop-blur-sm border border-mint-200 rounded-2xl p-6 w-full md:w-[calc(50%-8px)] shadow-sm"
+                className="bg-white border border-mint-200 rounded-2xl p-6 w-full md:w-[calc(50%-8px)] shadow-sm"
               >
                 <div className="flex items-start justify-between mb-4 pb-4 border-b border-mint-100">
                   <div>
                     <h3 className="text-sage-800 font-semibold">
                       {debt.company}
                     </h3>
-                    <p className="text-sage-400 text-xs mt-0.5">
+                    <p className="text-sage-500 text-xs mt-0.5">
                       £{debt.monthly_amount}/month agreed
                     </p>
                   </div>
@@ -197,7 +197,7 @@ export default function MonthTrackerPage() {
                         ? "bg-emerald-50 border-emerald-200 text-emerald-600"
                         : displayStatus === "partial"
                           ? "bg-amber-50 border-amber-200 text-amber-600"
-                          : "bg-peach-100 border-peach-200 text-sage-400"
+                          : "bg-peach-100 border-peach-200 text-sage-500"
                     }`}
                   >
                     {displayStatus === "paid" && <Check size={14} />}
@@ -225,7 +225,7 @@ export default function MonthTrackerPage() {
                               <p className="text-sage-800 text-sm font-medium">
                                 £{payment.amount}
                               </p>
-                              <p className="text-sage-400 text-xs">
+                              <p className="text-sage-500 text-xs">
                                 {payment.payment_date}
                               </p>
                             </div>
@@ -240,7 +240,7 @@ export default function MonthTrackerPage() {
                     })}
                   </div>
                 ) : (
-                  <p className="text-sage-400 text-sm mb-4">
+                  <p className="text-sage-500 text-sm mb-4">
                     No payment logged
                   </p>
                 )}
@@ -249,12 +249,12 @@ export default function MonthTrackerPage() {
                   <div className="space-y-2 mb-4 pt-3 border-t border-mint-100">
                     {details.notes.map((note, i) => (
                       <div key={i} className="p-3 bg-peach-100/50 rounded-lg">
-                        <p className="text-xs text-sage-400 uppercase tracking-wider font-semibold mb-1">
+                        <p className="text-xs text-sage-500 uppercase tracking-wider font-semibold mb-1">
                           Note
                         </p>
                         <p className="text-sage-700 text-sm">{note.reason}</p>
                         {note.actions && (
-                          <p className="text-sage-400 text-xs mt-1">
+                          <p className="text-sage-500 text-xs mt-1">
                             → {note.actions}
                           </p>
                         )}

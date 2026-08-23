@@ -1,0 +1,4 @@
+/* Mirian typefaces.
+   Atkinson Hyperlegible — inherited from the app (chosen for legibility: ADHD, dyslexia, low vision).
+   Nunito — nearest Google Fonts match to the "Mirian" wordmark (rounded geometric sans). */
+@import url("https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400;1,700&family=Nunito:ital,wght@0,400..900;1,400..900&display=swap");

@@ -1,38 +1,96 @@
+/* Mirian design system entry point.
+   Mirrors the design project's styles.css — tokens first, then Tailwind. */
+@import "./tokens/fonts.css";
+@import "./tokens/colors.css";
+@import "./tokens/typography.css";
+@import "./tokens/spacing.css";
+@import "./tokens/radius.css";
+@import "./tokens/elevation.css";
+@import "./tokens/motion.css";
+@import "./tokens/semantic.css";
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-@import url("https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400;1,700&display=swap");
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
 
-* {
-  font-family: "Atkinson Hyperlegible", sans-serif;
+  body {
+    margin: 0;
+    background: var(--bg-page);
+    color: var(--text-body);
+    font-family: var(--font-body);
+    font-size: var(--text-base);
+    line-height: var(--leading-normal);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Display face for headings; body face everywhere else. */
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display);
+    color: var(--text-heading);
+    letter-spacing: var(--tracking-tight);
+    line-height: var(--leading-tight);
+  }
+
+  /* Focus is never removed. 2px teal outline, 2px offset. */
+  :focus-visible {
+    outline: var(--focus-outline);
+    outline-offset: var(--focus-offset);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    *,
+    *::before,
+    *::after {
+      animation-duration: 1ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 1ms !important;
+    }
+  }
 }
 
-html {
-  scroll-behavior: smooth;
-}
+@layer components {
+  /* Interactive cards lift by exactly 2px and gain shadow-md. No bounce. */
+  .debt-card {
+    transition:
+      transform var(--dur-base) var(--ease-out),
+      box-shadow var(--dur-base) var(--ease-out);
+  }
 
-body {
-  background-color: #e7d8ca;
-}
+  .debt-card:hover {
+    transform: translateY(var(--lift-hover));
+    box-shadow: var(--shadow-md);
+  }
 
-.debt-card {
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-}
+  /* The one deliberate gradient in the system. */
+  .progress-bar {
+    background: var(--progress-fill);
+    transition: width var(--dur-progress) var(--ease-out);
+  }
 
-.debt-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 24px 48px rgba(91, 125, 116, 0.15);
-}
+  /* The calm cool wash used behind full-bleed screens (auth, onboarding).
+     Replaces the old peach gradient. */
+  .bg-page-accent {
+    background: var(--bg-page-accent);
+  }
 
-.progress-bar {
-  background: linear-gradient(90deg, #5b7d74 0%, #a7b89f 100%);
-  transition: width 0.6s ease;
-}
-
-.text-accent {
-  background: linear-gradient(135deg, #5b7d74 0%, #a7b89f 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  /* 12px caps label ("TOTAL DEBT") — the single sub-13px exception,
+     uppercased by CSS rather than typed that way. */
+  .caps-label {
+    font-size: var(--text-2xs);
+    font-weight: var(--weight-bold);
+    letter-spacing: var(--tracking-caps);
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
 }

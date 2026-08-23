@@ -1,0 +1,24 @@
+:root{
+  /* Teal — the brand hue, built around #2a9a9e. Calm, modern, not a bank. */
+  --teal-50:#effbfb;--teal-100:#d7f3f4;--teal-200:#b3e8ea;--teal-300:#7fd7da;
+  --teal-400:#45bfc4;--teal-500:#2a9a9e;--teal-600:#217e82;--teal-700:#1a666a;
+  --teal-800:#154f52;--teal-900:#0f3739;--teal-950:#0a2526;
+
+  /* Ice & sky — the accent. Pale ice washes for surfaces, sky for quiet highlights. */
+  --ice-50:#f4fcfc;--ice-100:#dcf4f5;--ice-200:#c3ebed;
+  --sky-300:#8ecfe4;--sky-500:#3d9dc4;--sky-600:#2b7fa6;--sky-700:#22677f;
+
+  /* Cool neutrals — paper, surfaces, hairlines */
+  --paper:#f8fbfb;--paper-sunk:#edf3f3;--white:#ffffff;
+  --line-100:#edf3f3;--line-200:#dfeaea;--line-300:#c9d8d9;
+
+  /* Ink — text greys, cooled toward the brand teal */
+  --ink-900:#0f2427;--ink-700:#3a5254;--ink-500:#5b7174;--ink-400:#899b9d;
+
+  /* Semantic states. Every state also carries an icon or label — colour is never the only signal. */
+  --ok-100:#e2f3e9;--ok-200:#bfe4cd;--ok-600:#1c7040;--ok-700:#155733;
+  --warn-100:#fdf0da;--warn-200:#f6dfb4;--warn-600:#8a5a00;--warn-700:#6d4700;
+  --alert-100:#fceae5;--alert-200:#f6cec3;--alert-600:#a8371f;--alert-700:#872c19;
+  --now-100:#fdeddc;--now-200:#f7d6b4;--now-600:#9a4e13;--now-700:#7c3e0f;
+  --info-100:#eceafa;--info-200:#d5d1f3;--info-600:#4f46b8;--info-700:#3e3793;
+}

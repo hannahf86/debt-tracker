@@ -143,7 +143,7 @@ export default function LogPaymentModal({ debt, onClose, onSuccess }: Props) {
           </div>
           <button
             onClick={onClose}
-            className="text-sage-400 hover:text-sage-600 transition-colors"
+            className="text-sage-500 hover:text-sage-600 transition-colors"
           >
             <X size={20} />
           </button>
@@ -156,14 +156,14 @@ export default function LogPaymentModal({ debt, onClose, onSuccess }: Props) {
               <label className="text-xs text-sage-500 uppercase tracking-wider font-semibold block mb-2">
                 Amount paid
               </label>
-              <div className="flex items-center bg-white border border-mint-200 rounded-lg px-4 py-2 focus-within:border-sage-400 focus-within:ring-1 focus-within:ring-sage-400">
-                <span className="text-sage-400 mr-2">£</span>
+              <div className="flex items-center bg-white border border-mint-200 rounded-lg px-4 py-2 focus-within:border-brand focus-within:ring-2 focus-within:ring-brand">
+                <span className="text-sage-500 mr-2">£</span>
                 <input
                   type="number"
                   value={amount}
                   onChange={(e) => setAmount(e.target.value)}
                   placeholder="0.00"
-                  className="flex-1 bg-transparent text-sage-800 placeholder-sage-300 focus:outline-none"
+                  className="flex-1 bg-transparent text-sage-800 placeholder-sage-500 focus:outline-none"
                   autoFocus
                 />
               </div>
@@ -177,7 +177,7 @@ export default function LogPaymentModal({ debt, onClose, onSuccess }: Props) {
                 type="date"
                 value={paymentDate}
                 onChange={(e) => setPaymentDate(e.target.value)}
-                className="w-full bg-white border border-mint-200 rounded-lg px-4 py-2 text-sage-800 focus:outline-none focus:border-sage-400 focus:ring-1 focus:ring-sage-400"
+                className="w-full bg-white border border-mint-200 rounded-lg px-4 py-2 text-sage-800 focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand"
               />
             </div>
 
@@ -242,7 +242,7 @@ export default function LogPaymentModal({ debt, onClose, onSuccess }: Props) {
                 <p className="text-sage-800 text-sm font-medium">
                   It was genuinely late
                 </p>
-                <p className="text-sage-400 text-xs mt-0.5">
+                <p className="text-sage-500 text-xs mt-0.5">
                   I'll tell you why
                 </p>
               </button>
@@ -253,7 +253,7 @@ export default function LogPaymentModal({ debt, onClose, onSuccess }: Props) {
                 <p className="text-sage-800 text-sm font-medium">
                   I just logged it late
                 </p>
-                <p className="text-sage-400 text-xs mt-0.5">
+                <p className="text-sage-500 text-xs mt-0.5">
                   Payment went out on time, I forgot to log it
                 </p>
               </button>
@@ -265,7 +265,7 @@ export default function LogPaymentModal({ debt, onClose, onSuccess }: Props) {
         {step === "late-reason" && (
           <div className="space-y-4">
             <ContactBox />
-            <p className="text-sage-400 text-xs">
+            <p className="text-sage-500 text-xs">
               💡 It's worth letting them know what happened
             </p>
             <div>
@@ -277,7 +277,7 @@ export default function LogPaymentModal({ debt, onClose, onSuccess }: Props) {
                 onChange={(e) => setLateReason(e.target.value)}
                 placeholder="No judgment — just helps to have it written down..."
                 rows={3}
-                className="w-full bg-white border border-mint-200 rounded-lg px-4 py-2 text-sage-800 placeholder-sage-300 focus:outline-none focus:border-sage-400 focus:ring-1 focus:ring-sage-400 resize-none"
+                className="w-full bg-white border border-mint-200 rounded-lg px-4 py-2 text-sage-800 placeholder-sage-500 focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand resize-none"
               />
             </div>
             <button
@@ -300,7 +300,7 @@ export default function LogPaymentModal({ debt, onClose, onSuccess }: Props) {
               </p>
             </div>
             <ContactBox />
-            <p className="text-sage-400 text-xs">
+            <p className="text-sage-500 text-xs">
               💡 Let them know you've paid what you can right now
             </p>
             <div>
@@ -312,7 +312,7 @@ export default function LogPaymentModal({ debt, onClose, onSuccess }: Props) {
                 onChange={(e) => setShortReason(e.target.value)}
                 placeholder="No judgment — just helps to have it written down..."
                 rows={3}
-                className="w-full bg-white border border-mint-200 rounded-lg px-4 py-2 text-sage-800 placeholder-sage-300 focus:outline-none focus:border-sage-400 focus:ring-1 focus:ring-sage-400 resize-none"
+                className="w-full bg-white border border-mint-200 rounded-lg px-4 py-2 text-sage-800 placeholder-sage-500 focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand resize-none"
               />
             </div>
             <button
@@ -345,7 +345,7 @@ export default function LogPaymentModal({ debt, onClose, onSuccess }: Props) {
                 <p className="text-sage-800 text-sm font-medium">
                   Yes, log it — I paid more 🎉
                 </p>
-                <p className="text-sage-400 text-xs mt-0.5">I'm celebrating!</p>
+                <p className="text-sage-500 text-xs mt-0.5">I'm celebrating!</p>
               </button>
               <button
                 onClick={() => setStep("amount")}
@@ -354,7 +354,7 @@ export default function LogPaymentModal({ debt, onClose, onSuccess }: Props) {
                 <p className="text-sage-800 text-sm font-medium">
                   Let me check the amount
                 </p>
-                <p className="text-sage-400 text-xs mt-0.5">
+                <p className="text-sage-500 text-xs mt-0.5">
                   Go back and correct it
                 </p>
               </button>

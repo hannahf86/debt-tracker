@@ -101,7 +101,7 @@ export default function SettingsPage() {
         </div>
 
         {/* Account */}
-        <div className="bg-white/60 backdrop-blur-sm border border-mint-200 rounded-2xl p-6 mb-6 shadow-sm">
+        <div className="bg-white border border-mint-200 rounded-2xl p-6 mb-6 shadow-sm">
           <h2 className="text-lg font-semibold text-sage-800 mb-6">Account</h2>
 
           <div className="space-y-4">
@@ -113,7 +113,7 @@ export default function SettingsPage() {
                 type="email"
                 value={session?.user?.email || ""}
                 disabled
-                className="w-full bg-mint-50 border border-mint-200 rounded-lg px-4 py-2 text-sage-400 cursor-not-allowed"
+                className="w-full bg-mint-50 border border-mint-200 rounded-lg px-4 py-2 text-sage-500 cursor-not-allowed"
               />
             </div>
 
@@ -140,8 +140,8 @@ export default function SettingsPage() {
               ) : (
                 <div className="space-y-3">
                   {passwordError && (
-                    <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
-                      <p className="text-red-600 text-sm">{passwordError}</p>
+                    <div className="p-3 bg-alert-100 border border-alert-200 rounded-lg">
+                      <p className="text-alert-600 text-sm">{passwordError}</p>
                     </div>
                   )}
                   <input
@@ -149,14 +149,14 @@ export default function SettingsPage() {
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
                     placeholder="New password"
-                    className="w-full bg-white border border-mint-200 rounded-lg px-4 py-2 text-sage-800 placeholder-sage-300 focus:outline-none focus:border-sage-400 focus:ring-1 focus:ring-sage-400"
+                    className="w-full bg-white border border-mint-200 rounded-lg px-4 py-2 text-sage-800 placeholder-sage-500 focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand"
                   />
                   <input
                     type="password"
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     placeholder="Confirm new password"
-                    className="w-full bg-white border border-mint-200 rounded-lg px-4 py-2 text-sage-800 placeholder-sage-300 focus:outline-none focus:border-sage-400 focus:ring-1 focus:ring-sage-400"
+                    className="w-full bg-white border border-mint-200 rounded-lg px-4 py-2 text-sage-800 placeholder-sage-500 focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand"
                   />
                   <div className="flex gap-3">
                     <button
@@ -187,7 +187,7 @@ export default function SettingsPage() {
         </div>
 
         {/* Budget */}
-        <div className="bg-white/60 backdrop-blur-sm border border-mint-200 rounded-2xl p-6 mb-6 shadow-sm">
+        <div className="bg-white border border-mint-200 rounded-2xl p-6 mb-6 shadow-sm">
           <h2 className="text-lg font-semibold text-sage-800 mb-2">
             Monthly budget
           </h2>
@@ -204,14 +204,14 @@ export default function SettingsPage() {
               Monthly budget
             </label>
             <div className="flex items-center gap-3">
-              <div className="flex items-center flex-1 bg-white border border-mint-200 rounded-lg px-4 py-2 focus-within:border-sage-400 focus-within:ring-1 focus-within:ring-sage-400">
-                <span className="text-sage-400 mr-2">£</span>
+              <div className="flex items-center flex-1 bg-white border border-mint-200 rounded-lg px-4 py-2 focus-within:border-brand focus-within:ring-2 focus-within:ring-brand">
+                <span className="text-sage-500 mr-2">£</span>
                 <input
                   type="number"
                   value={monthlyBudget}
                   onChange={(e) => setMonthlyBudget(e.target.value)}
                   placeholder="0.00"
-                  className="flex-1 bg-transparent text-sage-800 placeholder-sage-300 focus:outline-none"
+                  className="flex-1 bg-transparent text-sage-800 placeholder-sage-500 focus:outline-none"
                 />
               </div>
               <button
@@ -227,10 +227,10 @@ export default function SettingsPage() {
         </div>
 
         {/* Danger zone */}
-        <div className="bg-red-50 border border-red-200 rounded-2xl p-6">
+        <div className="bg-alert-100 border border-alert-200 rounded-2xl p-6">
           <div className="flex items-center gap-2 mb-2">
-            <AlertTriangle size={18} className="text-red-400" />
-            <h2 className="text-lg font-semibold text-red-500">Danger zone</h2>
+            <AlertTriangle size={18} className="text-alert-600" />
+            <h2 className="text-lg font-semibold text-alert-600">Danger zone</h2>
           </div>
           <p className="text-sage-500 text-sm mb-6">
             Deleting your account is permanent and cannot be undone. All your
@@ -240,7 +240,7 @@ export default function SettingsPage() {
           {!isDeleting ? (
             <button
               onClick={() => setIsDeleting(true)}
-              className="px-4 py-2 bg-red-50 hover:bg-red-100 text-red-500 border border-red-200 rounded-lg text-sm font-medium transition-all"
+              className="px-4 py-2 bg-alert-100 hover:bg-alert-100 text-alert-600 border border-alert-200 rounded-lg text-sm font-medium transition-all"
             >
               Delete account
             </button>
@@ -258,7 +258,7 @@ export default function SettingsPage() {
                 value={deleteConfirm}
                 onChange={(e) => setDeleteConfirm(e.target.value)}
                 placeholder="delete my account"
-                className="w-full bg-white border border-red-200 rounded-lg px-4 py-2 text-sage-800 placeholder-sage-300 focus:outline-none focus:border-red-400 focus:ring-1 focus:ring-red-400"
+                className="w-full bg-white border border-alert-200 rounded-lg px-4 py-2 text-sage-800 placeholder-sage-500 focus:outline-none focus:border-alert-600 focus:ring-2 focus:ring-alert-600"
               />
               <div className="flex gap-3">
                 <button
@@ -275,7 +275,7 @@ export default function SettingsPage() {
                   disabled={
                     deleteConfirm !== "delete my account" || isDeleteLoading
                   }
-                  className="flex-1 bg-red-100 hover:bg-red-200 text-red-500 border border-red-200 font-medium py-2 rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed text-sm"
+                  className="flex-1 bg-alert-100 hover:bg-alert-200 text-alert-600 border border-alert-200 font-medium py-2 rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed text-sm"
                 >
                   {isDeleteLoading ? "Deleting..." : "Confirm delete"}
                 </button>

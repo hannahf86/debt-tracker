@@ -35,14 +35,10 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-peach-300 via-peach-100 to-mint-100 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-page-accent flex items-center justify-center p-4">
       <div className="w-full max-w-sm">
         <div className="mb-8 text-center">
-          <img
-            src="../public/logo-green.svg"
-            alt="Logo"
-            className="h-10 w-auto inline-block mr-2"
-          />
+          <img src="/mark.svg" alt="" className="h-14 w-14 mx-auto mb-4" />
           <h1 className="text-3xl font-bold text-sage-800 mb-2">Mirian</h1>
           <p className="text-sage-600 text-sm">
             Track what you owe. Celebrate what you've paid. Watch it all get
@@ -50,7 +46,7 @@ export default function LoginPage() {
           </p>
         </div>
 
-        <div className="bg-white/70 backdrop-blur-sm border border-mint-200 rounded-2xl p-8 shadow-sm">
+        <div className="bg-white border border-mint-200 rounded-2xl p-8 shadow-sm">
           <h2 className="text-xl font-semibold text-sage-800 mb-6">Sign in</h2>
 
           {message && (
@@ -60,8 +56,8 @@ export default function LoginPage() {
           )}
 
           {error && (
-            <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg">
-              <p className="text-sm text-red-600">{error}</p>
+            <div className="mb-4 p-4 bg-alert-100 border border-alert-200 rounded-lg">
+              <p className="text-sm text-alert-600">{error}</p>
             </div>
           )}
 
@@ -75,7 +71,7 @@ export default function LoginPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="you@example.com"
-                className="w-full bg-white border border-mint-200 rounded-lg px-4 py-2 text-sage-800 placeholder-sage-400 focus:outline-none focus:border-sage-500 focus:ring-1 focus:ring-sage-500"
+                className="w-full bg-white border border-mint-200 rounded-lg px-4 py-2 text-sage-800 placeholder-sage-500 focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand"
                 required
               />
             </div>
@@ -89,7 +85,7 @@ export default function LoginPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
-                className="w-full bg-white border border-mint-200 rounded-lg px-4 py-2 text-sage-800 placeholder-sage-400 focus:outline-none focus:border-sage-500 focus:ring-1 focus:ring-sage-500"
+                className="w-full bg-white border border-mint-200 rounded-lg px-4 py-2 text-sage-800 placeholder-sage-500 focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand"
                 required
               />
             </div>

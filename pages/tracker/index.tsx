@@ -1,5 +1,6 @@
 "use client";
 
+import { ordinal } from "@/lib/format";
 import { useState } from "react";
 import { useRouter } from "next/router";
 import { useTracker, getDebtMonthStatus } from "@/lib/hooks/useTracker";
@@ -50,9 +51,17 @@ export default function YearlyTrackerPage() {
   const year = new Date().getFullYear();
   const currentMonth = new Date().getMonth();
 
+  // Actually take the minimum created_at. Indexing into the array assumed a
+  // newest-first order, but /api/tracker returns debts oldest-first, so this
+  // picked the newest debt and greyed out every month before it as
+  // "before signup".
   const earliestDebt =
     data.debts.length > 0
-      ? new Date(data.debts[data.debts.length - 1].created_at)
+      ? new Date(
+          Math.min(
+            ...data.debts.map((d) => new Date(d.created_at).getTime()),
+          ),
+        )
       : null;
 
   const handleCellClick = async (debtId: string, monthIdx: number) => {
@@ -66,7 +75,7 @@ export default function YearlyTrackerPage() {
     if (type === "partial")
       return { label: "Short payment", color: "text-amber-600" };
     if (type === "partial-late")
-      return { label: "Short & late", color: "text-red-500" };
+      return { label: "Short & late", color: "text-alert-600" };
     if (type === "overpaid")
       return { label: "Overpaid 🎉", color: "text-sage-600" };
     return { label: type, color: "text-sage-500" };
@@ -100,7 +109,7 @@ export default function YearlyTrackerPage() {
             No active debts to track.
           </div>
         ) : (
-          <div className="bg-white/60 backdrop-blur-sm border border-mint-200 rounded-2xl p-6 overflow-x-auto shadow-sm">
+          <div className="bg-white border border-mint-200 rounded-2xl p-6 overflow-x-auto shadow-sm">
             <table className="w-full min-w-max">
               <thead>
                 <tr>
@@ -113,7 +122,7 @@ export default function YearlyTrackerPage() {
                       className={`text-xs uppercase tracking-wider font-semibold pb-4 px-2 text-center ${
                         idx === currentMonth
                           ? "text-orange-500"
-                          : "text-sage-400"
+                          : "text-sage-500"
                       }`}
                     >
                       <div className="flex flex-col items-center gap-1">
@@ -136,12 +145,12 @@ export default function YearlyTrackerPage() {
                       <p className="text-sage-800 font-medium text-sm">
                         {debt.company}
                       </p>
-                      <p className="text-sage-400 text-xs">
+                      <p className="text-sage-500 text-xs">
                         £{debt.monthly_amount}/mo
                       </p>
                       {debt.direct_debit_date && (
-                        <p className="text-sage-400 text-xs">
-                          Due: {debt.direct_debit_date}th
+                        <p className="text-sage-500 text-xs">
+                          Due: {ordinal(debt.direct_debit_date)}
                         </p>
                       )}
                     </td>
@@ -182,7 +191,7 @@ export default function YearlyTrackerPage() {
                                     : status === "partial"
                                       ? "bg-amber-50 border-amber-300 text-amber-600 hover:bg-amber-100 cursor-pointer"
                                       : status === "missed"
-                                        ? "bg-peach-100 border-peach-200 text-sage-400 hover:bg-peach-200 cursor-pointer"
+                                        ? "bg-peach-100 border-peach-200 text-sage-500 hover:bg-peach-200 cursor-pointer"
                                         : "bg-peach-100/50 border-peach-200 text-peach-300"
                             }`}
                           >

@@ -1,5 +1,6 @@
 "use client";
 
+import { ordinal } from "@/lib/format";
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
@@ -26,7 +27,7 @@ const arrangementConfig: Record<string, { label: string; dot: string }> = {
   "payment-plan": { label: "Payment plan in place", dot: "bg-emerald-500" },
   "needs-setting-up": { label: "Needs setting up", dot: "bg-blue-400" },
   "awaiting-response": { label: "Awaiting response", dot: "bg-amber-400" },
-  "account-in-default": { label: "Account in default", dot: "bg-red-400" },
+  "account-in-default": { label: "Account in default", dot: "bg-alert-600" },
   default: { label: "Not set", dot: "bg-sage-400" },
 };
 
@@ -119,7 +120,7 @@ export default function DashboardPage() {
 
       {/* Monthly Tracker */}
       <div className="max-w-6xl mx-auto mb-8">
-        <div className="bg-white/60 backdrop-blur-sm border border-mint-200 rounded-2xl p-6 shadow-sm">
+        <div className="bg-white border border-mint-200 rounded-2xl p-6 shadow-sm">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-sm font-semibold text-sage-600 uppercase tracking-wider">
               {new Date().getFullYear()} Payment History
@@ -180,9 +181,9 @@ export default function DashboardPage() {
                             : monthStatus === "partial"
                               ? "bg-amber-100 border-amber-300 text-amber-600 cursor-pointer hover:bg-amber-200 shadow-sm"
                               : monthStatus === "missed"
-                                ? "bg-red-100 border-red-300 text-red-500 cursor-pointer hover:bg-red-200 shadow-sm"
+                                ? "bg-alert-100 border-alert-200 text-alert-600 cursor-pointer hover:bg-alert-200 shadow-sm"
                                 : monthStatus === "future"
-                                  ? "bg-white/40 border-mint-200 text-sage-300 cursor-default"
+                                  ? "bg-white/40 border-mint-200 text-sage-500 cursor-default"
                                   : "bg-peach-100/50 border-peach-200 text-peach-300 cursor-default"
                     }`}
                   >
@@ -211,7 +212,7 @@ export default function DashboardPage() {
 
       {/* Summary Cards */}
       <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-        <div className="bg-white/60 backdrop-blur-sm border border-mint-200 rounded-xl p-6 shadow-sm">
+        <div className="bg-white border border-mint-200 rounded-xl p-6 shadow-sm">
           <p className="text-sage-500 text-xs uppercase tracking-wider font-semibold mb-3">
             Total Debt
           </p>
@@ -219,14 +220,14 @@ export default function DashboardPage() {
             £{totalDebt.toLocaleString()}
           </p>
         </div>
-        <div className="bg-white/60 backdrop-blur-sm border border-mint-200 rounded-xl p-6 shadow-sm">
+        <div className="bg-white border border-mint-200 rounded-xl p-6 shadow-sm">
           <p className="text-sage-500 text-xs uppercase tracking-wider font-semibold mb-3">
             Monthly Budget
           </p>
           <p className="text-3xl font-bold text-sage-800">£0</p>
-          <p className="text-xs text-sage-400 mt-2">for debt repayment</p>
+          <p className="text-xs text-sage-500 mt-2">for debt repayment</p>
         </div>
-        <div className="bg-white/60 backdrop-blur-sm border border-mint-200 rounded-xl p-6 shadow-sm">
+        <div className="bg-white border border-mint-200 rounded-xl p-6 shadow-sm">
           <p className="text-sage-500 text-xs uppercase tracking-wider font-semibold mb-3">
             Debt Cleared By
           </p>
@@ -243,7 +244,7 @@ export default function DashboardPage() {
         ) : debts.length === 0 ? (
           <div className="text-center py-12">
             <p className="text-sage-500 mb-2">No debts added yet</p>
-            <p className="text-sage-400 text-sm">
+            <p className="text-sage-500 text-sm">
               Add your first debt to get started
             </p>
           </div>
@@ -252,7 +253,7 @@ export default function DashboardPage() {
             {debts.map((debt) => (
               <div
                 key={debt.id}
-                className="debt-card bg-white/60 backdrop-blur-sm border border-mint-200 rounded-xl p-6 cursor-pointer group shadow-sm hover:shadow-md"
+                className="debt-card bg-white border border-mint-200 rounded-xl p-6 cursor-pointer group shadow-sm hover:shadow-md"
                 onClick={() => router.push(`/debts/${debt.id}`)}
               >
                 <div className="flex items-start justify-between mb-4">
@@ -264,7 +265,7 @@ export default function DashboardPage() {
                       </h3>
                       {debt.direct_debit_date && (
                         <p className="text-xs text-sage-500 mt-0.5">
-                          DD due: {debt.direct_debit_date}th
+                          DD due: {ordinal(debt.direct_debit_date)}
                         </p>
                       )}
                     </div>
@@ -302,7 +303,7 @@ export default function DashboardPage() {
                     />
                   </div>
                   <div className="flex items-center justify-between mt-3">
-                    <p className="text-xs text-sage-400 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <p className="text-xs text-sage-500 opacity-0 group-hover:opacity-100 transition-opacity">
                       Click to see details
                     </p>
                     <button
@@ -323,7 +324,7 @@ export default function DashboardPage() {
 
         <button
           onClick={() => router.push("/debts/new")}
-          className="w-full border-2 border-dashed border-sage-300 rounded-xl p-6 text-sage-400 hover:text-sage-600 hover:border-sage-400 transition-all group flex items-center justify-center gap-2"
+          className="w-full border-2 border-dashed border-sage-300 rounded-xl p-6 text-sage-500 hover:text-sage-600 hover:border-sage-400 transition-all group flex items-center justify-center gap-2"
         >
           <Plus
             size={20}

@@ -65,7 +65,7 @@ export default function OnboardingPage() {
 
   if (status === "loading") {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-peach-300 via-peach-100 to-mint-100 flex items-center justify-center">
+      <div className="min-h-screen bg-page-accent flex items-center justify-center">
         <p className="text-sage-500">Loading...</p>
       </div>
     );
@@ -104,7 +104,7 @@ export default function OnboardingPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-peach-300 via-peach-100 to-mint-100 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-page-accent flex items-center justify-center p-4">
       <div className="w-full max-w-lg">
         {/* Progress indicator */}
         {step < 4 && (
@@ -129,11 +129,7 @@ export default function OnboardingPage() {
         {/* Step 1 — Welcome */}
         {step === 1 && (
           <div className="text-center">
-            <img
-              src="/logo-green.svg"
-              alt="Mirian logo"
-              className="h-20 w-auto mx-auto mb-8"
-            />
+            <img src="/mark.svg" alt="" className="h-20 w-20 mx-auto mb-8" />
             <h1 className="text-4xl font-bold text-sage-800 mb-4">
               Welcome to Mirian.
             </h1>
@@ -152,7 +148,7 @@ export default function OnboardingPage() {
             </button>
             <button
               onClick={() => router.push("/dashboard")}
-              className="mt-4 text-sage-400 hover:text-sage-600 text-sm transition-colors block mx-auto"
+              className="mt-4 text-sage-500 hover:text-sage-600 text-sm transition-colors block mx-auto"
             >
               Skip for now
             </button>
@@ -161,7 +157,7 @@ export default function OnboardingPage() {
 
         {/* Step 2 — What to expect */}
         {step === 2 && (
-          <div className="bg-white/60 backdrop-blur-sm border border-mint-200 rounded-2xl p-8 shadow-sm">
+          <div className="bg-white border border-mint-200 rounded-2xl p-8 shadow-sm">
             <h2 className="text-2xl font-bold text-sage-800 mb-2">
               Here's what Mirian does.
             </h2>
@@ -222,7 +218,7 @@ export default function OnboardingPage() {
             </button>
             <button
               onClick={() => router.push("/dashboard")}
-              className="mt-3 text-sage-400 hover:text-sage-600 text-sm transition-colors block mx-auto text-center"
+              className="mt-3 text-sage-500 hover:text-sage-600 text-sm transition-colors block mx-auto text-center"
             >
               Skip for now
             </button>
@@ -231,7 +227,7 @@ export default function OnboardingPage() {
 
         {/* Step 3 — Add first debt */}
         {step === 3 && (
-          <div className="bg-white/60 backdrop-blur-sm border border-mint-200 rounded-2xl p-8 shadow-sm">
+          <div className="bg-white border border-mint-200 rounded-2xl p-8 shadow-sm">
             <h2 className="text-2xl font-bold text-sage-800 mb-2">
               Let's start with one debt.
             </h2>
@@ -240,8 +236,8 @@ export default function OnboardingPage() {
             </p>
 
             {error && (
-              <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
-                <p className="text-sm text-red-600">{error}</p>
+              <div className="mb-6 p-4 bg-alert-100 border border-alert-200 rounded-lg">
+                <p className="text-sm text-alert-600">{error}</p>
               </div>
             )}
 
@@ -256,7 +252,7 @@ export default function OnboardingPage() {
                   value={form.company}
                   onChange={handleChange}
                   placeholder="e.g. Barclays, HMRC, EON"
-                  className="w-full bg-white border border-mint-200 rounded-lg px-4 py-2 text-sage-800 placeholder-sage-300 focus:outline-none focus:border-sage-400 focus:ring-1 focus:ring-sage-400"
+                  className="w-full bg-white border border-mint-200 rounded-lg px-4 py-2 text-sage-800 placeholder-sage-500 focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand"
                 />
               </div>
 
@@ -268,7 +264,7 @@ export default function OnboardingPage() {
                   name="category"
                   value={form.category}
                   onChange={handleChange}
-                  className="w-full bg-white border border-mint-200 rounded-lg px-4 py-2 text-sage-800 focus:outline-none focus:border-sage-400 focus:ring-1 focus:ring-sage-400"
+                  className="w-full bg-white border border-mint-200 rounded-lg px-4 py-2 text-sage-800 focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand"
                 >
                   <option value="" disabled>
                     Select a category
@@ -319,15 +315,15 @@ export default function OnboardingPage() {
                   <label className="text-xs text-sage-500 uppercase tracking-wider font-semibold block mb-2">
                     Total owed *
                   </label>
-                  <div className="flex items-center bg-white border border-mint-200 rounded-lg px-4 py-2 focus-within:border-sage-400 focus-within:ring-1 focus-within:ring-sage-400">
-                    <span className="text-sage-400 mr-2">£</span>
+                  <div className="flex items-center bg-white border border-mint-200 rounded-lg px-4 py-2 focus-within:border-brand focus-within:ring-2 focus-within:ring-brand">
+                    <span className="text-sage-500 mr-2">£</span>
                     <input
                       type="number"
                       name="total_amount"
                       value={form.total_amount}
                       onChange={handleChange}
                       placeholder="0.00"
-                      className="w-full bg-transparent text-sage-800 placeholder-sage-300 focus:outline-none"
+                      className="w-full bg-transparent text-sage-800 placeholder-sage-500 focus:outline-none"
                     />
                   </div>
                 </div>
@@ -335,15 +331,15 @@ export default function OnboardingPage() {
                   <label className="text-xs text-sage-500 uppercase tracking-wider font-semibold block mb-2">
                     Monthly payment *
                   </label>
-                  <div className="flex items-center bg-white border border-mint-200 rounded-lg px-4 py-2 focus-within:border-sage-400 focus-within:ring-1 focus-within:ring-sage-400">
-                    <span className="text-sage-400 mr-2">£</span>
+                  <div className="flex items-center bg-white border border-mint-200 rounded-lg px-4 py-2 focus-within:border-brand focus-within:ring-2 focus-within:ring-brand">
+                    <span className="text-sage-500 mr-2">£</span>
                     <input
                       type="number"
                       name="monthly_amount"
                       value={form.monthly_amount}
                       onChange={handleChange}
                       placeholder="0.00"
-                      className="w-full bg-transparent text-sage-800 placeholder-sage-300 focus:outline-none"
+                      className="w-full bg-transparent text-sage-800 placeholder-sage-500 focus:outline-none"
                     />
                   </div>
                 </div>
@@ -366,7 +362,7 @@ export default function OnboardingPage() {
             </button>
             <button
               onClick={() => router.push("/dashboard")}
-              className="mt-3 text-sage-400 hover:text-sage-600 text-sm transition-colors block mx-auto text-center"
+              className="mt-3 text-sage-500 hover:text-sage-600 text-sm transition-colors block mx-auto text-center"
             >
               Skip for now
             </button>
