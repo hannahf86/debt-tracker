@@ -32,12 +32,12 @@ const arrangements = [
   {
     value: "needs-setting-up",
     label: "More details can be added",
-    icon: <Moon size={16} className="text-info-600" />,
+    icon: <Clock size={16} className="text-warn-600" />,
   },
   {
     value: "awaiting-response",
     label: "Awaiting response",
-    icon: <Clock size={16} className="text-warn-200" />,
+    icon: <Moon size={16} className="text-info-600" />,
   },
 ];
 

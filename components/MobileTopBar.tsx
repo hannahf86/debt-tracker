@@ -63,27 +63,27 @@ export default function MobileTopBar({
   const title = override ?? config.title;
 
   return (
-    <header className="md:hidden flex items-center gap-1 h-14 pl-1 pr-2 bg-white border-b border-mint-200">
+    <header className="md:hidden flex items-center gap-1 h-16 pl-1.5 pr-2.5 bg-white border-b border-mint-200">
       {config.back ? (
         <button
           onClick={() => router.push(config.back!)}
           aria-label="Back"
-          className="flex items-center justify-center w-11 h-11 shrink-0 rounded-xl text-sage-700 hover:bg-mint-100 transition-colors duration-base"
+          className="flex items-center justify-center w-12 h-12 shrink-0 rounded-xl text-sage-700 hover:bg-mint-100 active:bg-mint-200 transition-colors duration-base"
         >
-          <ArrowLeft size={22} />
+          <ArrowLeft size={24} />
         </button>
       ) : (
         <button
           onClick={onOpen}
           aria-label="Open menu"
           aria-expanded={isOpen}
-          className="flex items-center justify-center w-11 h-11 shrink-0 rounded-xl text-sage-700 hover:bg-mint-100 transition-colors duration-base"
+          className="flex items-center justify-center w-12 h-12 shrink-0 rounded-xl text-sage-700 hover:bg-mint-100 active:bg-mint-200 transition-colors duration-base"
         >
-          <Menu size={22} />
+          <Menu size={24} />
         </button>
       )}
 
-      <h1 className="flex-1 min-w-0 font-display text-lg font-bold text-sage-800 truncate">
+      <h1 className="flex-1 min-w-0 font-display text-xl font-bold text-sage-800 truncate">
         {title}
       </h1>
 
@@ -91,9 +91,9 @@ export default function MobileTopBar({
         <button
           onClick={() => router.push("/debts/new")}
           aria-label="Add a debt"
-          className="flex items-center justify-center w-11 h-11 shrink-0 rounded-xl bg-teal-50 text-brand hover:bg-teal-100 transition-colors duration-base"
+          className="flex items-center justify-center w-12 h-12 shrink-0 rounded-xl bg-teal-50 text-brand hover:bg-teal-100 active:bg-teal-200 transition-colors duration-base"
         >
-          <Plus size={20} />
+          <Plus size={22} />
         </button>
       )}
     </header>

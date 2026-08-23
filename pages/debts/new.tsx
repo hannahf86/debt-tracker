@@ -22,12 +22,12 @@ const arrangements = [
   {
     value: "needs-setting-up",
     label: "More details can be added",
-    icon: <Moon size={16} className="text-info-600" />,
+    icon: <Clock size={16} className="text-warn-600" />,
   },
   {
     value: "awaiting-response",
     label: "Awaiting response",
-    icon: <Clock size={16} className="text-warn-200" />,
+    icon: <Moon size={16} className="text-info-600" />,
   },
 ];
 
@@ -88,7 +88,7 @@ export default function NewDebtPage() {
       <div className="max-w-lg mx-auto">
         <button
           onClick={() => router.push("/dashboard")}
-          className="text-sage-500 hover:text-sage-700 transition-colors flex items-center gap-1 text-sm font-medium mb-8"
+          className="hidden md:flex text-sage-500 hover:text-sage-700 transition-colors items-center gap-1 text-sm font-medium mb-8"
         >
           ← Back
         </button>

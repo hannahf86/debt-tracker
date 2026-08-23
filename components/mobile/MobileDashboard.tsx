@@ -111,7 +111,7 @@ export default function MobileDashboard({
   }).length;
 
   return (
-    <div className="p-4 pb-10 flex flex-col gap-4">
+    <div className="w-full max-w-full p-4 pb-10 flex flex-col gap-4">
       {/* Greeting — the app bar leaves its title blank so this is the heading.
           Depends on the client clock, so skip the hydration match. */}
       <header className="pt-1 pb-1">

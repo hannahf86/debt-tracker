@@ -147,7 +147,7 @@ export default function MonthTrackerPage() {
       <div className="max-w-lg mx-auto">
         <button
           onClick={() => router.push("/tracker")}
-          className="text-sage-500 hover:text-sage-700 transition-colors flex items-center gap-1 text-sm font-medium mb-8"
+          className="hidden md:flex text-sage-500 hover:text-sage-700 transition-colors items-center gap-1 text-sm font-medium mb-8"
         >
           ← Back to tracker
         </button>

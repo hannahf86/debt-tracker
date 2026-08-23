@@ -92,7 +92,7 @@ export default function YearlyTrackerPage() {
       <div className="max-w-6xl mx-auto">
         <button
           onClick={() => router.push("/dashboard")}
-          className="text-sage-500 hover:text-sage-700 transition-colors flex items-center gap-1 text-sm font-medium mb-8"
+          className="hidden md:flex text-sage-500 hover:text-sage-700 transition-colors items-center gap-1 text-sm font-medium mb-8"
         >
           ← Back
         </button>

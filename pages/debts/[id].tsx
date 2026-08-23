@@ -181,7 +181,7 @@ export default function DebtDetailPage() {
       <div className="max-w-5xl mx-auto">
         <button
           onClick={() => router.push("/dashboard")}
-          className="text-sage-500 hover:text-sage-700 transition-colors flex items-center gap-1 text-sm font-medium mb-8"
+          className="hidden md:flex text-sage-500 hover:text-sage-700 transition-colors items-center gap-1 text-sm font-medium mb-8"
         >
           ← Back
         </button>

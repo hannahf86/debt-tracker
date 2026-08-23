@@ -1,4 +1,5 @@
 import type { AppProps } from "next/app";
+import Head from "next/head";
 import { SessionProvider } from "next-auth/react";
 import { useRouter } from "next/router";
 import { useState } from "react";
@@ -28,6 +29,14 @@ export default function App({
 
   return (
     <SessionProvider session={session}>
+      {/* Next's default is width=device-width with no initial-scale, which
+          lets the browser pick its own zoom and shrink the page to fit. */}
+      <Head>
+        <meta
+          name="viewport"
+          content="width=device-width, initial-scale=1, viewport-fit=cover"
+        />
+      </Head>
       <PageTitleProvider>
       <div className="flex min-h-screen bg-page-accent">
         {!isAuthRoute && (
@@ -41,7 +50,7 @@ export default function App({
         {/* min-w-0 lets the column shrink instead of forcing the page wider
             than the viewport when a child overflows. */}
         <main
-          className={`flex-1 min-w-0 transition-all duration-300 ${
+          className={`flex-1 min-w-0 overflow-x-hidden transition-all duration-300 ${
             !isAuthRoute ? (collapsed ? "md:ml-16" : "md:ml-64") : ""
           }`}
         >
