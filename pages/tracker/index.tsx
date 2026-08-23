@@ -1,6 +1,7 @@
 "use client";
 
 import { ordinal } from "@/lib/format";
+import MobileTracker from "@/components/mobile/MobileTracker";
 import { useState } from "react";
 import { useRouter } from "next/router";
 import { useTracker, getDebtMonthStatus } from "@/lib/hooks/useTracker";
@@ -82,7 +83,12 @@ export default function YearlyTrackerPage() {
   };
 
   return (
-    <div className="p-4 md:p-6">
+    <>
+      <div className="md:hidden">
+        <MobileTracker data={data} isLoading={isLoading} />
+      </div>
+
+      <div className="hidden md:block p-4 md:p-6">
       <div className="max-w-6xl mx-auto">
         <button
           onClick={() => router.push("/dashboard")}
@@ -216,6 +222,7 @@ export default function YearlyTrackerPage() {
           </div>
         )}
       </div>
-    </div>
+      </div>
+    </>
   );
 }

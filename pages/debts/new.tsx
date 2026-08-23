@@ -21,7 +21,7 @@ const arrangements = [
   },
   {
     value: "needs-setting-up",
-    label: "Needs setting up",
+    label: "More details needed",
     icon: <Moon size={16} className="text-info-600" />,
   },
   {

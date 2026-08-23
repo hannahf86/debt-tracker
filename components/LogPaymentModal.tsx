@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { X, CheckCircle, Check, Lightbulb, Eye } from "lucide-react";
+import { X, CheckCircle, Check } from "lucide-react";
 import type { Debt } from "@/lib/types";
 
 type Step =
@@ -271,8 +271,7 @@ export default function LogPaymentModal({ debt, onClose, onSuccess }: Props) {
           <div className="space-y-4">
             <ContactBox />
             <p className="text-sage-500 text-xs">
-              <Lightbulb size={14} className="inline-block mr-1.5 -mt-0.5" />
-              It's worth letting them know what happened
+              Their contact details, if you need them.
             </p>
             <div>
               <label className="text-xs text-sage-500 uppercase tracking-wider font-semibold block mb-2">
@@ -310,8 +309,7 @@ export default function LogPaymentModal({ debt, onClose, onSuccess }: Props) {
             </div>
             <ContactBox />
             <p className="text-sage-500 text-xs">
-              <Lightbulb size={14} className="inline-block mr-1.5 -mt-0.5" />
-              Let them know you've paid what you can right now
+              Their contact details, if you need them.
             </p>
             <div>
               <label className="text-xs text-sage-500 uppercase tracking-wider font-semibold block mb-2">

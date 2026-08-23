@@ -13,17 +13,10 @@ import {
   MoreHorizontal,
 } from "lucide-react";
 import type { Debt } from "@/lib/types";
+import { arrangementStyle } from "@/lib/arrangement";
 import { clearedDate, formatMonthYear } from "@/lib/projection";
 import { missingDetails, incompleteDebts } from "@/lib/completeness";
 import DueChip from "@/components/DueChip";
-
-const arrangementConfig: Record<string, { label: string; dot: string }> = {
-  "payment-plan": { label: "Payment plan in place", dot: "bg-ok-600" },
-  "needs-setting-up": { label: "Needs setting up", dot: "bg-info-600" },
-  "awaiting-response": { label: "Awaiting response", dot: "bg-warn-200" },
-  "account-in-default": { label: "Account in default", dot: "bg-alert-600" },
-  default: { label: "Not set", dot: "bg-sage-400" },
-};
 
 const categoryIcon = (category: string) => {
   const cls = "w-5 h-5 text-sage-600";
@@ -186,14 +179,13 @@ export default function DebtsPage() {
                           </span>
                         </div>
                       )}
-                      <div className="flex items-center gap-2 px-3 py-1.5 rounded-pill bg-mint-100 border border-mint-200">
+                      <div className={`flex items-center gap-2 px-3 py-1.5 rounded-pill border ${arrangementStyle(debt.arrangement).chip}`}>
                         <div
-                          className={`w-2 h-2 rounded-full ${arrangementConfig[debt.arrangement ?? "default"].dot}`}
+                          className={`w-2 h-2 rounded-full ${arrangementStyle(debt.arrangement).dot}`}
                         />
-                        <span className="text-xs font-medium text-sage-700 whitespace-nowrap">
+                        <span className="text-xs font-medium whitespace-nowrap">
                           {
-                            arrangementConfig[debt.arrangement ?? "default"]
-                              .label
+                            arrangementStyle(debt.arrangement).label
                           }
                         </span>
                       </div>
