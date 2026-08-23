@@ -62,7 +62,7 @@ export default async function handler(
     try {
       const { data: debt } = await supabase
         .from("debts")
-        .select("id, amount_owed, monthly_amount")
+        .select("id, amount_owed, monthly_amount, created_at")
         .eq("id", debt_id)
         .eq("user_id", session.user.id)
         .single();
@@ -88,14 +88,28 @@ export default async function handler(
 
       if (paymentError) throw paymentError;
 
-      // Update amount owed
-      const newAmount = Math.max(0, debt.amount_owed - parseFloat(amount));
-      const { error: updateError } = await supabase
-        .from("debts")
-        .update({ amount_owed: newAmount })
-        .eq("id", debt_id);
+      // Backfill: a payment dated before the debt was added is already
+      // reflected in the balance the user typed in, so recording it must not
+      // deduct again. It still shows in the tracker, which is the point —
+      // seeing the year fill in is the reward.
+      const addedOn = new Date(debt.created_at);
+      const paidOn = new Date(payment_date);
+      const isBackfill =
+        new Date(paidOn.getFullYear(), paidOn.getMonth(), paidOn.getDate()) <
+        new Date(addedOn.getFullYear(), addedOn.getMonth(), addedOn.getDate());
 
-      if (updateError) throw updateError;
+      const newAmount = isBackfill
+        ? debt.amount_owed
+        : Math.max(0, debt.amount_owed - parseFloat(amount));
+
+      if (!isBackfill) {
+        const { error: updateError } = await supabase
+          .from("debts")
+          .update({ amount_owed: newAmount })
+          .eq("id", debt_id);
+
+        if (updateError) throw updateError;
+      }
 
       // If late or short, log a missed payment note
       if (
@@ -117,7 +131,7 @@ export default async function handler(
         ]);
       }
 
-      return res.status(201).json(payment);
+      return res.status(201).json({ ...payment, affected_balance: !isBackfill, new_amount_owed: newAmount });
     } catch (error) {
       console.error("Error creating payment:", error);
       return res.status(500).json({ error: "Failed to create payment" });

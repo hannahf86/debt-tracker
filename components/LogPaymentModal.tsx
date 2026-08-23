@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { X, CheckCircle, Check } from "lucide-react";
+import { X, CheckCircle, Check, Info } from "lucide-react";
 import type { Debt } from "@/lib/types";
 
 type Step =
@@ -16,13 +16,20 @@ type Props = {
   debt: Debt;
   onClose: () => void;
   onSuccess: (newAmountOwed: number) => void;
+  /** Pre-fill the date, e.g. when logging from a past month's view. */
+  defaultDate?: string;
 };
 
-export default function LogPaymentModal({ debt, onClose, onSuccess }: Props) {
+export default function LogPaymentModal({
+  debt,
+  onClose,
+  onSuccess,
+  defaultDate,
+}: Props) {
   const [step, setStep] = useState<Step>("amount");
   const [amount, setAmount] = useState("");
   const [paymentDate, setPaymentDate] = useState(
-    new Date().toISOString().split("T")[0],
+    defaultDate ?? new Date().toISOString().split("T")[0],
   );
   const [lateReason, setLateReason] = useState("");
   const [shortReason, setShortReason] = useState("");
@@ -32,6 +39,14 @@ export default function LogPaymentModal({ debt, onClose, onSuccess }: Props) {
   const monthlyAmount = debt.monthly_amount || 0;
   const parsedAmount = parseFloat(amount) || 0;
   const isToday = paymentDate === new Date().toISOString().split("T")[0];
+
+  // Same rule the API uses: dated before the debt was added means the balance
+  // already accounts for it, so recording it won't deduct again.
+  const addedOn = new Date(debt.created_at);
+  const paidOn = new Date(paymentDate);
+  const isBackfill =
+    new Date(paidOn.getFullYear(), paidOn.getMonth(), paidOn.getDate()) <
+    new Date(addedOn.getFullYear(), addedOn.getMonth(), addedOn.getDate());
   const isLate = !isToday;
   const isShort = parsedAmount < monthlyAmount && parsedAmount > 0;
   const isOver = parsedAmount > monthlyAmount;
@@ -48,7 +63,7 @@ export default function LogPaymentModal({ debt, onClose, onSuccess }: Props) {
     if (!amount || parsedAmount <= 0) return;
     if (isOver) setStep("overpaid-confirm");
     else if (isShort) setStep("short-reason");
-    else if (isLate) setStep("confirm-late");
+    else if (isLate && !isBackfill) setStep("confirm-late");
     else handleSubmit("on-time");
   };
 
@@ -179,6 +194,17 @@ export default function LogPaymentModal({ debt, onClose, onSuccess }: Props) {
                 onChange={(e) => setPaymentDate(e.target.value)}
                 className="w-full bg-white border border-mint-200 rounded-lg px-4 py-2 text-sage-800 focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand"
               />
+
+              {isBackfill && (
+                <div className="mt-3 flex items-start gap-2.5 bg-info-100 border border-info-200 rounded-lg px-3.5 py-3">
+                  <Info size={16} className="text-info-600 shrink-0 mt-0.5" />
+                  <p className="text-xs text-info-700">
+                    This is from before you added {debt.company}, so it
+                    won&rsquo;t change your balance — the amount you entered
+                    already counts it. It&rsquo;ll still show in your tracker.
+                  </p>
+                </div>
+              )}
             </div>
 
             {parsedAmount > 0 && monthlyAmount > 0 && (

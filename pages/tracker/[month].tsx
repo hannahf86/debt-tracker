@@ -47,6 +47,17 @@ export default function MonthTrackerPage() {
   const router = useRouter();
   const { month } = router.query;
   const monthIndex = parseInt(month as string) - 1;
+
+  // Default a payment logged here to this month. Use today's date when it's
+  // the current month, otherwise the last day of that month.
+  const defaultDateForMonth = (() => {
+    if (isNaN(monthIndex)) return undefined;
+    const now = new Date();
+    const y = now.getFullYear();
+    if (monthIndex === now.getMonth()) return now.toISOString().split("T")[0];
+    const lastDay = new Date(y, monthIndex + 1, 0).getDate();
+    return `${y}-${String(monthIndex + 1).padStart(2, "0")}-${String(lastDay).padStart(2, "0")}`;
+  })();
   const year = new Date().getFullYear();
   const { data, isLoading } = useTracker();
   const [debtDetails, setDebtDetails] = useState<DebtDetails>({});
@@ -295,6 +306,8 @@ export default function MonthTrackerPage() {
       {logPaymentDebt && (
         <LogPaymentModal
           debt={logPaymentDebt}
+          // Logging from a month's view should default to that month, not today.
+          defaultDate={defaultDateForMonth}
           onClose={() => setLogPaymentDebt(null)}
           onSuccess={() => setLogPaymentDebt(null)}
         />
