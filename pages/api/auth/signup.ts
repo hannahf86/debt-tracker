@@ -1,5 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { createClient } from "@supabase/supabase-js";
+import { originFrom } from "@/lib/appOrigin";
 
 export default async function handler(
   req: NextApiRequest,
@@ -20,7 +21,13 @@ export default async function handler(
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
   );
 
-  const { data, error } = await supabase.auth.signUp({ email, password });
+  const { data, error } = await supabase.auth.signUp({
+    email,
+    password,
+    // Without this the link follows Supabase's global Site URL, which is how a
+    // production signup ends up pointing at localhost.
+    options: { emailRedirectTo: `${originFrom(req)}/auth/callback` },
+  });
 
   if (error) {
     return res.status(400).json({ error: error.message });

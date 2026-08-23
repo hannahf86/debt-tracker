@@ -1,5 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { createClient } from "@supabase/supabase-js";
+import { originFrom } from "@/lib/appOrigin";
 
 /**
  * Sends a password reset email.
@@ -24,11 +25,7 @@ export default async function handler(
 
   // Where Supabase sends them after they click the link. Must also be listed
   // in Supabase → Authentication → URL Configuration → Redirect URLs.
-  const proto =
-    (req.headers["x-forwarded-proto"] as string)?.split(",")[0] ?? "http";
-  const host = req.headers.host;
-  const origin = process.env.NEXTAUTH_URL?.trim() || `${proto}://${host}`;
-  const redirectTo = `${origin.replace(/\/$/, "")}/auth/reset-password`;
+  const redirectTo = `${originFrom(req)}/auth/reset-password`;
 
   const supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
