@@ -3,7 +3,6 @@
 import { Menu, ArrowLeft, Plus } from "lucide-react";
 import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
-import { usePageTitleValue } from "@/lib/pageTitle";
 
 /**
  * Mobile app bar. 56px, title in the middle, one control each side.
@@ -13,7 +12,6 @@ import { usePageTitleValue } from "@/lib/pageTitle";
  */
 
 type BarConfig = {
-  title: string;
   /** Nested screens swap the hamburger for a back arrow to this route. */
   back?: string;
   /** Dashboard and Debts carry a shortcut to add a debt. */
@@ -23,22 +21,21 @@ type BarConfig = {
 function configFor(pathname: string): BarConfig | null {
   switch (pathname) {
     case "/dashboard":
-      // Title left blank on purpose — the page's greeting is the heading.
-      return { title: "", addAction: true };
+      return { addAction: true };
     case "/debts":
-      return { title: "Your debts", addAction: true };
+      return { addAction: true };
     case "/tracker":
-      return { title: `${new Date().getFullYear()} tracker` };
+      return {};
     case "/settings":
-      return { title: "Settings" };
+      return {};
     case "/tracker/[month]":
-      return { title: "Month", back: "/tracker" };
+      return { back: "/tracker" };
     case "/debts/new":
-      return { title: "Add a debt", back: "/debts" };
+      return { back: "/debts" };
     case "/debts/[id]":
-      return { title: "Debt", back: "/debts" };
+      return { back: "/debts" };
     case "/debts/[id]/edit":
-      return { title: "Edit debt", back: "/debts" };
+      return { back: "/debts" };
     default:
       return null;
   }
@@ -53,17 +50,14 @@ export default function MobileTopBar({
 }) {
   const { data: session } = useSession();
   const router = useRouter();
-  const override = usePageTitleValue();
 
   if (!session) return null;
 
   const config = configFor(router.pathname);
   if (!config) return null;
 
-  const title = override ?? config.title;
-
   return (
-    <header className="md:hidden flex items-center gap-1 h-16 pl-1.5 pr-2.5 bg-white border-b border-mint-200">
+    <header className="md:hidden flex items-center gap-1.5 h-[4.5rem] pl-1.5 pr-2.5 bg-white border-b border-mint-200">
       {config.back ? (
         <button
           onClick={() => router.push(config.back!)}
@@ -83,9 +77,11 @@ export default function MobileTopBar({
         </button>
       )}
 
-      <h1 className="flex-1 min-w-0 font-display text-xl font-bold text-sage-800 truncate">
-        {title}
-      </h1>
+      <img src="/mark.svg" alt="" className="h-8 w-8 shrink-0" />
+
+      <span className="flex-1 min-w-0 font-display text-xl font-bold text-sage-800 truncate">
+        Mirian
+      </span>
 
       {config.addAction && (
         <button

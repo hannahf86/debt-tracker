@@ -25,7 +25,6 @@ import {
 } from "lucide-react";
 import type { Debt, Payment } from "@/lib/types";
 import { clearedDate, formatMonthYear } from "@/lib/projection";
-import { usePageTitle } from "@/lib/pageTitle";
 import { arrangementStyle } from "@/lib/arrangement";
 
 const months = [
@@ -113,9 +112,6 @@ export default function DebtDetailPage() {
   const [isDeleting, setIsDeleting] = useState(false);
 
   const debt = debts.find((d) => d.id === id);
-
-  // The mobile app bar is titled with the company name.
-  usePageTitle(debt?.company ?? null);
 
   const year = new Date().getFullYear();
   const currentMonth = new Date().getMonth();

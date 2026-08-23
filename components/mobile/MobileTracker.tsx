@@ -78,9 +78,14 @@ export default function MobileTracker({
 
   return (
     <div className="p-4 pb-10 flex flex-col gap-3.5">
-      <p className="text-sm text-sage-500">
-        Every payment counts. Here&rsquo;s the full picture.
-      </p>
+      <header>
+        <h1 className="font-display text-[1.75rem] leading-tight font-extrabold text-sage-800">
+          {year} tracker
+        </h1>
+        <p className="text-sm text-sage-500 mt-1">
+          Every payment counts. Here&rsquo;s the full picture.
+        </p>
+      </header>
 
       {data.debts.map((debt) => {
         const Icon = CATEGORY_ICON[debt.category] ?? MoreHorizontal;
