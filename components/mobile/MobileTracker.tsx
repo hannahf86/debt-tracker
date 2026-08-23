@@ -1,7 +1,15 @@
 "use client";
 
 import { useRouter } from "next/router";
-import { CreditCard, Landmark, Zap, Receipt, Home, MoreHorizontal } from "lucide-react";
+import {
+  CreditCard,
+  Landmark,
+  Zap,
+  Receipt,
+  Home,
+  MoreHorizontal,
+  ChevronRight,
+} from "lucide-react";
 import type { Debt } from "@/lib/types";
 import {
   getDebtMonthStatus,
@@ -83,26 +91,33 @@ export default function MobileTracker({
             key={debt.id}
             className="bg-white border border-mint-200 rounded-xl shadow-sm p-4"
           >
-            <header className="flex items-center gap-3 mb-3.5">
+            {/* The header opens the debt; the month cells below keep their
+                own behaviour, so no nested interactive elements. */}
+            <button
+              onClick={() => router.push(`/debts/${debt.id}`)}
+              aria-label={`Open ${debt.company}`}
+              className="w-full flex items-center gap-3 mb-3.5 text-left rounded-lg -m-1 p-1 active:bg-mint-100 transition-colors duration-fast"
+            >
               <span
                 className="flex items-center justify-center w-9 h-9 rounded-md bg-teal-50 text-brand shrink-0"
                 aria-hidden="true"
               >
                 <Icon size={18} />
               </span>
-              <div className="flex-1 min-w-0">
-                <p className="font-display text-[17px] font-bold text-sage-800 truncate">
+              <span className="flex-1 min-w-0">
+                <span className="block font-display text-[17px] font-bold text-sage-800 truncate">
                   {debt.company}
-                </p>
-                <p className="text-xs text-sage-500">
+                </span>
+                <span className="block text-xs text-sage-500">
                   {debt.monthly_amount ? `£${debt.monthly_amount}/mo · ` : ""}
                   £{Math.round(debt.amount_owed).toLocaleString()} left
-                </p>
-              </div>
+                </span>
+              </span>
               <span className="text-sm font-bold text-brand shrink-0">
                 {percent}%
               </span>
-            </header>
+              <ChevronRight size={18} className="text-sage-400 shrink-0" />
+            </button>
 
             {/* The year transposed: this debt's twelve months, six across. */}
             <div className="grid grid-cols-6 gap-2">
