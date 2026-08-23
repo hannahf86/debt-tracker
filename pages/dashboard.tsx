@@ -82,17 +82,20 @@ const months = [
 export default function DashboardPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
-  const { debts, isLoading, updateDebt } = useDebts();
+  const { debts, isLoading, error: debtsError, updateDebt } = useDebts();
   const { data: trackerData, isLoading: isTrackerLoading } = useTracker();
   const { budget } = useBudget();
   const [logPaymentDebt, setLogPaymentDebt] = useState<Debt | null>(null);
   const [pickingDebt, setPickingDebt] = useState(false);
 
   useEffect(() => {
-    if (!isLoading && debts.length === 0) {
+    // Only send someone to onboarding when we know they genuinely have no
+    // debts. A failed fetch also yields an empty list, and redirecting on that
+    // traps them in a loop they can't leave.
+    if (!isLoading && !debtsError && debts.length === 0) {
       router.push("/onboarding");
     }
-  }, [isLoading, debts, router]);
+  }, [isLoading, debtsError, debts, router]);
 
   if (status === "unauthenticated") {
     router.push("/auth/login");

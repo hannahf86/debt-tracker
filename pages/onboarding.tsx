@@ -1,9 +1,9 @@
 "use client";
 
-import { useSession } from "next-auth/react";
+import { useSession, signOut } from "next-auth/react";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
-import { CheckCircle, Moon, Clock, Sprout, Check, MapPin } from "lucide-react";
+import { CheckCircle, Moon, Clock, Sprout, Check, MapPin, LogOut } from "lucide-react";
 
 const steps = [
   { id: 1, label: "Welcome" },
@@ -71,6 +71,17 @@ export default function OnboardingPage() {
     );
   }
 
+  // Onboarding renders without the sidebar, so without this there is no way
+  // out of the screen if anything here fails.
+  const escapeHatch = (
+    <button
+      onClick={() => signOut({ callbackUrl: "/auth/login" })}
+      className="fixed top-4 right-4 z-10 inline-flex items-center gap-1.5 px-3 min-h-[44px] rounded-pill text-sm text-sage-600 hover:text-sage-800 hover:bg-white/70 transition-colors duration-base"
+    >
+      <LogOut size={16} /> Sign out
+    </button>
+  );
+
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
@@ -105,6 +116,7 @@ export default function OnboardingPage() {
 
   return (
     <div className="min-h-screen bg-page-accent flex items-center justify-center p-4">
+      {escapeHatch}
       <div className="w-full max-w-lg">
         {/* Progress indicator */}
         {step < 4 && (
