@@ -3,7 +3,7 @@
 import { useSession } from "next-auth/react";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
-import { CheckCircle, Moon, Clock } from "lucide-react";
+import { CheckCircle, Moon, Clock, Sprout, Check, MapPin } from "lucide-react";
 
 const steps = [
   { id: 1, label: "Welcome" },
@@ -167,8 +167,8 @@ export default function OnboardingPage() {
 
             <div className="space-y-6 mb-10">
               <div className="flex items-start gap-4">
-                <div className="w-10 h-10 rounded-xl bg-sage-100 flex items-center justify-center flex-shrink-0 text-xl">
-                  🌱
+                <div className="w-10 h-10 rounded-xl bg-teal-50 text-brand flex items-center justify-center flex-shrink-0">
+                  <Sprout size={20} />
                 </div>
                 <div>
                   <p className="text-sage-800 font-semibold">
@@ -181,8 +181,8 @@ export default function OnboardingPage() {
               </div>
 
               <div className="flex items-start gap-4">
-                <div className="w-10 h-10 rounded-xl bg-sage-100 flex items-center justify-center flex-shrink-0 text-xl">
-                  ✓
+                <div className="w-10 h-10 rounded-xl bg-teal-50 text-brand flex items-center justify-center flex-shrink-0">
+                  <Check size={20} />
                 </div>
                 <div>
                   <p className="text-sage-800 font-semibold">
@@ -195,8 +195,8 @@ export default function OnboardingPage() {
               </div>
 
               <div className="flex items-start gap-4">
-                <div className="w-10 h-10 rounded-xl bg-sage-100 flex items-center justify-center flex-shrink-0 text-xl">
-                  📍
+                <div className="w-10 h-10 rounded-xl bg-teal-50 text-brand flex items-center justify-center flex-shrink-0">
+                  <MapPin size={20} />
                 </div>
                 <div>
                   <p className="text-sage-800 font-semibold">
@@ -372,7 +372,9 @@ export default function OnboardingPage() {
         {/* Step 4 — You're in */}
         {step === 4 && (
           <div className="text-center">
-            <div className="text-6xl mb-6">🎉</div>
+            <div className="flex items-center justify-center w-20 h-20 mx-auto mb-6 rounded-pill bg-ok-100 border border-ok-200 text-ok-600">
+              <CheckCircle size={40} />
+            </div>
             <h2 className="text-3xl font-bold text-sage-800 mb-4">
               You're all set.
             </h2>
@@ -381,7 +383,7 @@ export default function OnboardingPage() {
             </p>
             <p className="text-sage-500 text-sm mb-12 max-w-sm mx-auto leading-relaxed">
               You can add more debts anytime, log payments as they happen, and
-              watch your total get smaller. You've got this. 💪
+              watch your total get smaller. You've got this.
             </p>
             <button
               onClick={() => router.push("/dashboard")}

@@ -84,6 +84,14 @@
     background: var(--bg-page-accent);
   }
 
+  /* Scrollable, but without the bar — used by the year strip. */
+  .no-scrollbar {
+    scrollbar-width: none;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
   /* 12px caps label ("TOTAL DEBT") — the single sub-13px exception,
      uppercased by CSS rather than typed that way. */
   .caps-label {

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { X, CheckCircle } from "lucide-react";
+import { X, CheckCircle, Check, Lightbulb, Eye } from "lucide-react";
 import type { Debt } from "@/lib/types";
 
 type Step =
@@ -79,17 +79,17 @@ export default function LogPaymentModal({ debt, onClose, onSuccess }: Props) {
 
       if (overrideType === "on-time" || overrideType === "overpaid") {
         setSuccessMessage(
-          `Nice one! You're ${percent}% to clearing this debt 💪`,
+          `Nice one! You're ${percent}% to clearing this debt`,
         );
       } else if (getPaymentType() === "late" || overrideType === "late") {
         setSuccessMessage(
-          `Logged. Late payments happen — what matters is you're on it ✓`,
+          `Logged. Late payments happen — what matters is you're on it`,
         );
       } else if (isShort) {
-        setSuccessMessage(`Logged. Every bit counts — keep going ✓`);
+        setSuccessMessage(`Logged. Every bit counts — keep going`);
       } else {
         setSuccessMessage(
-          `Nice one! You're ${percent}% to clearing this debt 💪`,
+          `Nice one! You're ${percent}% to clearing this debt`,
         );
       }
 
@@ -195,7 +195,12 @@ export default function LogPaymentModal({ debt, onClose, onSuccess }: Props) {
                   `£${(parsedAmount - monthlyAmount).toFixed(2)} over your agreed amount`}
                 {isShort &&
                   `£${(monthlyAmount - parsedAmount).toFixed(2)} short of your agreed amount`}
-                {isCorrect && !isLate && "✓ Correct amount"}
+                {isCorrect && !isLate && (
+                  <>
+                    <Check size={14} className="inline-block mr-1.5 -mt-0.5" />
+                    Correct amount
+                  </>
+                )}
                 {isCorrect &&
                   isLate &&
                   "Correct amount — you can tell us why it was late next"}
@@ -266,11 +271,15 @@ export default function LogPaymentModal({ debt, onClose, onSuccess }: Props) {
           <div className="space-y-4">
             <ContactBox />
             <p className="text-sage-500 text-xs">
-              💡 It's worth letting them know what happened
+              <Lightbulb size={14} className="inline-block mr-1.5 -mt-0.5" />
+              It's worth letting them know what happened
             </p>
             <div>
               <label className="text-xs text-sage-500 uppercase tracking-wider font-semibold block mb-2">
-                Why was it late?
+                Why was it late?{" "}
+                <span className="normal-case tracking-normal font-normal text-sage-500">
+                  — optional
+                </span>
               </label>
               <textarea
                 value={lateReason}
@@ -282,7 +291,7 @@ export default function LogPaymentModal({ debt, onClose, onSuccess }: Props) {
             </div>
             <button
               onClick={() => handleSubmit("late")}
-              disabled={!lateReason || isLoading}
+              disabled={isLoading}
               className="w-full bg-sage-600 hover:bg-sage-700 text-white font-semibold py-3 rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isLoading ? "Saving..." : "Save"}
@@ -301,11 +310,15 @@ export default function LogPaymentModal({ debt, onClose, onSuccess }: Props) {
             </div>
             <ContactBox />
             <p className="text-sage-500 text-xs">
-              💡 Let them know you've paid what you can right now
+              <Lightbulb size={14} className="inline-block mr-1.5 -mt-0.5" />
+              Let them know you've paid what you can right now
             </p>
             <div>
               <label className="text-xs text-sage-500 uppercase tracking-wider font-semibold block mb-2">
-                Why was it short?
+                Why was it short?{" "}
+                <span className="normal-case tracking-normal font-normal text-sage-500">
+                  — optional
+                </span>
               </label>
               <textarea
                 value={shortReason}
@@ -317,7 +330,7 @@ export default function LogPaymentModal({ debt, onClose, onSuccess }: Props) {
             </div>
             <button
               onClick={() => handleSubmit("partial")}
-              disabled={!shortReason || isLoading}
+              disabled={isLoading}
               className="w-full bg-sage-600 hover:bg-sage-700 text-white font-semibold py-3 rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isLoading ? "Saving..." : "Save"}
@@ -330,7 +343,7 @@ export default function LogPaymentModal({ debt, onClose, onSuccess }: Props) {
           <div className="space-y-4">
             <div className="p-3 bg-sage-50 border border-sage-200 rounded-lg">
               <p className="text-sage-700 text-sm font-medium">
-                You paid £{(parsedAmount - monthlyAmount).toFixed(2)} extra 👀
+                You paid £{(parsedAmount - monthlyAmount).toFixed(2)} extra
               </p>
               <p className="text-sage-500 text-xs mt-1">
                 Double check this is right before we log it
@@ -343,7 +356,7 @@ export default function LogPaymentModal({ debt, onClose, onSuccess }: Props) {
                 className="w-full p-3 bg-white border border-mint-200 hover:border-ok-200 rounded-lg text-left transition-all"
               >
                 <p className="text-sage-800 text-sm font-medium">
-                  Yes, log it — I paid more 🎉
+                  Yes, log it — I paid more
                 </p>
                 <p className="text-sage-500 text-xs mt-0.5">I'm celebrating!</p>
               </button>

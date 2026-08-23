@@ -29,6 +29,7 @@ import {
 } from "@/lib/projection";
 import LogPaymentModal from "@/components/LogPaymentModal";
 import DueChip from "@/components/DueChip";
+import MobileDashboard from "@/components/mobile/MobileDashboard";
 
 const arrangementConfig: Record<string, { label: string; dot: string }> = {
   "payment-plan": { label: "Payment plan in place", dot: "bg-ok-600" },
@@ -138,7 +139,20 @@ export default function DashboardPage() {
       : new Date();
 
   return (
-    <div className="p-4 md:p-6">
+    <>
+      <div className="md:hidden">
+        <MobileDashboard
+          debts={debts}
+          projection={projection}
+          budget={budget}
+          trackerData={trackerData}
+          isLoading={isLoading}
+          onLogPayment={setLogPaymentDebt}
+          displayName={displayName}
+        />
+      </div>
+
+      <div className="hidden md:block p-4 md:p-6">
       {/* Header + debt free day */}
       <div className="max-w-6xl mx-auto mb-8 flex flex-col gap-6 md:flex-row md:items-start md:justify-between">
         <div>
@@ -441,6 +455,7 @@ export default function DashboardPage() {
           <span className="font-medium">Add a debt</span>
         </button>
       </div>
+      </div>
 
       {/* "Add payment" needs a debt first — the modal itself takes exactly one. */}
       {pickingDebt && (
@@ -503,6 +518,6 @@ export default function DashboardPage() {
           }}
         />
       )}
-    </div>
+    </>
   );
 }

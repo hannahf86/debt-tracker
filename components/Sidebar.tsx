@@ -72,7 +72,7 @@ export default function Sidebar({
       )}
 
       <div
-        className={`fixed top-0 left-0 h-screen z-40 flex flex-col bg-mint-100 border-r border-mint-200 w-64 transition-transform duration-slow ease-out md:transition-all ${
+        className={`fixed top-0 left-0 h-screen z-40 flex flex-col bg-white md:bg-mint-100 border-r border-mint-200 shadow-md md:shadow-none w-72 transition-transform duration-slow ease-out md:transition-all ${
           mobileOpen ? "translate-x-0" : "-translate-x-full"
         } md:translate-x-0 ${collapsed ? "md:w-16" : "md:w-64"}`}
       >
@@ -133,6 +133,8 @@ export default function Sidebar({
               </Link>
             );
           })}
+
+          <div className="h-px bg-mint-100 my-2.5 mx-1" />
 
           <Link
             href="/debts/new"

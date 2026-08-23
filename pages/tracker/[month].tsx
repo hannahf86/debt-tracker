@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import { useTracker, getDebtMonthStatus } from "@/lib/hooks/useTracker";
-import { Check, Minus, X, ChevronRight } from "lucide-react";
+import { Check, Minus, X, ChevronRight, CheckCircle } from "lucide-react";
 import LogPaymentModal from "@/components/LogPaymentModal";
 import type { Debt } from "@/lib/types";
 
@@ -111,7 +111,7 @@ export default function MonthTrackerPage() {
       };
     if (type === "overpaid")
       return {
-        label: "Overpaid 🎉",
+        label: "Overpaid",
         color: "text-sage-600",
         icon: <Check size={12} />,
       };
@@ -152,7 +152,9 @@ export default function MonthTrackerPage() {
 
         {allGood && (
           <div className="bg-ok-100 border border-ok-200 rounded-2xl p-6 text-center mb-6">
-            <div className="text-4xl mb-3">🎉</div>
+            <div className="flex items-center justify-center w-16 h-16 mx-auto mb-3 rounded-pill bg-ok-100 border border-ok-200 text-ok-600">
+              <CheckCircle size={32} />
+            </div>
             <h2 className="text-xl font-bold text-ok-700 mb-2">
               Nothing missed!
             </h2>
@@ -267,7 +269,7 @@ export default function MonthTrackerPage() {
                   details.notes.length === 0 &&
                   displayStatus === "paid" && (
                     <p className="text-ok-600 text-sm">
-                      You're all good — payment made on time. Keep it up! 💪
+                      You're all good — payment made on time. Keep it up
                     </p>
                   )}
 

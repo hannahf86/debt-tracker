@@ -77,7 +77,7 @@ export default function YearlyTrackerPage() {
     if (type === "partial-late")
       return { label: "Short & late", color: "text-alert-600" };
     if (type === "overpaid")
-      return { label: "Overpaid 🎉", color: "text-sage-600" };
+      return { label: "Overpaid", color: "text-sage-600" };
     return { label: type, color: "text-sage-500" };
   };
 

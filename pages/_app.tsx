@@ -4,6 +4,7 @@ import { useRouter } from "next/router";
 import { useState } from "react";
 import Sidebar from "@/components/Sidebar";
 import MobileTopBar from "@/components/MobileTopBar";
+import { PageTitleProvider } from "@/lib/pageTitle";
 import "@/styles/globals.css";
 
 const authRoutes = [
@@ -27,6 +28,7 @@ export default function App({
 
   return (
     <SessionProvider session={session}>
+      <PageTitleProvider>
       <div className="flex min-h-screen bg-page-accent">
         {!isAuthRoute && (
           <Sidebar
@@ -52,6 +54,7 @@ export default function App({
           <Component {...pageProps} />
         </main>
       </div>
+      </PageTitleProvider>
     </SessionProvider>
   );
 }
