@@ -1,6 +1,16 @@
 import { useState, useEffect, useCallback } from "react";
 import type { Debt } from "@/lib/types";
 
+/** Prefer the API's message — it knows why the request failed. */
+async function errorFrom(response: Response, fallback: string): Promise<Error> {
+  try {
+    const body = await response.json();
+    return new Error(typeof body?.error === "string" ? body.error : fallback);
+  } catch {
+    return new Error(fallback);
+  }
+}
+
 export function useDebts() {
   const [debts, setDebts] = useState<Debt[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -38,7 +48,7 @@ export function useDebts() {
         });
 
         if (!response.ok) {
-          throw new Error("Failed to create debt");
+          throw await errorFrom(response, "Failed to create debt");
         }
 
         const newDebt = await response.json();
@@ -61,7 +71,7 @@ export function useDebts() {
         });
 
         if (!response.ok) {
-          throw new Error("Failed to update debt");
+          throw await errorFrom(response, "Failed to update debt");
         }
 
         const updated = await response.json();
@@ -82,7 +92,7 @@ export function useDebts() {
         });
 
         if (!response.ok) {
-          throw new Error("Failed to delete debt");
+          throw await errorFrom(response, "Failed to delete debt");
         }
 
         setDebts(debts.filter((d) => d.id !== id));

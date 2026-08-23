@@ -1,5 +1,6 @@
 import { getSession } from "@/lib/devAuth";
 import { supabase } from "@/lib/supabase";
+import { describeDbError } from "@/lib/dbError";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 export default async function handler(
@@ -75,8 +76,12 @@ export default async function handler(
 
       return res.status(201).json(debt);
     } catch (error) {
+      // Log the real Postgres error; show something actionable.
       console.error("Error creating debt:", error);
-      return res.status(500).json({ error: "Failed to create debt" });
+      const code = (error as { code?: string })?.code;
+      return res
+        .status(code === "23503" ? 409 : 500)
+        .json({ error: describeDbError(error, "Failed to create debt") });
     }
   }
 
