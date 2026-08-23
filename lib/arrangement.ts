@@ -27,8 +27,8 @@ export const arrangementConfig: Record<ArrangementKey, ArrangementStyle> = {
     chip: "bg-mint-100 border-mint-200 text-sage-700",
   },
   "needs-setting-up": {
-    // Highlighted: this is the one state that needs something from you.
-    label: "More details needed",
+    // An offer, not a demand — "needed" reads as urgent.
+    label: "More details can be added",
     dot: "bg-warn-600",
     chip: "bg-warn-100 border-warn-200 text-warn-700",
   },

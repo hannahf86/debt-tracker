@@ -22,7 +22,7 @@ const arrangements = [
   },
   {
     value: "needs-setting-up",
-    label: "More details needed",
+    label: "More details can be added",
     icon: <Moon size={16} className="text-info-600" />,
   },
   {
