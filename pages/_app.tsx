@@ -10,6 +10,8 @@ const authRoutes = [
   "/auth/login",
   "/auth/signup",
   "/auth/callback",
+  "/auth/forgot-password",
+  "/auth/reset-password",
   "/onboarding",
   "/404",
 ];
