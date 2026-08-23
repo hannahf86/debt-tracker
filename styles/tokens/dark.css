@@ -1,0 +1,145 @@
+/* Dark theme.
+ *
+ * The ramp variables hold ROLES, not literal shades — so `--ink-900` is still
+ * "strongest text" and `--teal-700` is still "the action colour", they just
+ * resolve to different values here. Every utility built on them follows without
+ * needing a dark: variant.
+ *
+ * Applies when the user has chosen dark, or when they've expressed no choice
+ * and the OS prefers dark. An explicit light choice always wins.
+ */
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  /* Surfaces: cool near-black, lifted a step for cards so they read as
+     raised rather than outlined. */
+  --paper: 11 24 26;
+  --paper-sunk: 8 18 20;
+  --white: 18 37 40; /* "card" — bg-white resolves here */
+
+  /* Hairlines have to be lighter than the surface in dark, not darker. */
+  --line-100: 30 55 59;
+  --line-200: 38 68 72;
+  --line-300: 50 86 91;
+
+  /* Text inverts. Kept off pure white — pure white on near-black is harsh
+     and causes halation, especially for dyslexic and astigmatic readers. */
+  --ink-900: 231 243 243;
+  --ink-700: 196 215 216;
+  --ink-500: 150 175 177;
+  --ink-400: 110 136 139;
+
+  /* Teal is the accent, so it has to come forward rather than recede.
+     700 is the action colour in both themes; here it resolves lighter. */
+  --teal-50: 12 38 40;
+  --teal-100: 17 52 55;
+  --teal-200: 24 72 76;
+  --teal-300: 33 100 104;
+  --teal-400: 69 191 196;
+  --teal-500: 60 178 183;
+  --teal-600: 79 199 204;
+  --teal-700: 106 214 218;
+  --teal-800: 150 230 233;
+  --teal-900: 196 242 244;
+  --teal-950: 231 250 251;
+
+  --ice-50: 14 40 43;
+  --ice-100: 19 54 58;
+  --ice-200: 26 74 79;
+
+  --sky-300: 142 207 228;
+  --sky-500: 109 190 218;
+  --sky-600: 142 207 228;
+  --sky-700: 180 224 238;
+
+  /* States: dim the tints, brighten the foregrounds. */
+  --ok-100: 16 46 31;
+  --ok-200: 24 68 45;
+  --ok-600: 126 214 162;
+  --ok-700: 168 230 194;
+
+  --warn-100: 51 38 10;
+  --warn-200: 74 56 16;
+  --warn-600: 240 195 116;
+  --warn-700: 246 215 158;
+
+  --alert-100: 56 25 18;
+  --alert-200: 80 36 26;
+  --alert-600: 244 166 146;
+  --alert-700: 248 195 181;
+
+  --now-100: 54 31 13;
+  --now-200: 78 46 19;
+  --now-600: 244 178 122;
+  --now-700: 248 203 163;
+
+  --info-100: 32 30 62;
+  --info-200: 47 44 88;
+  --info-600: 176 170 240;
+  --info-700: 202 198 246;
+}
+
+/* Same values when the OS prefers dark and no explicit choice was made. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --paper: 11 24 26;
+    --paper-sunk: 8 18 20;
+    --white: 18 37 40;
+
+    --line-100: 30 55 59;
+    --line-200: 38 68 72;
+    --line-300: 50 86 91;
+
+    --ink-900: 231 243 243;
+    --ink-700: 196 215 216;
+    --ink-500: 150 175 177;
+    --ink-400: 110 136 139;
+
+    --teal-50: 12 38 40;
+    --teal-100: 17 52 55;
+    --teal-200: 24 72 76;
+    --teal-300: 33 100 104;
+    --teal-400: 69 191 196;
+    --teal-500: 60 178 183;
+    --teal-600: 79 199 204;
+    --teal-700: 106 214 218;
+    --teal-800: 150 230 233;
+    --teal-900: 196 242 244;
+    --teal-950: 231 250 251;
+
+    --ice-50: 14 40 43;
+    --ice-100: 19 54 58;
+    --ice-200: 26 74 79;
+
+    --sky-300: 142 207 228;
+    --sky-500: 109 190 218;
+    --sky-600: 142 207 228;
+    --sky-700: 180 224 238;
+
+    --ok-100: 16 46 31;
+    --ok-200: 24 68 45;
+    --ok-600: 126 214 162;
+    --ok-700: 168 230 194;
+
+    --warn-100: 51 38 10;
+    --warn-200: 74 56 16;
+    --warn-600: 240 195 116;
+    --warn-700: 246 215 158;
+
+    --alert-100: 56 25 18;
+    --alert-200: 80 36 26;
+    --alert-600: 244 166 146;
+    --alert-700: 248 195 181;
+
+    --now-100: 54 31 13;
+    --now-200: 78 46 19;
+    --now-600: 244 178 122;
+    --now-700: 248 203 163;
+
+    --info-100: 32 30 62;
+    --info-200: 47 44 88;
+    --info-600: 176 170 240;
+    --info-700: 202 198 246;
+  }
+}

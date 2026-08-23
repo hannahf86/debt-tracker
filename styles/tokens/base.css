@@ -5,5 +5,5 @@ p{margin:0;text-wrap:pretty}
 a{color:var(--text-link);text-decoration-thickness:1px;text-underline-offset:2px}
 a:hover{color:var(--text-link-hover)}
 :focus-visible{outline:var(--focus-outline);outline-offset:var(--focus-offset)}
-html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;text-size-adjust:100%}
+html{color-scheme:light;scroll-behavior:smooth;-webkit-text-size-adjust:100%;text-size-adjust:100%}
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}

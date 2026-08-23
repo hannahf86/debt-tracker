@@ -2,43 +2,25 @@
 
 // Mirian design system — see styles/tokens/*.css for the source of truth.
 //
-// The `sage` / `mint` / `peach` scales are kept as ALIASES onto the new teal
-// palette. The app has ~600 utility classes using those names; repointing the
-// scale applies the refresh everywhere at once instead of rewriting each one.
-// New work should prefer the semantic names below (brand, ink, line, paper…).
+// Colours resolve through CSS variables holding RGB channels, so a single
+// theme swap in tokens/dark.css reaches every utility without dark: variants.
+// The <alpha-value> placeholder keeps opacity modifiers (bg-brand/20) working.
 //
-// Values are literal hex rather than var() so Tailwind's opacity modifiers
-// (e.g. bg-brand/20) keep working.
+// The `sage` / `mint` / `peach` scales are ALIASES kept from the pre-refresh
+// palette: the app has hundreds of classes using those names, and repointing
+// the scale applied the refresh everywhere at once. New work should prefer the
+// semantic names (brand, ink, line, paper, surface…).
 
-const teal = {
-  50: "#effbfb",
-  100: "#d7f3f4",
-  200: "#b3e8ea",
-  300: "#7fd7da",
-  400: "#45bfc4",
-  500: "#2a9a9e",
-  600: "#217e82",
-  700: "#1a666a",
-  800: "#154f52",
-  900: "#0f3739",
-  950: "#0a2526",
-};
+const v = (name) => `rgb(var(--${name}) / <alpha-value>)`;
 
-const ink = {
-  900: "#0f2427",
-  700: "#3a5254",
-  500: "#5b7174",
-  400: "#899b9d",
-};
+const ramp = (prefix, stops) =>
+  Object.fromEntries(stops.map((n) => [n, v(`${prefix}-${n}`)]));
 
-const line = {
-  100: "#edf3f3",
-  200: "#dfeaea",
-  300: "#c9d8d9",
-};
-
-const ice = { 50: "#f4fcfc", 100: "#dcf4f5", 200: "#c3ebed" };
-const sky = { 300: "#8ecfe4", 500: "#3d9dc4", 600: "#2b7fa6", 700: "#22677f" };
+const teal = ramp("teal", [50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950]);
+const ink = ramp("ink", [400, 500, 700, 900]);
+const line = ramp("line", [100, 200, 300]);
+const ice = ramp("ice", [50, 100, 200]);
+const sky = ramp("sky", [300, 500, 600, 700]);
 
 module.exports = {
   content: [
@@ -73,46 +55,44 @@ module.exports = {
         line,
         ice,
         sky,
-        paper: { DEFAULT: "#f8fbfb", sunk: "#edf3f3" },
 
-        // Semantic action colours
+        // Card surface. bg-white resolves here so cards theme correctly.
+        white: v("white"),
+        paper: { DEFAULT: v("paper"), sunk: v("paper-sunk") },
+        surface: v("white"),
+
         brand: {
-          DEFAULT: teal[700],
-          hover: teal[800],
-          active: teal[900],
-          soft: teal[100],
-          "soft-hover": teal[200],
+          DEFAULT: v("teal-700"),
+          hover: v("teal-800"),
+          active: v("teal-900"),
+          soft: v("teal-100"),
+          "soft-hover": v("teal-200"),
         },
 
-        // Payment / month states — each also carries an icon, never colour alone
-        ok: { 100: "#e2f3e9", 200: "#bfe4cd", 600: "#1c7040", 700: "#155733" },
-        warn: { 100: "#fdf0da", 200: "#f6dfb4", 600: "#8a5a00", 700: "#6d4700" },
-        alert: { 100: "#fceae5", 200: "#f6cec3", 600: "#a8371f", 700: "#872c19" },
-        now: { 100: "#fdeddc", 200: "#f7d6b4", 600: "#9a4e13", 700: "#7c3e0f" },
-        info: { 100: "#eceafa", 200: "#d5d1f3", 600: "#4f46b8", 700: "#3e3793" },
+        ok: ramp("ok", [100, 200, 600, 700]),
+        warn: ramp("warn", [100, 200, 600, 700]),
+        alert: ramp("alert", [100, 200, 600, 700]),
+        now: ramp("now", [100, 200, 600, 700]),
+        info: ramp("info", [100, 200, 600, 700]),
 
         // --- Legacy aliases -------------------------------------------------
-        // sage was the old green ramp: 800/900 headings, 600 action fill,
-        // 700 action hover, 500 muted text, 400/300 faint + placeholders.
         sage: {
           50: teal[50],
           100: teal[100],
           200: teal[200],
-          300: ink[400], // placeholders
-          400: ink[400], // faint text
-          500: ink[500], // muted text
-          600: teal[700], // primary action fill
-          700: teal[800], // action hover / strong text
-          800: ink[900], // headings
+          300: ink[400],
+          400: ink[400],
+          500: ink[500],
+          600: v("teal-700"),
+          700: v("teal-800"),
+          800: ink[900],
           900: ink[900],
           950: teal[950],
         },
-        // mint was hairlines and card borders
         mint: { 100: line[100], 200: line[200], 300: line[300] },
-        // peach was the warm page gradient — now cool paper/ice
         peach: {
           50: ice[50],
-          100: "#f8fbfb",
+          100: v("paper"),
           200: ice[100],
           300: ice[100],
           400: ice[200],

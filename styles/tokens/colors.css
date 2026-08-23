@@ -1,24 +1,58 @@
+/* Mirian colour ramp.
+ *
+ * Values are RGB channels rather than hex so they can carry an alpha through
+ * Tailwind (`rgb(var(--teal-700) / <alpha-value>)`) and be swapped wholesale
+ * for a dark theme. Wrap in rgb() to use one directly in CSS.
+ *
+ * In dark mode these hold their DARK-THEME ROLE, not the literal light shade —
+ * e.g. --ink-900 is the strongest text colour in both themes, near-black in
+ * light and near-white in dark.
+ */
 :root{
   /* Teal — the brand hue, built around #2a9a9e. Calm, modern, not a bank. */
-  --teal-50:#effbfb;--teal-100:#d7f3f4;--teal-200:#b3e8ea;--teal-300:#7fd7da;
-  --teal-400:#45bfc4;--teal-500:#2a9a9e;--teal-600:#217e82;--teal-700:#1a666a;
-  --teal-800:#154f52;--teal-900:#0f3739;--teal-950:#0a2526;
+  --teal-50:239 251 251;--teal-100:215 243 244;--teal-200:179 232 234;--teal-300:127 215 218;
+  --teal-400:69 191 196;--teal-500:42 154 158;--teal-600:33 126 130;--teal-700:26 102 106;
+  --teal-800:21 79 82;--teal-900:15 55 57;--teal-950:10 37 38;
 
   /* Ice & sky — the accent. Pale ice washes for surfaces, sky for quiet highlights. */
-  --ice-50:#f4fcfc;--ice-100:#dcf4f5;--ice-200:#c3ebed;
-  --sky-300:#8ecfe4;--sky-500:#3d9dc4;--sky-600:#2b7fa6;--sky-700:#22677f;
+  --ice-50:244 252 252;--ice-100:220 244 245;--ice-200:195 235 237;
+  --sky-300:142 207 228;--sky-500:61 157 196;--sky-600:43 127 166;--sky-700:34 103 127;
 
   /* Cool neutrals — paper, surfaces, hairlines */
-  --paper:#f8fbfb;--paper-sunk:#edf3f3;--white:#ffffff;
-  --line-100:#edf3f3;--line-200:#dfeaea;--line-300:#c9d8d9;
+  --paper:248 251 251;--paper-sunk:237 243 243;--white:255 255 255;
+  --line-100:237 243 243;--line-200:223 234 234;--line-300:201 216 217;
 
   /* Ink — text greys, cooled toward the brand teal */
-  --ink-900:#0f2427;--ink-700:#3a5254;--ink-500:#5b7174;--ink-400:#899b9d;
+  --ink-900:15 36 39;--ink-700:58 82 84;--ink-500:91 113 116;--ink-400:137 155 157;
 
   /* Semantic states. Every state also carries an icon or label — colour is never the only signal. */
-  --ok-100:#e2f3e9;--ok-200:#bfe4cd;--ok-600:#1c7040;--ok-700:#155733;
-  --warn-100:#fdf0da;--warn-200:#f6dfb4;--warn-600:#8a5a00;--warn-700:#6d4700;
-  --alert-100:#fceae5;--alert-200:#f6cec3;--alert-600:#a8371f;--alert-700:#872c19;
-  --now-100:#fdeddc;--now-200:#f7d6b4;--now-600:#9a4e13;--now-700:#7c3e0f;
-  --info-100:#eceafa;--info-200:#d5d1f3;--info-600:#4f46b8;--info-700:#3e3793;
+  --ok-100:226 243 233;--ok-200:191 228 205;--ok-600:28 112 64;--ok-700:21 87 51;
+  --warn-100:253 240 218;--warn-200:246 223 180;--warn-600:138 90 0;--warn-700:109 71 0;
+  --alert-100:252 234 229;--alert-200:246 206 195;--alert-600:168 55 31;--alert-700:135 44 25;
+  --now-100:253 237 220;--now-200:247 214 180;--now-600:154 78 19;--now-700:124 62 15;
+  --info-100:236 234 250;--info-200:213 209 243;--info-600:79 70 184;--info-700:62 55 147;
+}
+:root{
+  /* Teal — the brand hue, built around #2a9a9e. Calm, modern, not a bank. */
+  --teal-50:239 251 251;--teal-100:215 243 244;--teal-200:179 232 234;--teal-300:127 215 218;
+  --teal-400:69 191 196;--teal-500:42 154 158;--teal-600:33 126 130;--teal-700:26 102 106;
+  --teal-800:21 79 82;--teal-900:15 55 57;--teal-950:10 37 38;
+
+  /* Ice & sky — the accent. Pale ice washes for surfaces, sky for quiet highlights. */
+  --ice-50:244 252 252;--ice-100:220 244 245;--ice-200:195 235 237;
+  --sky-300:142 207 228;--sky-500:61 157 196;--sky-600:43 127 166;--sky-700:34 103 127;
+
+  /* Cool neutrals — paper, surfaces, hairlines */
+  --paper:248 251 251;--paper-sunk:237 243 243;--white:255 255 255;
+  --line-100:237 243 243;--line-200:223 234 234;--line-300:201 216 217;
+
+  /* Ink — text greys, cooled toward the brand teal */
+  --ink-900:15 36 39;--ink-700:58 82 84;--ink-500:91 113 116;--ink-400:137 155 157;
+
+  /* Semantic states. Every state also carries an icon or label — colour is never the only signal. */
+  --ok-100:226 243 233;--ok-200:191 228 205;--ok-600:28 112 64;--ok-700:21 87 51;
+  --warn-100:253 240 218;--warn-200:246 223 180;--warn-600:138 90 0;--warn-700:109 71 0;
+  --alert-100:252 234 229;--alert-200:246 206 195;--alert-600:168 55 31;--alert-700:135 44 25;
+  --now-100:253 237 220;--now-200:247 214 180;--now-600:154 78 19;--now-700:124 62 15;
+  --info-100:236 234 250;--info-200:213 209 243;--info-600:79 70 184;--info-700:62 55 147;
 }

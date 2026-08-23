@@ -1,45 +1,45 @@
 :root{
   /* Surfaces */
-  --bg-page:var(--paper);
-  --bg-page-accent:linear-gradient(160deg,var(--ice-100) 0%,var(--paper) 48%,var(--teal-50) 100%);
-  --surface-card:var(--white);
-  --surface-sunk:var(--paper-sunk);
-  --surface-tint:var(--teal-50);
-  --surface-nav:var(--white);
-  --surface-overlay:rgba(15,36,39,.46);
+  --bg-page:rgb(var(--paper));
+  --bg-page-accent:linear-gradient(160deg,rgb(var(--ice-100)) 0%,rgb(var(--paper)) 48%,rgb(var(--teal-50)) 100%);
+  --surface-card:rgb(var(--white));
+  --surface-sunk:rgb(var(--paper-sunk));
+  --surface-tint:rgb(var(--teal-50));
+  --surface-nav:rgb(var(--white));
+  --surface-overlay:rgb(var(--ink-900) / .46);
 
   /* Text */
-  --text-heading:var(--ink-900);
-  --text-body:var(--ink-700);
-  --text-muted:var(--ink-500);
-  --text-faint:var(--ink-400);
-  --text-on-brand:var(--white);
-  --text-link:var(--teal-700);
-  --text-link-hover:var(--teal-900);
+  --text-heading:rgb(var(--ink-900));
+  --text-body:rgb(var(--ink-700));
+  --text-muted:rgb(var(--ink-500));
+  --text-faint:rgb(var(--ink-400));
+  --text-on-brand:rgb(var(--white));
+  --text-link:rgb(var(--teal-700));
+  --text-link-hover:rgb(var(--teal-900));
 
   /* Lines */
-  --border-card:var(--line-200);
-  --border-input:var(--line-300);
-  --border-focus:var(--teal-700);
+  --border-card:rgb(var(--line-200));
+  --border-input:rgb(var(--line-300));
+  --border-focus:rgb(var(--teal-700));
 
   /* Brand actions */
-  --brand:var(--teal-700);
-  --brand-hover:var(--teal-800);
-  --brand-active:var(--teal-900);
-  --brand-soft:var(--teal-100);
-  --brand-soft-hover:var(--teal-200);
+  --brand:rgb(var(--teal-700));
+  --brand-hover:rgb(var(--teal-800));
+  --brand-active:rgb(var(--teal-900));
+  --brand-soft:rgb(var(--teal-100));
+  --brand-soft-hover:rgb(var(--teal-200));
 
   /* Progress */
-  --progress-track:var(--teal-100);
-  --progress-fill:linear-gradient(90deg,var(--teal-600) 0%,var(--teal-400) 100%);
+  --progress-track:rgb(var(--teal-100));
+  --progress-fill:linear-gradient(90deg,rgb(var(--teal-600)) 0%,rgb(var(--teal-400)) 100%);
 
   /* Month / payment states */
-  --state-paid-bg:var(--ok-100);--state-paid-line:var(--ok-200);--state-paid-fg:var(--ok-600);
-  --state-partial-bg:var(--warn-100);--state-partial-line:var(--warn-200);--state-partial-fg:var(--warn-600);
-  --state-missed-bg:var(--alert-100);--state-missed-line:var(--alert-200);--state-missed-fg:var(--alert-600);
-  --state-now-bg:var(--now-100);--state-now-line:var(--now-200);--state-now-fg:var(--now-600);
-  --state-future-bg:var(--paper-sunk);--state-future-line:var(--line-200);--state-future-fg:var(--ink-400);
+  --state-paid-bg:rgb(var(--ok-100));--state-paid-line:rgb(var(--ok-200));--state-paid-fg:rgb(var(--ok-600));
+  --state-partial-bg:rgb(var(--warn-100));--state-partial-line:rgb(var(--warn-200));--state-partial-fg:rgb(var(--warn-600));
+  --state-missed-bg:rgb(var(--alert-100));--state-missed-line:rgb(var(--alert-200));--state-missed-fg:rgb(var(--alert-600));
+  --state-now-bg:rgb(var(--now-100));--state-now-line:rgb(var(--now-200));--state-now-fg:rgb(var(--now-600));
+  --state-future-bg:rgb(var(--paper-sunk));--state-future-line:rgb(var(--line-200));--state-future-fg:rgb(var(--ink-400));
 
   /* Arrangement dots */
-  --arr-plan:var(--ok-600);--arr-accent:var(--sky-600);--arr-todo:var(--info-600);--arr-waiting:var(--warn-600);--arr-default-dot:var(--alert-600);--arr-none:var(--ink-400);
+  --arr-plan:rgb(var(--ok-600));--arr-accent:rgb(var(--sky-600));--arr-todo:rgb(var(--info-600));--arr-waiting:rgb(var(--warn-600));--arr-default-dot:rgb(var(--alert-600));--arr-none:rgb(var(--ink-400));
 }

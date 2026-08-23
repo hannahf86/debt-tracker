@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useSession, signOut } from "next-auth/react";
 import { useDebts } from "@/lib/hooks/useDebts";
 import { useProfile } from "@/lib/hooks/useProfile";
+import ThemePicker from "@/components/ThemePicker";
 import { Save, AlertTriangle } from "lucide-react";
 
 export default function SettingsPage() {
@@ -129,6 +130,17 @@ export default function SettingsPage() {
           <p className="text-sage-500 text-sm">
             Manage your account and preferences
           </p>
+        </div>
+
+        {/* Appearance */}
+        <div className="bg-white border border-mint-200 rounded-2xl p-6 mb-6 shadow-sm">
+          <h2 className="text-lg font-semibold text-sage-800 mb-2">
+            Appearance
+          </h2>
+          <p className="text-sage-600 text-sm mb-5">
+            System follows whatever your phone or computer is set to.
+          </p>
+          <ThemePicker />
         </div>
 
         {/* Account */}
