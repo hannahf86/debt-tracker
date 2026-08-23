@@ -33,3 +33,9 @@ yarn-error.log*
 .DS_Store
 *.pem
 .vercel
+
+# env backups — a plain .env.local rule doesn't catch these, and they carry
+# the same secrets
+*.bak
+.env*.bak
+.env.local.*
