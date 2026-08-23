@@ -105,7 +105,7 @@ export default function MobileTracker({
                 <Icon size={18} />
               </span>
               <span className="flex-1 min-w-0">
-                <span className="block font-display text-[17px] font-bold text-sage-800 truncate">
+                <span className="block font-display text-[1.0625rem] font-bold text-sage-800 truncate">
                   {debt.company}
                 </span>
                 <span className="block text-xs text-sage-500">

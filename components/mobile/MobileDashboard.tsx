@@ -1,7 +1,15 @@
 "use client";
 
 import { useRouter } from "next/router";
-import { Plus, CreditCard, Landmark, Zap, Receipt, Home, MoreHorizontal } from "lucide-react";
+import {
+  Plus,
+  CreditCard,
+  Landmark,
+  Zap,
+  Receipt,
+  Home,
+  MoreHorizontal,
+} from "lucide-react";
 import type { Debt } from "@/lib/types";
 import type { DebtFreeProjection } from "@/lib/projection";
 import { formatLongDate, budgetUsage } from "@/lib/projection";
@@ -14,8 +22,18 @@ import {
 import MonthCell from "@/components/mobile/MonthCell";
 
 const MONTHS = [
-  "Jan", "Feb", "Mar", "Apr", "May", "Jun",
-  "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
+  "Jan",
+  "Feb",
+  "Mar",
+  "Apr",
+  "May",
+  "Jun",
+  "Jul",
+  "Aug",
+  "Sep",
+  "Oct",
+  "Nov",
+  "Dec",
 ];
 
 const CATEGORY_ICON: Record<string, typeof CreditCard> = {
@@ -27,7 +45,13 @@ const CATEGORY_ICON: Record<string, typeof CreditCard> = {
   other: MoreHorizontal,
 };
 
-function CategoryTile({ category, size = 40 }: { category: string; size?: number }) {
+function CategoryTile({
+  category,
+  size = 40,
+}: {
+  category: string;
+  size?: number;
+}) {
   const Icon = CATEGORY_ICON[category] ?? MoreHorizontal;
   return (
     <span
@@ -40,7 +64,15 @@ function CategoryTile({ category, size = 40 }: { category: string; size?: number
   );
 }
 
-function ProgressBar({ percent, height = 8, label }: { percent: number; height?: number; label: string }) {
+function ProgressBar({
+  percent,
+  height = 8,
+  label,
+}: {
+  percent: number;
+  height?: number;
+  label: string;
+}) {
   return (
     <div
       className="w-full bg-teal-100 rounded-pill overflow-hidden"
@@ -51,7 +83,10 @@ function ProgressBar({ percent, height = 8, label }: { percent: number; height?:
       aria-valuemax={100}
       aria-label={label}
     >
-      <div className="progress-bar h-full rounded-pill" style={{ width: `${percent}%` }} />
+      <div
+        className="progress-bar h-full rounded-pill"
+        style={{ width: `${percent}%` }}
+      />
     </div>
   );
 }
@@ -102,7 +137,10 @@ export default function MobileDashboard({
       : 0;
 
   // What's due this month, and how much of it is still unlogged.
-  const dueThisMonth = debts.reduce((sum, d) => sum + (d.monthly_amount ?? 0), 0);
+  const dueThisMonth = debts.reduce(
+    (sum, d) => sum + (d.monthly_amount ?? 0),
+    0,
+  );
   const stillToLog = debts.filter((d) => {
     const key = `${year}-${String(thisMonth + 1).padStart(2, "0")}`;
     return !trackerData.payments.some(
@@ -111,12 +149,12 @@ export default function MobileDashboard({
   }).length;
 
   return (
-    <div className="w-full max-w-full p-4 pb-10 flex flex-col gap-4">
+    <div className="w-full p-4 pb-10 flex flex-col gap-4">
       {/* Greeting — the app bar leaves its title blank so this is the heading.
           Depends on the client clock, so skip the hydration match. */}
       <header className="pt-1 pb-1">
         <h1
-          className="font-display text-[28px] leading-tight font-extrabold text-sage-800"
+          className="font-display text-[1.75rem] leading-tight font-extrabold text-sage-800"
           suppressHydrationWarning
         >
           {greeting}
@@ -130,7 +168,7 @@ export default function MobileDashboard({
       {/* a. Debt free day — the motivating figure goes first */}
       <section className="bg-white border border-mint-200 rounded-2xl shadow-sm px-5 py-6 text-center">
         <p className="text-sm text-sage-500">Your debt free day</p>
-        <p className="font-display text-[36px] leading-tight font-extrabold text-sage-800 my-1.5">
+        <p className="font-display text-[2.25rem] leading-tight font-extrabold text-sage-800 my-1.5">
           {isLoading ? "—" : formatLongDate(projection.date)}
         </p>
         <p className="text-xs text-sage-500 mb-4">
@@ -157,7 +195,7 @@ export default function MobileDashboard({
       {/* b. Total debt */}
       <section className="bg-white border border-mint-200 rounded-2xl shadow-sm px-5 py-6">
         <p className="caps-label">Total debt</p>
-        <p className="font-display text-[44px] leading-none font-extrabold text-sage-800 mt-2.5 mb-1">
+        <p className="font-display text-[2.75rem] leading-none font-extrabold text-sage-800 mt-2.5 mb-1">
           £{Math.round(projection.totalOwed).toLocaleString()}
         </p>
         <p className="text-sm text-sage-500 mb-4">
@@ -181,7 +219,7 @@ export default function MobileDashboard({
       <div className="flex gap-3">
         <div className="flex-1 bg-white border border-mint-200 rounded-xl px-3.5 py-4">
           <p className="caps-label">Monthly budget</p>
-          <p className="font-display text-[26px] font-extrabold text-sage-800 mt-2">
+          <p className="font-display text-[1.625rem] font-extrabold text-sage-800 mt-2">
             {budget === null ? "—" : `£${Math.round(budget).toLocaleString()}`}
           </p>
           {usage.percent === null ? (
@@ -207,8 +245,10 @@ export default function MobileDashboard({
         </div>
         <div className="flex-1 bg-white border border-mint-200 rounded-xl px-3.5 py-4">
           <p className="caps-label">Due this month</p>
-          <p className="font-display text-[26px] font-extrabold text-sage-800 mt-2">
-            {dueThisMonth > 0 ? `£${Math.round(dueThisMonth).toLocaleString()}` : "—"}
+          <p className="font-display text-[1.625rem] font-extrabold text-sage-800 mt-2">
+            {dueThisMonth > 0
+              ? `£${Math.round(dueThisMonth).toLocaleString()}`
+              : "—"}
           </p>
           <p className="text-xs text-sage-500 mt-0.5">
             {stillToLog} of {debts.length} still to log
@@ -250,7 +290,10 @@ export default function MobileDashboard({
                     );
 
             return (
-              <div key={month} className="flex flex-col items-center gap-1.5 shrink-0">
+              <div
+                key={month}
+                className="flex flex-col items-center gap-1.5 shrink-0"
+              >
                 <span className="text-2xs font-bold tracking-caps uppercase text-sage-400">
                   {month}
                 </span>
@@ -292,7 +335,7 @@ export default function MobileDashboard({
                 <div className="flex-1 min-w-0">
                   <button
                     onClick={() => router.push(`/debts/${debt.id}`)}
-                    className="font-display text-[18px] font-bold text-sage-800 text-left truncate w-full"
+                    className="font-display text-[1.125rem] font-bold text-sage-800 text-left truncate w-full"
                   >
                     {debt.company}
                   </button>
@@ -303,7 +346,7 @@ export default function MobileDashboard({
                   </p>
                 </div>
                 <div className="text-right shrink-0">
-                  <p className="font-display text-[18px] font-extrabold text-sage-800">
+                  <p className="font-display text-[1.125rem] font-extrabold text-sage-800">
                     £{Math.round(debt.amount_owed).toLocaleString()}
                   </p>
                   <p className="text-2xs text-sage-500">left</p>

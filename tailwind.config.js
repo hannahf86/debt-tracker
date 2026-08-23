@@ -55,16 +55,16 @@ module.exports = {
 
       // Design-system type scale — deliberately larger than web defaults.
       fontSize: {
-        "2xs": ["12px", { lineHeight: "1.3" }],
-        xs: ["13px", { lineHeight: "1.4" }],
-        sm: ["15px", { lineHeight: "1.5" }],
-        base: ["17px", { lineHeight: "1.55" }],
-        lg: ["20px", { lineHeight: "1.4" }],
-        xl: ["24px", { lineHeight: "1.3" }],
-        "2xl": ["30px", { lineHeight: "1.2" }],
-        "3xl": ["38px", { lineHeight: "1.15" }],
-        "4xl": ["48px", { lineHeight: "1.15" }],
-        "5xl": ["60px", { lineHeight: "1.1" }],
+        "2xs": ["0.75rem", { lineHeight: "1.3" }],
+        xs: ["0.8125rem", { lineHeight: "1.4" }],
+        sm: ["0.9375rem", { lineHeight: "1.5" }],
+        base: ["1.0625rem", { lineHeight: "1.55" }],
+        lg: ["1.25rem", { lineHeight: "1.4" }],
+        xl: ["1.5rem", { lineHeight: "1.3" }],
+        "2xl": ["1.875rem", { lineHeight: "1.2" }],
+        "3xl": ["2.375rem", { lineHeight: "1.15" }],
+        "4xl": ["3rem", { lineHeight: "1.15" }],
+        "5xl": ["3.75rem", { lineHeight: "1.1" }],
       },
 
       colors: {
