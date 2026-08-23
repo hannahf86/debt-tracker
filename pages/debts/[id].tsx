@@ -26,6 +26,7 @@ import {
 import type { Debt, Payment } from "@/lib/types";
 import { clearedDate, formatMonthYear } from "@/lib/projection";
 import { arrangementStyle } from "@/lib/arrangement";
+import MobileDebtDetail from "@/components/mobile/MobileDebtDetail";
 
 const months = [
   "Jan",
@@ -90,8 +91,8 @@ function ProgressRing({ percent }: { percent: number }) {
         />
         <defs>
           <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" style={{ stopColor: "var(--teal-600)" }} />
-            <stop offset="100%" style={{ stopColor: "var(--teal-400)" }} />
+            <stop offset="0%" style={{ stopColor: "rgb(var(--teal-600))" }} />
+            <stop offset="100%" style={{ stopColor: "rgb(var(--teal-400))" }} />
           </linearGradient>
         </defs>
       </svg>
@@ -173,7 +174,18 @@ export default function DebtDetailPage() {
   };
 
   return (
-    <div className="p-4 md:p-6">
+    <>
+      <div className="md:hidden">
+        <MobileDebtDetail
+          debt={debt}
+          payments={payments}
+          onLogPayment={() => setLogPaymentDebt(debt)}
+          onDelete={handleDelete}
+          isDeleting={isDeleting}
+        />
+      </div>
+
+      <div className="hidden md:block p-4 md:p-6">
       <div className="max-w-5xl mx-auto">
         <button
           onClick={() => router.push("/dashboard")}
@@ -328,6 +340,7 @@ export default function DebtDetailPage() {
           </div>
         </div>
       </div>
+      </div>
 
       {logPaymentDebt && (
         <LogPaymentModal
@@ -339,6 +352,6 @@ export default function DebtDetailPage() {
           }}
         />
       )}
-    </div>
+    </>
   );
 }

@@ -17,6 +17,7 @@ import { arrangementStyle } from "@/lib/arrangement";
 import { clearedDate, formatMonthYear } from "@/lib/projection";
 import { missingDetails, incompleteDebts } from "@/lib/completeness";
 import DueChip from "@/components/DueChip";
+import MobileDebts from "@/components/mobile/MobileDebts";
 
 const categoryIcon = (category: string) => {
   const cls = "w-5 h-5 text-sage-600";
@@ -55,7 +56,12 @@ export default function DebtsPage() {
     );
 
   return (
-    <div className="p-4 md:p-6">
+    <>
+      <div className="md:hidden">
+        <MobileDebts debts={debts} isLoading={isLoading} />
+      </div>
+
+      <div className="hidden md:block p-4 md:p-6">
       {/* Header */}
       <div className="max-w-5xl mx-auto mb-8 flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
         <div>
@@ -224,6 +230,7 @@ export default function DebtsPage() {
           </div>
         )}
       </div>
-    </div>
+      </div>
+    </>
   );
 }
