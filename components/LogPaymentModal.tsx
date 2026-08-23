@@ -125,7 +125,7 @@ export default function LogPaymentModal({ debt, onClose, onSuccess }: Props) {
       onClick={onClose}
     >
       <div
-        className="w-full max-w-sm bg-white border border-mint-200 rounded-2xl p-6 shadow-xl"
+        className="w-full max-w-sm max-h-[calc(100dvh-2rem)] overflow-y-auto bg-white border border-mint-200 rounded-2xl p-6 shadow-modal"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
@@ -187,8 +187,8 @@ export default function LogPaymentModal({ debt, onClose, onSuccess }: Props) {
                   isOver
                     ? "bg-sage-50 border border-sage-200 text-sage-700"
                     : isShort
-                      ? "bg-amber-50 border border-amber-200 text-amber-700"
-                      : "bg-emerald-50 border border-emerald-200 text-emerald-700"
+                      ? "bg-warn-100 border border-warn-200 text-warn-700"
+                      : "bg-ok-100 border border-ok-200 text-ok-700"
                 }`}
               >
                 {isOver &&
@@ -223,11 +223,11 @@ export default function LogPaymentModal({ debt, onClose, onSuccess }: Props) {
         {/* Step: Confirm late */}
         {step === "confirm-late" && (
           <div className="space-y-4">
-            <div className="p-4 bg-amber-50 border border-amber-200 rounded-xl">
-              <p className="text-amber-700 text-sm font-medium mb-1">
+            <div className="p-4 bg-warn-100 border border-warn-200 rounded-xl">
+              <p className="text-warn-700 text-sm font-medium mb-1">
                 Payment logged as late
               </p>
-              <p className="text-amber-600 text-xs">
+              <p className="text-warn-600 text-xs">
                 Date entered: {paymentDate}
               </p>
             </div>
@@ -248,7 +248,7 @@ export default function LogPaymentModal({ debt, onClose, onSuccess }: Props) {
               </button>
               <button
                 onClick={() => handleSubmit("on-time")}
-                className="w-full p-3 bg-white border border-mint-200 hover:border-emerald-300 rounded-lg text-left transition-all"
+                className="w-full p-3 bg-white border border-mint-200 hover:border-ok-200 rounded-lg text-left transition-all"
               >
                 <p className="text-sage-800 text-sm font-medium">
                   I just logged it late
@@ -293,8 +293,8 @@ export default function LogPaymentModal({ debt, onClose, onSuccess }: Props) {
         {/* Step: Short reason */}
         {step === "short-reason" && (
           <div className="space-y-4">
-            <div className="p-3 bg-amber-50 border border-amber-200 rounded-lg">
-              <p className="text-amber-700 text-sm">
+            <div className="p-3 bg-warn-100 border border-warn-200 rounded-lg">
+              <p className="text-warn-700 text-sm">
                 £{(monthlyAmount - parsedAmount).toFixed(2)} short of your
                 agreed amount
               </p>
@@ -340,7 +340,7 @@ export default function LogPaymentModal({ debt, onClose, onSuccess }: Props) {
               <button
                 onClick={() => handleSubmit("overpaid")}
                 disabled={isLoading}
-                className="w-full p-3 bg-white border border-mint-200 hover:border-emerald-300 rounded-lg text-left transition-all"
+                className="w-full p-3 bg-white border border-mint-200 hover:border-ok-200 rounded-lg text-left transition-all"
               >
                 <p className="text-sage-800 text-sm font-medium">
                   Yes, log it — I paid more 🎉

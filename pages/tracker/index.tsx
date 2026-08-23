@@ -70,10 +70,10 @@ export default function YearlyTrackerPage() {
 
   const typeLabel = (type: string) => {
     if (type === "on-time")
-      return { label: "On time", color: "text-emerald-600" };
-    if (type === "late") return { label: "Late", color: "text-amber-600" };
+      return { label: "On time", color: "text-ok-600" };
+    if (type === "late") return { label: "Late", color: "text-warn-600" };
     if (type === "partial")
-      return { label: "Short payment", color: "text-amber-600" };
+      return { label: "Short payment", color: "text-warn-600" };
     if (type === "partial-late")
       return { label: "Short & late", color: "text-alert-600" };
     if (type === "overpaid")
@@ -121,17 +121,17 @@ export default function YearlyTrackerPage() {
                       key={month}
                       className={`text-xs uppercase tracking-wider font-semibold pb-4 px-2 text-center ${
                         idx === currentMonth
-                          ? "text-orange-500"
+                          ? "text-now-600"
                           : "text-sage-500"
                       }`}
                     >
                       <div className="flex flex-col items-center gap-1">
                         {idx === currentMonth && (
-                          <MapPin size={10} className="text-orange-500" />
+                          <MapPin size={10} className="text-now-600" />
                         )}
                         {month}
                         {idx === currentMonth && (
-                          <div className="w-1 h-1 rounded-full bg-orange-400" />
+                          <div className="w-1 h-1 rounded-full bg-now-200" />
                         )}
                       </div>
                     </th>
@@ -185,11 +185,11 @@ export default function YearlyTrackerPage() {
                               isBeforeSignup
                                 ? "bg-peach-100/50 border-peach-200 text-peach-300 cursor-default"
                                 : status === "current"
-                                  ? "bg-orange-100 border-orange-300 text-orange-500 hover:bg-orange-200 cursor-pointer"
+                                  ? "bg-now-100 border-now-200 text-now-600 hover:bg-now-200 cursor-pointer"
                                   : status === "paid"
-                                    ? "bg-emerald-50 border-emerald-300 text-emerald-600 hover:bg-emerald-100 cursor-pointer"
+                                    ? "bg-ok-100 border-ok-200 text-ok-600 hover:bg-ok-100 cursor-pointer"
                                     : status === "partial"
-                                      ? "bg-amber-50 border-amber-300 text-amber-600 hover:bg-amber-100 cursor-pointer"
+                                      ? "bg-warn-100 border-warn-200 text-warn-600 hover:bg-warn-100 cursor-pointer"
                                       : status === "missed"
                                         ? "bg-peach-100 border-peach-200 text-sage-500 hover:bg-peach-200 cursor-pointer"
                                         : "bg-peach-100/50 border-peach-200 text-peach-300"

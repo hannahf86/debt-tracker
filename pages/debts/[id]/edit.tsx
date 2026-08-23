@@ -18,17 +18,17 @@ const arrangements = [
   {
     value: "payment-plan",
     label: "Payment plan in place",
-    icon: <CheckCircle size={16} className="text-emerald-500" />,
+    icon: <CheckCircle size={16} className="text-ok-600" />,
   },
   {
     value: "needs-setting-up",
     label: "Needs setting up",
-    icon: <Moon size={16} className="text-blue-400" />,
+    icon: <Moon size={16} className="text-info-600" />,
   },
   {
     value: "awaiting-response",
     label: "Awaiting response",
-    icon: <Clock size={16} className="text-amber-400" />,
+    icon: <Clock size={16} className="text-warn-200" />,
   },
 ];
 
@@ -266,9 +266,16 @@ export default function EditDebtPage() {
           </div>
 
           <div className="bg-white border border-mint-200 rounded-2xl p-6 space-y-4 shadow-sm">
-            <h2 className="text-sm font-semibold text-sage-500 uppercase tracking-wider">
-              Optional details
-            </h2>
+            <div>
+              <h2 className="text-sm font-semibold text-sage-500 uppercase tracking-wider">
+                Payment details
+              </h2>
+              <p className="text-sm text-sage-600 mt-2">
+                Mirian needs these to track this debt properly. Fill in what
+                you have now — you can come back for the rest, and we&rsquo;ll
+                remind you what&rsquo;s still missing.
+              </p>
+            </div>
 
             <div>
               <label className="text-xs text-sage-500 uppercase tracking-wider font-semibold block mb-2">

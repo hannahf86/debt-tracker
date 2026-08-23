@@ -25,17 +25,17 @@ const arrangements = [
   {
     value: "payment-plan",
     label: "Payment plan in place",
-    icon: <CheckCircle size={16} className="text-emerald-500" />,
+    icon: <CheckCircle size={16} className="text-ok-600" />,
   },
   {
     value: "needs-setting-up",
     label: "Needs setting up",
-    icon: <Moon size={16} className="text-blue-400" />,
+    icon: <Moon size={16} className="text-info-600" />,
   },
   {
     value: "awaiting-response",
     label: "Awaiting response",
-    icon: <Clock size={16} className="text-amber-400" />,
+    icon: <Clock size={16} className="text-warn-200" />,
   },
 ];
 

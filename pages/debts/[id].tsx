@@ -24,6 +24,7 @@ import {
   AlertTriangle,
 } from "lucide-react";
 import type { Debt, Payment } from "@/lib/types";
+import { clearedDate, formatMonthYear } from "@/lib/projection";
 
 const months = [
   "Jan",
@@ -41,9 +42,9 @@ const months = [
 ];
 
 const arrangementConfig: Record<string, { label: string; dot: string }> = {
-  "payment-plan": { label: "Payment plan in place", dot: "bg-emerald-500" },
-  "needs-setting-up": { label: "Needs setting up", dot: "bg-blue-400" },
-  "awaiting-response": { label: "Awaiting response", dot: "bg-amber-400" },
+  "payment-plan": { label: "Payment plan in place", dot: "bg-ok-600" },
+  "needs-setting-up": { label: "Needs setting up", dot: "bg-info-600" },
+  "awaiting-response": { label: "Awaiting response", dot: "bg-warn-200" },
   "account-in-default": { label: "Account in default", dot: "bg-alert-600" },
   default: { label: "Not set", dot: "bg-sage-400" },
 };
@@ -66,20 +67,6 @@ const categoryIcon = (category: string) => {
   }
 };
 
-function calcClearedBy(
-  amountOwed: number,
-  monthlyAmount: number | null,
-): string {
-  if (!monthlyAmount || monthlyAmount <= 0) return "—";
-  const monthsRemaining = Math.ceil(amountOwed / monthlyAmount);
-  const clearedDate = new Date();
-  clearedDate.setMonth(clearedDate.getMonth() + monthsRemaining);
-  return clearedDate.toLocaleDateString("en-GB", {
-    month: "long",
-    year: "numeric",
-  });
-}
-
 function ProgressRing({ percent }: { percent: number }) {
   const radius = 60;
   const circumference = 2 * Math.PI * radius;
@@ -93,7 +80,7 @@ function ProgressRing({ percent }: { percent: number }) {
           cy="80"
           r={radius}
           fill="none"
-          stroke="#dce5e1"
+          style={{ stroke: "var(--progress-track)" }}
           strokeWidth="12"
         />
         <circle
@@ -106,12 +93,12 @@ function ProgressRing({ percent }: { percent: number }) {
           strokeLinecap="round"
           strokeDasharray={circumference}
           strokeDashoffset={strokeDashoffset}
-          className="transition-all duration-700"
+          className="transition-all duration-[600ms] ease-out"
         />
         <defs>
           <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="#5b7d74" />
-            <stop offset="100%" stopColor="#a7b89f" />
+            <stop offset="0%" style={{ stopColor: "var(--teal-600)" }} />
+            <stop offset="100%" style={{ stopColor: "var(--teal-400)" }} />
           </linearGradient>
         </defs>
       </svg>
@@ -154,7 +141,7 @@ export default function DebtDetailPage() {
   const percent = Math.round(
     ((debt.total_amount - debt.amount_owed) / debt.total_amount) * 100,
   );
-  const clearedBy = calcClearedBy(debt.amount_owed, debt.monthly_amount);
+  const clearedBy = formatMonthYear(clearedDate(debt), "long");
 
   const handleDelete = async () => {
     if (
@@ -228,45 +215,47 @@ export default function DebtDetailPage() {
                   <div
                     className={`w-2 h-2 rounded-full ${arrangementConfig[debt.arrangement ?? "default"].dot}`}
                   />
-                  <span className="text-xs font-medium text-sage-700">
+                  <span className="text-xs font-medium text-sage-700 whitespace-nowrap">
                     {arrangementConfig[debt.arrangement ?? "default"].label}
                   </span>
                 </div>
               </div>
 
-              <div className="flex items-center gap-3 mb-6">
-                {categoryIcon(debt.category)}
-                <h1 className="text-3xl font-bold text-sage-800">
+              <div className="flex items-start gap-3 mb-6">
+                <span className="shrink-0 mt-1">
+                  {categoryIcon(debt.category)}
+                </span>
+                <h1 className="text-2xl sm:text-3xl font-bold text-sage-800 min-w-0">
                   {debt.company}
                 </h1>
               </div>
 
               <div className="space-y-4 mb-8">
-                <div className="flex justify-between items-center py-3 border-b border-mint-200">
+                <div className="flex flex-wrap justify-between items-baseline gap-x-4 gap-y-1 py-3 border-b border-mint-200">
                   <p className="text-sage-500 text-sm">Total owed (original)</p>
                   <p className="text-sage-800 font-medium">
                     £{debt.total_amount.toLocaleString()}
                   </p>
                 </div>
-                <div className="flex justify-between items-center py-3 border-b border-mint-200">
+                <div className="flex flex-wrap justify-between items-baseline gap-x-4 gap-y-1 py-3 border-b border-mint-200">
                   <p className="text-sage-500 text-sm">Monthly DD</p>
                   <p className="text-sage-800 font-medium">
                     £{debt.monthly_amount?.toLocaleString() ?? "—"}
                   </p>
                 </div>
                 {debt.company_email && (
-                  <div className="flex justify-between items-center py-3 border-b border-mint-200">
+                  <div className="flex flex-wrap justify-between items-baseline gap-x-4 gap-y-1 py-3 border-b border-mint-200">
                     <p className="text-sage-500 text-sm">Contact email</p>
                     <a
                       href={`mailto:${debt.company_email}`}
-                      className="text-sage-600 hover:text-sage-800 text-sm transition-colors"
+                      className="text-sage-600 hover:text-sage-800 text-sm transition-colors break-all text-right"
                     >
                       {debt.company_email}
                     </a>
                   </div>
                 )}
                 {debt.account_reference && (
-                  <div className="flex justify-between items-center py-3 border-b border-mint-200">
+                  <div className="flex flex-wrap justify-between items-baseline gap-x-4 gap-y-1 py-3 border-b border-mint-200">
                     <p className="text-sage-500 text-sm">Account ref</p>
                     <p className="text-sage-800 font-medium">
                       {debt.account_reference}
@@ -315,7 +304,7 @@ export default function DebtDetailPage() {
               return (
                 <div key={month} className="flex flex-col items-center gap-2">
                   <div
-                    className={`text-xs font-medium ${idx === currentMonth ? "text-orange-500" : "text-sage-500"}`}
+                    className={`text-xs font-medium ${idx === currentMonth ? "text-now-600" : "text-sage-500"}`}
                   >
                     {month}
                   </div>
@@ -323,11 +312,11 @@ export default function DebtDetailPage() {
                     onClick={() => isClickable && setLogPaymentDebt(debt)}
                     className={`w-full h-12 rounded-lg border flex items-center justify-center transition-all ${
                       status === "current"
-                        ? "bg-orange-100 border-orange-300 text-orange-500 cursor-pointer hover:bg-orange-200"
+                        ? "bg-now-100 border-now-200 text-now-600 cursor-pointer hover:bg-now-200"
                         : status === "paid"
-                          ? "bg-emerald-50 border-emerald-300 text-emerald-600 cursor-pointer hover:bg-emerald-100"
+                          ? "bg-ok-100 border-ok-200 text-ok-600 cursor-pointer hover:bg-ok-100"
                           : status === "partial"
-                            ? "bg-amber-50 border-amber-300 text-amber-600 cursor-pointer hover:bg-amber-100"
+                            ? "bg-warn-100 border-warn-200 text-warn-600 cursor-pointer hover:bg-warn-100"
                             : status === "missed"
                               ? "bg-peach-100 border-peach-200 text-sage-500 cursor-pointer hover:bg-peach-200"
                               : "bg-peach-100/50 border-peach-200 text-peach-300 cursor-default"

@@ -88,19 +88,19 @@ export default function MonthTrackerPage() {
     if (type === "on-time")
       return {
         label: "On time",
-        color: "text-emerald-600",
+        color: "text-ok-600",
         icon: <Check size={12} />,
       };
     if (type === "late")
       return {
         label: "Late",
-        color: "text-amber-600",
+        color: "text-warn-600",
         icon: <ChevronRight size={12} />,
       };
     if (type === "partial")
       return {
         label: "Short payment",
-        color: "text-amber-600",
+        color: "text-warn-600",
         icon: <Minus size={12} />,
       };
     if (type === "partial-late")
@@ -151,12 +151,12 @@ export default function MonthTrackerPage() {
         </div>
 
         {allGood && (
-          <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-6 text-center mb-6">
+          <div className="bg-ok-100 border border-ok-200 rounded-2xl p-6 text-center mb-6">
             <div className="text-4xl mb-3">🎉</div>
-            <h2 className="text-xl font-bold text-emerald-700 mb-2">
+            <h2 className="text-xl font-bold text-ok-700 mb-2">
               Nothing missed!
             </h2>
-            <p className="text-emerald-600 text-sm">
+            <p className="text-ok-600 text-sm">
               All payments were logged this month. Seriously, great work.
             </p>
           </div>
@@ -194,9 +194,9 @@ export default function MonthTrackerPage() {
                   <div
                     className={`w-8 h-8 rounded-lg border flex items-center justify-center ${
                       displayStatus === "paid"
-                        ? "bg-emerald-50 border-emerald-200 text-emerald-600"
+                        ? "bg-ok-100 border-ok-200 text-ok-600"
                         : displayStatus === "partial"
-                          ? "bg-amber-50 border-amber-200 text-amber-600"
+                          ? "bg-warn-100 border-warn-200 text-warn-600"
                           : "bg-peach-100 border-peach-200 text-sage-500"
                     }`}
                   >
@@ -266,7 +266,7 @@ export default function MonthTrackerPage() {
                 {hasPayments &&
                   details.notes.length === 0 &&
                   displayStatus === "paid" && (
-                    <p className="text-emerald-600 text-sm">
+                    <p className="text-ok-600 text-sm">
                       You're all good — payment made on time. Keep it up! 💪
                     </p>
                   )}

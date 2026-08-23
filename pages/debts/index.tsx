@@ -4,6 +4,7 @@ import { useRouter } from "next/router";
 import { useDebts } from "@/lib/hooks/useDebts";
 import {
   Plus,
+  AlertCircle,
   CreditCard,
   Landmark,
   Zap,
@@ -12,11 +13,14 @@ import {
   MoreHorizontal,
 } from "lucide-react";
 import type { Debt } from "@/lib/types";
+import { clearedDate, formatMonthYear } from "@/lib/projection";
+import { missingDetails, incompleteDebts } from "@/lib/completeness";
+import DueChip from "@/components/DueChip";
 
 const arrangementConfig: Record<string, { label: string; dot: string }> = {
-  "payment-plan": { label: "Payment plan in place", dot: "bg-emerald-500" },
-  "needs-setting-up": { label: "Needs setting up", dot: "bg-blue-400" },
-  "awaiting-response": { label: "Awaiting response", dot: "bg-amber-400" },
+  "payment-plan": { label: "Payment plan in place", dot: "bg-ok-600" },
+  "needs-setting-up": { label: "Needs setting up", dot: "bg-info-600" },
+  "awaiting-response": { label: "Awaiting response", dot: "bg-warn-200" },
   "account-in-default": { label: "Account in default", dot: "bg-alert-600" },
   default: { label: "Not set", dot: "bg-sage-400" },
 };
@@ -39,20 +43,6 @@ const categoryIcon = (category: string) => {
   }
 };
 
-function calcClearedBy(
-  amountOwed: number,
-  monthlyAmount: number | null,
-): string {
-  if (!monthlyAmount || monthlyAmount <= 0) return "—";
-  const monthsRemaining = Math.ceil(amountOwed / monthlyAmount);
-  const clearedDate = new Date();
-  clearedDate.setMonth(clearedDate.getMonth() + monthsRemaining);
-  return clearedDate.toLocaleDateString("en-GB", {
-    month: "short",
-    year: "numeric",
-  });
-}
-
 export default function DebtsPage() {
   const router = useRouter();
   const { debts, isLoading } = useDebts();
@@ -64,6 +54,8 @@ export default function DebtsPage() {
       ? Math.round(((totalOriginal - totalOwed) / totalOriginal) * 100)
       : 0;
 
+  const needsDetails = incompleteDebts(debts);
+
   const getProgressPercent = (debt: Debt) =>
     Math.round(
       ((debt.total_amount - debt.amount_owed) / debt.total_amount) * 100,
@@ -72,14 +64,14 @@ export default function DebtsPage() {
   return (
     <div className="p-4 md:p-6">
       {/* Header */}
-      <div className="max-w-5xl mx-auto mb-8 flex items-start justify-between">
+      <div className="max-w-5xl mx-auto mb-8 flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
         <div>
-          <h1 className="text-4xl font-bold text-sage-800 mb-2">Your debts</h1>
+          <h1 className="text-3xl sm:text-4xl font-bold text-sage-800 mb-2">Your debts</h1>
           <p className="text-sage-500 text-sm">All your debts in one place</p>
         </div>
         <button
           onClick={() => router.push("/debts/new")}
-          className="flex items-center gap-2 px-4 py-2 bg-sage-600 hover:bg-sage-700 text-white rounded-xl transition-all text-sm font-medium"
+          className="flex items-center justify-center gap-2 px-4 min-h-[48px] bg-sage-600 hover:bg-sage-700 text-white rounded-pill transition-all text-sm font-medium shrink-0 self-start"
         >
           <Plus size={16} />
           Add debt
@@ -109,14 +101,35 @@ export default function DebtsPage() {
             Overall Progress
           </p>
           <p className="text-3xl font-bold text-sage-800">{overallPercent}%</p>
-          <div className="w-full h-1.5 bg-mint-100 rounded-full mt-3 overflow-hidden">
+          <div className="w-full h-1.5 bg-mint-100 rounded-pill mt-3 overflow-hidden">
             <div
-              className="progress-bar h-full rounded-full"
+              className="progress-bar h-full rounded-pill"
               style={{ width: `${overallPercent}%` }}
             />
           </div>
         </div>
       </div>
+
+      {/* Details still outstanding — an offer, not a telling-off. */}
+      {!isLoading && needsDetails.length > 0 && (
+        <div className="max-w-5xl mx-auto mb-4">
+          <div className="flex items-start gap-3 bg-warn-100 border border-warn-200 rounded-xl px-5 py-4">
+            <AlertCircle size={18} className="text-warn-600 shrink-0 mt-0.5" />
+            <div>
+              <p className="text-sm font-semibold text-warn-700">
+                {needsDetails.length}{" "}
+                {needsDetails.length === 1 ? "debt is" : "debts are"} missing
+                details
+              </p>
+              <p className="text-sm text-sage-600 mt-0.5">
+                Payment dates, references and contact emails help Mirian track
+                things properly. Add them whenever you have them to hand — no
+                rush.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Debt list */}
       <div className="max-w-5xl mx-auto">
@@ -141,10 +154,8 @@ export default function DebtsPage() {
           <div className="space-y-3">
             {debts.map((debt) => {
               const percent = getProgressPercent(debt);
-              const clearedBy = calcClearedBy(
-                debt.amount_owed,
-                debt.monthly_amount,
-              );
+              const clearedBy = formatMonthYear(clearedDate(debt));
+              const missing = missingDetails(debt);
 
               return (
                 <div
@@ -152,11 +163,11 @@ export default function DebtsPage() {
                   onClick={() => router.push(`/debts/${debt.id}`)}
                   className="debt-card bg-white border border-mint-200 rounded-xl p-6 cursor-pointer group hover:shadow-md shadow-sm transition-all"
                 >
-                  <div className="flex items-start justify-between mb-4">
-                    <div className="flex items-center gap-3">
-                      <div>{categoryIcon(debt.category)}</div>
+                  <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-4">
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div className="shrink-0">{categoryIcon(debt.category)}</div>
                       <div>
-                        <h3 className="font-semibold text-sage-800">
+                        <h3 className="font-semibold text-sage-800 truncate">
                           {debt.company}
                         </h3>
                         <p className="text-xs text-sage-500 mt-0.5">
@@ -164,12 +175,22 @@ export default function DebtsPage() {
                         </p>
                       </div>
                     </div>
-                    <div className="flex items-center gap-3">
-                      <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-mint-100 border border-mint-200">
+                    <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+                      <DueChip dayOfMonth={debt.direct_debit_date} />
+                      {missing.length > 0 && (
+                        <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-pill border bg-warn-100 border-warn-200 text-warn-600 shrink-0">
+                          <AlertCircle size={14} className="shrink-0" />
+                          <span className="text-xs font-semibold">
+                            {missing.length}{" "}
+                            {missing.length === 1 ? "detail" : "details"} to add
+                          </span>
+                        </div>
+                      )}
+                      <div className="flex items-center gap-2 px-3 py-1.5 rounded-pill bg-mint-100 border border-mint-200">
                         <div
                           className={`w-2 h-2 rounded-full ${arrangementConfig[debt.arrangement ?? "default"].dot}`}
                         />
-                        <span className="text-xs font-medium text-sage-700">
+                        <span className="text-xs font-medium text-sage-700 whitespace-nowrap">
                           {
                             arrangementConfig[debt.arrangement ?? "default"]
                               .label
@@ -198,9 +219,9 @@ export default function DebtsPage() {
                         {percent}%
                       </p>
                     </div>
-                    <div className="w-full h-1.5 bg-mint-100 rounded-full overflow-hidden">
+                    <div className="w-full h-1.5 bg-mint-100 rounded-pill overflow-hidden">
                       <div
-                        className="progress-bar h-full rounded-full transition-all"
+                        className="progress-bar h-full rounded-pill transition-all"
                         style={{ width: `${percent}%` }}
                       />
                     </div>

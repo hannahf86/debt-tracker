@@ -131,6 +131,7 @@ module.exports = {
         lg: "16px",
         xl: "20px", // default card
         "2xl": "28px", // hero panels
+        pill: "999px", // progress bars, chips, pill buttons
       },
 
       boxShadow: {

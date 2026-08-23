@@ -123,8 +123,8 @@ export default function SettingsPage() {
               </label>
 
               {passwordSaved && (
-                <div className="mb-3 p-3 bg-emerald-50 border border-emerald-200 rounded-lg">
-                  <p className="text-emerald-700 text-sm">
+                <div className="mb-3 p-3 bg-ok-100 border border-ok-200 rounded-lg">
+                  <p className="text-ok-700 text-sm">
                     Password updated successfully!
                   </p>
                 </div>

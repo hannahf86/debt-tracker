@@ -21,12 +21,19 @@ import {
 } from "lucide-react";
 import type { Debt } from "@/lib/types";
 import { useTracker, getMonthStatus } from "@/lib/hooks/useTracker";
+import { useBudget } from "@/lib/hooks/useBudget";
+import {
+  projectDebtFree,
+  formatLongDate,
+  formatMonthYear,
+} from "@/lib/projection";
 import LogPaymentModal from "@/components/LogPaymentModal";
+import DueChip from "@/components/DueChip";
 
 const arrangementConfig: Record<string, { label: string; dot: string }> = {
-  "payment-plan": { label: "Payment plan in place", dot: "bg-emerald-500" },
-  "needs-setting-up": { label: "Needs setting up", dot: "bg-blue-400" },
-  "awaiting-response": { label: "Awaiting response", dot: "bg-amber-400" },
+  "payment-plan": { label: "Payment plan in place", dot: "bg-ok-600" },
+  "needs-setting-up": { label: "Needs setting up", dot: "bg-info-600" },
+  "awaiting-response": { label: "Awaiting response", dot: "bg-warn-200" },
   "account-in-default": { label: "Account in default", dot: "bg-alert-600" },
   default: { label: "Not set", dot: "bg-sage-400" },
 };
@@ -49,6 +56,13 @@ const categoryIcon = (category: string) => {
   }
 };
 
+function timeGreeting(): string {
+  const h = new Date().getHours();
+  if (h < 12) return "Morning";
+  if (h < 18) return "Afternoon";
+  return "Evening";
+}
+
 const months = [
   "Jan",
   "Feb",
@@ -69,7 +83,9 @@ export default function DashboardPage() {
   const router = useRouter();
   const { debts, isLoading, updateDebt } = useDebts();
   const { data: trackerData, isLoading: isTrackerLoading } = useTracker();
+  const { budget } = useBudget();
   const [logPaymentDebt, setLogPaymentDebt] = useState<Debt | null>(null);
+  const [pickingDebt, setPickingDebt] = useState(false);
 
   useEffect(() => {
     if (!isLoading && debts.length === 0) {
@@ -82,7 +98,15 @@ export default function DashboardPage() {
     return null;
   }
 
-  const totalDebt = debts.reduce((sum, d) => sum + d.amount_owed, 0);
+  const projection = projectDebtFree(debts);
+  const totalDebt = projection.totalOwed;
+
+  const firstName = (session?.user?.name || session?.user?.email || "")
+    .split("@")[0]
+    .split(/[.\s_-]/)[0];
+  const displayName = firstName
+    ? firstName.charAt(0).toUpperCase() + firstName.slice(1)
+    : "";
 
   const getProgressPercent = (debt: Debt) =>
     Math.round(
@@ -102,26 +126,72 @@ export default function DashboardPage() {
     await updateDebt(debt.id, { arrangement: next });
   };
 
+  // Take the actual minimum created_at. Indexing the array assumed a
+  // newest-first order, but /api/tracker returns debts oldest-first.
   const earliestDebt =
     trackerData.debts.length > 0
-      ? new Date(trackerData.debts[trackerData.debts.length - 1].created_at)
+      ? new Date(
+          Math.min(
+            ...trackerData.debts.map((d) => new Date(d.created_at).getTime()),
+          ),
+        )
       : new Date();
 
   return (
     <div className="p-4 md:p-6">
-      {/* Header */}
-      <div className="max-w-6xl mx-auto mb-8">
-        <h1 className="text-4xl font-bold text-sage-800 mb-2">Dashboard</h1>
-        <p className="text-sage-600 text-sm">
-          Track what you owe. Celebrate what you've paid. Watch it all get
-          smaller!
-        </p>
+      {/* Header + debt free day */}
+      <div className="max-w-6xl mx-auto mb-8 flex flex-col gap-6 md:flex-row md:items-start md:justify-between">
+        <div>
+          {/* Greeting depends on the client clock, so it can't match a
+              prerendered value — compute it here and skip the mismatch check. */}
+          <h1
+            className="text-3xl md:text-4xl font-bold text-sage-800 mb-2"
+            suppressHydrationWarning
+          >
+            {timeGreeting()}
+            {displayName ? `, ${displayName}` : ""}
+          </h1>
+          <p className="text-sage-600">
+            Let&rsquo;s get you debt free and find some peace
+          </p>
+        </div>
+
+        <div className="bg-white border border-mint-200 rounded-2xl p-6 shadow-sm w-full md:w-[22rem] shrink-0 text-center">
+          <p className="text-sage-600 text-sm mb-1">Your debt free day</p>
+          <p className="font-display text-3xl font-bold text-sage-800 mb-1">
+            {/* Without the last debt's payment date we only honestly know the
+                month, so don't invent a day. */}
+            {isLoading
+              ? "—"
+              : projection.longestPole?.direct_debit_date
+                ? formatLongDate(projection.date)
+                : formatMonthYear(projection.date, "long")}
+          </p>
+          <p className="text-2xs text-sage-500 mb-4">
+            {projection.unprojectable.length > 0
+              ? `Add a monthly amount to ${projection.unprojectable.length} ${
+                  projection.unprojectable.length === 1 ? "debt" : "debts"
+                } to see this`
+              : "Based on your current pay schedule"}
+          </p>
+          <div className="flex items-center gap-3">
+            <div className="flex-1 h-2.5 bg-teal-100 rounded-pill overflow-hidden">
+              <div
+                className="progress-bar h-full rounded-pill"
+                style={{ width: `${projection.percentCleared}%` }}
+              />
+            </div>
+            <span className="text-sm font-bold text-brand tabular-nums">
+              {projection.percentCleared}%
+            </span>
+          </div>
+        </div>
       </div>
 
       {/* Monthly Tracker */}
       <div className="max-w-6xl mx-auto mb-8">
-        <div className="bg-white border border-mint-200 rounded-2xl p-6 shadow-sm">
-          <div className="flex items-center justify-between mb-6">
+        <div className="bg-white border border-mint-200 rounded-2xl p-4 sm:p-6 shadow-sm">
+          <div className="flex flex-wrap items-center justify-between gap-2 mb-6">
             <h2 className="text-sm font-semibold text-sage-600 uppercase tracking-wider">
               {new Date().getFullYear()} Payment History
             </h2>
@@ -133,7 +203,7 @@ export default function DashboardPage() {
             </button>
           </div>
 
-          <div className="flex gap-3 flex-wrap">
+          <div className="grid grid-cols-6 sm:grid-cols-12 gap-2 sm:gap-3">
             {months.map((month, idx) => {
               const monthDate = new Date(new Date().getFullYear(), idx, 1);
               const isBeforeSignup =
@@ -154,9 +224,9 @@ export default function DashboardPage() {
                     );
 
               return (
-                <div key={month} className="flex flex-col items-center gap-2">
+                <div key={month} className="flex flex-col items-center gap-2 min-w-0">
                   <div
-                    className={`text-xs font-medium ${idx === new Date().getMonth() ? "text-orange-500" : "text-sage-500"}`}
+                    className={`text-xs font-medium ${idx === new Date().getMonth() ? "text-now-600" : "text-sage-500"}`}
                   >
                     {month}
                   </div>
@@ -171,15 +241,15 @@ export default function DashboardPage() {
                         router.push(`/tracker/${idx + 1}`);
                       }
                     }}
-                    className={`w-12 h-12 rounded-lg border flex items-center justify-center transition-all focus:outline-none hover:-translate-y-0.5 hover:shadow-md ${
+                    className={`w-full aspect-square max-w-12 rounded-lg border flex items-center justify-center transition-all focus:outline-none hover:-translate-y-0.5 hover:shadow-md ${
                       isBeforeSignup
                         ? "bg-peach-100/30 border-peach-200/50 text-peach-300 cursor-default"
                         : monthStatus === "current"
-                          ? "bg-orange-100 border-orange-300 text-orange-500 cursor-pointer hover:bg-orange-200 shadow-sm"
+                          ? "bg-now-100 border-now-200 text-now-600 cursor-pointer hover:bg-now-200 shadow-sm"
                           : monthStatus === "paid"
-                            ? "bg-emerald-100 border-emerald-300 text-emerald-600 cursor-pointer hover:bg-emerald-200 shadow-sm"
+                            ? "bg-ok-100 border-ok-200 text-ok-600 cursor-pointer hover:bg-ok-200 shadow-sm"
                             : monthStatus === "partial"
-                              ? "bg-amber-100 border-amber-300 text-amber-600 cursor-pointer hover:bg-amber-200 shadow-sm"
+                              ? "bg-warn-100 border-warn-200 text-warn-600 cursor-pointer hover:bg-warn-200 shadow-sm"
                               : monthStatus === "missed"
                                 ? "bg-alert-100 border-alert-200 text-alert-600 cursor-pointer hover:bg-alert-200 shadow-sm"
                                 : monthStatus === "future"
@@ -211,27 +281,67 @@ export default function DashboardPage() {
       </div>
 
       {/* Summary Cards */}
-      <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-        <div className="bg-white border border-mint-200 rounded-xl p-6 shadow-sm">
-          <p className="text-sage-500 text-xs uppercase tracking-wider font-semibold mb-3">
-            Total Debt
-          </p>
-          <p className="text-3xl font-bold text-sage-800">
-            £{totalDebt.toLocaleString()}
-          </p>
+      <div className="max-w-6xl mx-auto mb-8 flex flex-col lg:flex-row lg:items-stretch gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 flex-1">
+          <div className="bg-white border border-mint-200 rounded-xl p-6 shadow-sm">
+            <p className="caps-label mb-3">Total debt</p>
+            <p className="font-display text-3xl font-bold text-sage-800">
+              £{Math.round(totalDebt).toLocaleString()}
+            </p>
+            <p className="text-xs text-sage-500 mt-2">
+              of £{Math.round(projection.totalOriginal).toLocaleString()}{" "}
+              originally
+            </p>
+          </div>
+
+          <div className="bg-white border border-mint-200 rounded-xl p-6 shadow-sm">
+            <p className="caps-label mb-3">Monthly budget</p>
+            <p className="font-display text-3xl font-bold text-sage-800">
+              {budget === null ? "—" : `£${Math.round(budget).toLocaleString()}`}
+            </p>
+            <p className="text-xs text-sage-500 mt-2">
+              {budget === null ? (
+                <button
+                  onClick={() => router.push("/settings")}
+                  className="underline hover:text-sage-800 transition-colors"
+                >
+                  Set one in settings
+                </button>
+              ) : (
+                "for debt repayment"
+              )}
+            </p>
+          </div>
+
+          <div className="bg-white border border-mint-200 rounded-xl p-6 shadow-sm">
+            <p className="caps-label mb-3">
+              Debt cleared <span className="normal-case">so far</span>
+            </p>
+            <p className="font-display text-3xl font-bold text-sage-800">
+              £{Math.round(projection.totalCleared).toLocaleString()}
+            </p>
+            <p className="text-xs text-sage-500 mt-2">
+              {projection.totalCleared > 0
+                ? "Amazing work — keep going"
+                : "Every bit counts"}
+            </p>
+          </div>
         </div>
-        <div className="bg-white border border-mint-200 rounded-xl p-6 shadow-sm">
-          <p className="text-sage-500 text-xs uppercase tracking-wider font-semibold mb-3">
-            Monthly Budget
-          </p>
-          <p className="text-3xl font-bold text-sage-800">£0</p>
-          <p className="text-xs text-sage-500 mt-2">for debt repayment</p>
-        </div>
-        <div className="bg-white border border-mint-200 rounded-xl p-6 shadow-sm">
-          <p className="text-sage-500 text-xs uppercase tracking-wider font-semibold mb-3">
-            Debt Cleared By
-          </p>
-          <p className="text-3xl font-bold text-sage-800">—</p>
+
+        <div className="flex flex-row lg:flex-col gap-3 lg:justify-center shrink-0">
+          <button
+            onClick={() => setPickingDebt(true)}
+            disabled={debts.length === 0}
+            className="flex-1 lg:flex-none inline-flex items-center justify-center gap-2 px-5 min-h-[48px] bg-brand hover:bg-brand-hover disabled:opacity-50 text-white rounded-pill text-sm font-semibold transition-colors duration-base"
+          >
+            <Plus size={16} /> Add payment
+          </button>
+          <button
+            onClick={() => router.push("/debts/new")}
+            className="flex-1 lg:flex-none inline-flex items-center justify-center gap-2 px-5 min-h-[48px] bg-brand hover:bg-brand-hover text-white rounded-pill text-sm font-semibold transition-colors duration-base"
+          >
+            <Plus size={16} /> A new debt
+          </button>
         </div>
       </div>
 
@@ -256,34 +366,32 @@ export default function DashboardPage() {
                 className="debt-card bg-white border border-mint-200 rounded-xl p-6 cursor-pointer group shadow-sm hover:shadow-md"
                 onClick={() => router.push(`/debts/${debt.id}`)}
               >
-                <div className="flex items-start justify-between mb-4">
-                  <div className="flex items-start gap-3 flex-1">
-                    <div>{categoryIcon(debt.category)}</div>
-                    <div>
-                      <h3 className="font-semibold text-sage-800 text-base">
+                <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-4">
+                  <div className="flex items-center gap-3 min-w-0">
+                    <div className="shrink-0">{categoryIcon(debt.category)}</div>
+                    <div className="min-w-0">
+                      <h3 className="font-semibold text-sage-800 text-base truncate">
                         {debt.company}
                       </h3>
-                      {debt.direct_debit_date && (
-                        <p className="text-xs text-sage-500 mt-0.5">
-                          DD due: {ordinal(debt.direct_debit_date)}
-                        </p>
-                      )}
                     </div>
                   </div>
+                  <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+                  <DueChip dayOfMonth={debt.direct_debit_date} />
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
                       toggleArrangement(debt);
                     }}
-                    className="flex-shrink-0 flex items-center gap-2 px-3 py-1.5 rounded-full bg-mint-100 border border-mint-200 hover:border-sage-300 transition-all"
+                    className="shrink-0 flex items-center gap-2 px-3 py-1.5 rounded-pill bg-mint-100 border border-mint-200 hover:border-sage-300 transition-all"
                   >
                     <div
                       className={`w-2 h-2 rounded-full ${arrangementConfig[debt.arrangement ?? "default"].dot}`}
                     />
-                    <span className="text-xs font-medium text-sage-700">
+                    <span className="text-xs font-medium text-sage-700 whitespace-nowrap">
                       {arrangementConfig[debt.arrangement ?? "default"].label}
                     </span>
                   </button>
+                  </div>
                 </div>
 
                 <div>
@@ -296,9 +404,9 @@ export default function DashboardPage() {
                       {getProgressPercent(debt)}%
                     </p>
                   </div>
-                  <div className="w-full h-2 bg-mint-100 rounded-full overflow-hidden mb-3">
+                  <div className="w-full h-2 bg-mint-100 rounded-pill overflow-hidden mb-3">
                     <div
-                      className="progress-bar h-full rounded-full"
+                      className="progress-bar h-full rounded-pill"
                       style={{ width: `${getProgressPercent(debt)}%` }}
                     />
                   </div>
@@ -333,6 +441,56 @@ export default function DashboardPage() {
           <span className="font-medium">Add a debt</span>
         </button>
       </div>
+
+      {/* "Add payment" needs a debt first — the modal itself takes exactly one. */}
+      {pickingDebt && (
+        <div
+          className="fixed inset-0 bg-sage-900/40 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+          onClick={() => setPickingDebt(false)}
+        >
+          <div
+            className="bg-white rounded-2xl shadow-modal w-full max-w-sm max-h-[calc(100dvh-2rem)] overflow-y-auto p-6"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h2 className="font-display text-xl font-bold text-sage-800 mb-1">
+              Which debt?
+            </h2>
+            <p className="text-sm text-sage-600 mb-5">
+              Pick the one you&rsquo;ve paid.
+            </p>
+            <div className="flex flex-col gap-2 max-h-80 overflow-y-auto">
+              {debts.map((debt) => (
+                <button
+                  key={debt.id}
+                  onClick={() => {
+                    setPickingDebt(false);
+                    setLogPaymentDebt(debt);
+                  }}
+                  className="w-full flex items-center gap-3 text-left px-4 min-h-[48px] py-3 rounded-xl border border-mint-200 hover:border-brand hover:bg-teal-50 transition-colors duration-base"
+                >
+                  <span className="text-brand shrink-0">
+                    {categoryIcon(debt.category)}
+                  </span>
+                  <span className="flex-1 min-w-0">
+                    <span className="block font-medium text-sage-800 truncate">
+                      {debt.company}
+                    </span>
+                    <span className="block text-xs text-sage-500">
+                      £{Math.round(debt.amount_owed).toLocaleString()} remaining
+                    </span>
+                  </span>
+                </button>
+              ))}
+            </div>
+            <button
+              onClick={() => setPickingDebt(false)}
+              className="w-full mt-5 min-h-[48px] rounded-pill border border-mint-200 text-sage-700 text-sm font-semibold hover:bg-paper-sunk transition-colors duration-base"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Log Payment Modal */}
       {logPaymentDebt && (
