@@ -21,11 +21,11 @@ import {
 } from "lucide-react";
 import type { Debt } from "@/lib/types";
 import { useTracker, getMonthStatus } from "@/lib/hooks/useTracker";
-import { useBudget } from "@/lib/hooks/useBudget";
+import { useProfile } from "@/lib/hooks/useProfile";
 import {
   projectDebtFree,
   formatLongDate,
-  formatMonthYear,
+  budgetUsage,
 } from "@/lib/projection";
 import LogPaymentModal from "@/components/LogPaymentModal";
 import DueChip from "@/components/DueChip";
@@ -84,7 +84,8 @@ export default function DashboardPage() {
   const router = useRouter();
   const { debts, isLoading, error: debtsError, updateDebt } = useDebts();
   const { data: trackerData, isLoading: isTrackerLoading } = useTracker();
-  const { budget } = useBudget();
+  const { profile, greetingName } = useProfile();
+  const budget = profile.monthly_budget;
   const [logPaymentDebt, setLogPaymentDebt] = useState<Debt | null>(null);
   const [pickingDebt, setPickingDebt] = useState(false);
 
@@ -103,14 +104,13 @@ export default function DashboardPage() {
   }
 
   const projection = projectDebtFree(debts);
+  const usage = budgetUsage(debts, budget);
   const totalDebt = projection.totalOwed;
 
-  const firstName = (session?.user?.name || session?.user?.email || "")
-    .split("@")[0]
-    .split(/[.\s_-]/)[0];
-  const displayName = firstName
-    ? firstName.charAt(0).toUpperCase() + firstName.slice(1)
-    : "";
+  // Prefer what they've asked to be called; fall back to the email local part.
+  const fallback = (session?.user?.email || "").split("@")[0].split(/[.\s_-]/)[0];
+  const raw = greetingName || fallback;
+  const displayName = raw ? raw.charAt(0).toUpperCase() + raw.slice(1) : "";
 
   const getProgressPercent = (debt: Debt) =>
     Math.round(
@@ -176,13 +176,7 @@ export default function DashboardPage() {
         <div className="bg-white border border-mint-200 rounded-2xl p-6 shadow-sm w-full md:w-[22rem] shrink-0 text-center">
           <p className="text-sage-600 text-sm mb-1">Your debt free day</p>
           <p className="font-display text-3xl font-bold text-sage-800 mb-1">
-            {/* Without the last debt's payment date we only honestly know the
-                month, so don't invent a day. */}
-            {isLoading
-              ? "—"
-              : projection.longestPole?.direct_debit_date
-                ? formatLongDate(projection.date)
-                : formatMonthYear(projection.date, "long")}
+            {isLoading ? "—" : formatLongDate(projection.date)}
           </p>
           <p className="text-2xs text-sage-500 mb-4">
             {projection.unprojectable.length > 0
@@ -316,18 +310,34 @@ export default function DashboardPage() {
             <p className="font-display text-3xl font-bold text-sage-800">
               {budget === null ? "—" : `£${Math.round(budget).toLocaleString()}`}
             </p>
-            <p className="text-xs text-sage-500 mt-2">
-              {budget === null ? (
+            {budget === null ? (
+              <p className="text-xs text-sage-500 mt-2">
                 <button
                   onClick={() => router.push("/settings")}
                   className="underline hover:text-sage-800 transition-colors"
                 >
                   Set one in settings
                 </button>
-              ) : (
-                "for debt repayment"
-              )}
-            </p>
+              </p>
+            ) : (
+              <>
+                <div className="w-full h-1.5 bg-mint-100 rounded-pill overflow-hidden mt-3">
+                  <div
+                    className={`h-full rounded-pill ${usage.over ? "bg-warn-600" : "bg-ok-600"}`}
+                    style={{ width: `${usage.percent ?? 0}%` }}
+                  />
+                </div>
+                <p
+                  className={`text-xs mt-2 font-semibold ${
+                    usage.over ? "text-warn-600" : "text-ok-600"
+                  }`}
+                >
+                  £{Math.round(usage.committed).toLocaleString()} of £
+                  {Math.round(budget).toLocaleString()} committed
+                  {usage.over ? " — over budget" : ""}
+                </p>
+              </>
+            )}
           </div>
 
           <div className="bg-white border border-mint-200 rounded-xl p-6 shadow-sm">

@@ -1,5 +1,6 @@
 import { getSession } from "@/lib/devAuth";
 import { supabase } from "@/lib/supabase";
+import { supabaseAdmin } from "@/lib/supabaseAdmin";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 export default async function handler(
@@ -22,7 +23,7 @@ export default async function handler(
     }
 
     try {
-      const { error } = await supabase.auth.admin.updateUserById(
+      const { error } = await supabaseAdmin.auth.admin.updateUserById(
         session.user.id,
         { password },
       );

@@ -1,5 +1,6 @@
 import { getSession } from "@/lib/devAuth";
 import { supabase } from "@/lib/supabase";
+import { supabaseAdmin } from "@/lib/supabaseAdmin";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 export default async function handler(
@@ -34,7 +35,7 @@ export default async function handler(
       await supabase.from("users").delete().eq("id", session.user.id);
 
       // Delete from Supabase auth
-      const { error } = await supabase.auth.admin.deleteUser(session.user.id);
+      const { error } = await supabaseAdmin.auth.admin.deleteUser(session.user.id);
       if (error) throw error;
 
       return res.status(200).json({ success: true });

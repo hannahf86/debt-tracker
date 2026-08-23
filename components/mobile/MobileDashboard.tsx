@@ -4,9 +4,13 @@ import { useRouter } from "next/router";
 import { Plus, CreditCard, Landmark, Zap, Receipt, Home, MoreHorizontal } from "lucide-react";
 import type { Debt } from "@/lib/types";
 import type { DebtFreeProjection } from "@/lib/projection";
-import { formatLongDate, formatMonthYear } from "@/lib/projection";
+import { formatLongDate, budgetUsage } from "@/lib/projection";
 import { ordinal } from "@/lib/format";
-import { getDebtMonthStatus, type TrackerData } from "@/lib/hooks/useTracker";
+import {
+  getMonthStatus,
+  type TrackerData,
+  type MonthStatus,
+} from "@/lib/hooks/useTracker";
 import MonthCell from "@/components/mobile/MonthCell";
 
 const MONTHS = [
@@ -78,6 +82,17 @@ export default function MobileDashboard({
 }) {
   const router = useRouter();
   const greeting = timeGreeting();
+  const usage = budgetUsage(debts, budget);
+
+  // Earliest debt across the set — the actual minimum, not an array position.
+  const earliestDebt =
+    trackerData.debts.length > 0
+      ? new Date(
+          Math.min(
+            ...trackerData.debts.map((d) => new Date(d.created_at).getTime()),
+          ),
+        )
+      : null;
   const year = new Date().getFullYear();
   const thisMonth = new Date().getMonth();
 
@@ -116,11 +131,7 @@ export default function MobileDashboard({
       <section className="bg-white border border-mint-200 rounded-2xl shadow-sm px-5 py-6 text-center">
         <p className="text-sm text-sage-500">Your debt free day</p>
         <p className="font-display text-[36px] leading-tight font-extrabold text-sage-800 my-1.5">
-          {isLoading
-            ? "—"
-            : projection.longestPole?.direct_debit_date
-              ? formatLongDate(projection.date)
-              : formatMonthYear(projection.date, "long")}
+          {isLoading ? "—" : formatLongDate(projection.date)}
         </p>
         <p className="text-xs text-sage-500 mb-4">
           {projection.unprojectable.length > 0
@@ -173,7 +184,26 @@ export default function MobileDashboard({
           <p className="font-display text-[26px] font-extrabold text-sage-800 mt-2">
             {budget === null ? "—" : `£${Math.round(budget).toLocaleString()}`}
           </p>
-          <p className="text-xs text-sage-500 mt-0.5">for debt repayment</p>
+          {usage.percent === null ? (
+            <p className="text-xs text-sage-500 mt-0.5">for debt repayment</p>
+          ) : (
+            <>
+              <div className="w-full h-1.5 bg-mint-100 rounded-pill overflow-hidden mt-2">
+                <div
+                  className={`h-full rounded-pill ${usage.over ? "bg-warn-600" : "bg-ok-600"}`}
+                  style={{ width: `${usage.percent}%` }}
+                />
+              </div>
+              <p
+                className={`text-xs mt-1.5 font-semibold ${
+                  usage.over ? "text-warn-600" : "text-ok-600"
+                }`}
+              >
+                £{Math.round(usage.committed).toLocaleString()} committed
+                {usage.over ? " — over" : ""}
+              </p>
+            </>
+          )}
         </div>
         <div className="flex-1 bg-white border border-mint-200 rounded-xl px-3.5 py-4">
           <p className="caps-label">Due this month</p>
@@ -199,18 +229,26 @@ export default function MobileDashboard({
         </div>
         <div className="flex gap-2 px-4 pb-1 overflow-x-auto no-scrollbar">
           {MONTHS.map((month, idx) => {
-            const status =
-              isLoading || trackerData.debts.length === 0
+            const monthStart = new Date(year, idx, 1);
+            // Don't mark months that predate the debts as missed — nothing was
+            // owed yet, and a row of red crosses reads as a telling-off.
+            const beforeAnyDebt = earliestDebt
+              ? monthStart <
+                new Date(earliestDebt.getFullYear(), earliestDebt.getMonth(), 1)
+              : true;
+
+            const status: MonthStatus =
+              isLoading || beforeAnyDebt || idx > thisMonth
                 ? "future"
-                : idx > thisMonth
-                  ? "future"
-                  : idx === thisMonth
-                    ? "current"
-                    : (["paid", "partial", "missed"].includes(
-                          getDebtMonthStatus(trackerData.debts[0], trackerData.payments, idx, year),
-                        )
-                        ? getDebtMonthStatus(trackerData.debts[0], trackerData.payments, idx, year)
-                        : "future");
+                : idx === thisMonth
+                  ? "current"
+                  : getMonthStatus(
+                      trackerData.debts,
+                      trackerData.payments,
+                      idx,
+                      year,
+                    );
+
             return (
               <div key={month} className="flex flex-col items-center gap-1.5 shrink-0">
                 <span className="text-2xs font-bold tracking-caps uppercase text-sage-400">
@@ -221,7 +259,9 @@ export default function MobileDashboard({
                   label={month}
                   size={46}
                   onClick={
-                    idx <= thisMonth ? () => router.push(`/tracker/${idx + 1}`) : undefined
+                    !beforeAnyDebt && idx <= thisMonth
+                      ? () => router.push(`/tracker/${idx + 1}`)
+                      : undefined
                   }
                 />
               </div>

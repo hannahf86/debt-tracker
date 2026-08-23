@@ -1,13 +1,44 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useSession, signOut } from "next-auth/react";
 import { useDebts } from "@/lib/hooks/useDebts";
+import { useProfile } from "@/lib/hooks/useProfile";
 import { Save, AlertTriangle } from "lucide-react";
 
 export default function SettingsPage() {
   const { data: session } = useSession();
   const { debts } = useDebts();
+
+  const { profile, saveProfile } = useProfile();
+
+  const [name, setName] = useState("");
+  const [displayName, setDisplayName] = useState("");
+  const [isSavingNames, setIsSavingNames] = useState(false);
+  const [namesSaved, setNamesSaved] = useState(false);
+
+  // Seed the fields once the profile arrives.
+  useEffect(() => {
+    setName(profile.name ?? "");
+    setDisplayName(profile.display_name ?? "");
+    if (profile.monthly_budget !== null) {
+      setMonthlyBudget(String(profile.monthly_budget));
+    }
+  }, [profile]);
+
+  const handleSaveNames = async () => {
+    setIsSavingNames(true);
+    setNamesSaved(false);
+    try {
+      await saveProfile({ name, display_name: displayName });
+      setNamesSaved(true);
+      setTimeout(() => setNamesSaved(false), 2500);
+    } catch {
+      // The profile hook surfaces the message; nothing extra to do here.
+    } finally {
+      setIsSavingNames(false);
+    }
+  };
 
   const [monthlyBudget, setMonthlyBudget] = useState("");
   const [budgetSaved, setBudgetSaved] = useState(false);
@@ -105,6 +136,54 @@ export default function SettingsPage() {
           <h2 className="text-lg font-semibold text-sage-800 mb-6">Account</h2>
 
           <div className="space-y-4">
+            <div>
+              <label
+                htmlFor="name"
+                className="text-xs text-sage-500 uppercase tracking-wider font-semibold block mb-2"
+              >
+                Name
+              </label>
+              <input
+                id="name"
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="Your full name"
+                className="w-full bg-white border border-mint-200 rounded-lg px-4 py-2 text-sage-800 placeholder-sage-500 focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand"
+              />
+            </div>
+
+            <div>
+              <label
+                htmlFor="display_name"
+                className="text-xs text-sage-500 uppercase tracking-wider font-semibold block mb-2"
+              >
+                Display name
+              </label>
+              <input
+                id="display_name"
+                type="text"
+                value={displayName}
+                onChange={(e) => setDisplayName(e.target.value)}
+                placeholder="What Mirian should call you"
+                className="w-full bg-white border border-mint-200 rounded-lg px-4 py-2 text-sage-800 placeholder-sage-500 focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand"
+              />
+              <p className="text-xs text-sage-500 mt-2">
+                Used in your greeting. Leave it blank to use your first name.
+              </p>
+            </div>
+
+            <div>
+              <button
+                onClick={handleSaveNames}
+                disabled={isSavingNames}
+                className="inline-flex items-center gap-2 px-4 min-h-[44px] rounded-pill bg-brand hover:bg-brand-hover text-white text-sm font-semibold transition-colors duration-base disabled:opacity-50"
+              >
+                <Save size={16} />
+                {isSavingNames ? "Saving…" : namesSaved ? "Saved" : "Save"}
+              </button>
+            </div>
+
             <div>
               <label className="text-xs text-sage-500 uppercase tracking-wider font-semibold block mb-2">
                 Email address

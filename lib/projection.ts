@@ -25,8 +25,10 @@ export function clearedDate(debt: Debt, from: Date = new Date()): Date | null {
   if (months === null) return null;
 
   const d = new Date(from.getFullYear(), from.getMonth() + months, 1);
-  const day = debt.direct_debit_date ?? 1;
   const lastDayOfMonth = new Date(d.getFullYear(), d.getMonth() + 1, 0).getDate();
+  // No payment date set means we don't know which day it lands, so use the end
+  // of the month — you're free *by* then rather than optimistically on the 1st.
+  const day = debt.direct_debit_date ?? lastDayOfMonth;
   d.setDate(Math.min(day, lastDayOfMonth));
   return d;
 }
@@ -49,7 +51,7 @@ export function formatLongDate(date: Date | null): string {
       ? "th"
       : { 1: "st", 2: "nd", 3: "rd" }[day % 10] ?? "th";
   return `${day}${suffix} ${date.toLocaleDateString("en-GB", {
-    month: "long",
+    month: "short",
     year: "numeric",
   })}`;
 }
@@ -109,5 +111,34 @@ export function projectDebtFree(
     totalOriginal,
     totalCleared,
     percentCleared,
+  };
+}
+
+export type BudgetUsage = {
+  /** Sum of what the debts commit you to each month. */
+  committed: number;
+  budget: number | null;
+  /** Committed as a share of budget, capped at 100 for the bar. */
+  percent: number | null;
+  over: boolean;
+};
+
+/**
+ * How much of the monthly budget the current debts already commit.
+ *
+ * Going over isn't an error — plenty of people are committed to more than they
+ * can comfortably pay, and that's exactly what the app exists to help with. It
+ * is worth showing plainly though.
+ */
+export function budgetUsage(debts: Debt[], budget: number | null): BudgetUsage {
+  const committed = debts.reduce((sum, d) => sum + (d.monthly_amount ?? 0), 0);
+  if (!budget || budget <= 0) {
+    return { committed, budget: null, percent: null, over: false };
+  }
+  return {
+    committed,
+    budget,
+    percent: Math.min(100, Math.round((committed / budget) * 100)),
+    over: committed > budget,
   };
 }

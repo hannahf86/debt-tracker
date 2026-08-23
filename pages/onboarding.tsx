@@ -1,6 +1,7 @@
 "use client";
 
 import { useSession, signOut } from "next-auth/react";
+import { useProfile } from "@/lib/hooks/useProfile";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import { CheckCircle, Moon, Clock, Sprout, Check, MapPin, LogOut } from "lucide-react";
@@ -8,8 +9,9 @@ import { CheckCircle, Moon, Clock, Sprout, Check, MapPin, LogOut } from "lucide-
 const steps = [
   { id: 1, label: "Welcome" },
   { id: 2, label: "What to expect" },
-  { id: 3, label: "First debt" },
-  { id: 4, label: "You're in" },
+  { id: 3, label: "Your details" },
+  { id: 4, label: "First debt" },
+  { id: 5, label: "You're in" },
 ];
 
 const categories = [
@@ -41,8 +43,29 @@ const arrangements = [
 
 export default function OnboardingPage() {
   const router = useRouter();
+  const { saveProfile } = useProfile();
   const { data: session, status } = useSession();
   const [step, setStep] = useState(1);
+  const [obName, setObName] = useState("");
+  const [obDisplayName, setObDisplayName] = useState("");
+  const [obBudget, setObBudget] = useState("");
+  const [isSavingDetails, setIsSavingDetails] = useState(false);
+
+  const handleSaveDetails = async () => {
+    setIsSavingDetails(true);
+    try {
+      await saveProfile({
+        name: obName,
+        display_name: obDisplayName,
+        monthly_budget: obBudget === "" ? null : Number(obBudget),
+      });
+    } catch {
+      // Details are optional — never block onboarding on them.
+    } finally {
+      setIsSavingDetails(false);
+      setStep(4);
+    }
+  };
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [form, setForm] = useState({
@@ -106,7 +129,7 @@ export default function OnboardingPage() {
         setIsLoading(false);
         return;
       }
-      setStep(4);
+      setStep(5);
     } catch (err) {
       setError("An error occurred. Please try again.");
     } finally {
@@ -119,9 +142,9 @@ export default function OnboardingPage() {
       {escapeHatch}
       <div className="w-full max-w-lg">
         {/* Progress indicator */}
-        {step < 4 && (
+        {step < 5 && (
           <div className="flex items-center justify-center gap-2 mb-8">
-            {steps.map((s) => (
+            {steps.slice(0, -1).map((s) => (
               <div key={s.id} className="flex items-center gap-2">
                 <div
                   className={`w-2 h-2 rounded-full transition-all ${
@@ -134,7 +157,7 @@ export default function OnboardingPage() {
                 />
               </div>
             ))}
-            <span className="text-sage-500 text-xs ml-2">{step} of 3</span>
+            <span className="text-sage-500 text-xs ml-2">{step} of {steps.length - 1}</span>
           </div>
         )}
 
@@ -237,8 +260,109 @@ export default function OnboardingPage() {
           </div>
         )}
 
-        {/* Step 3 — Add first debt */}
+        {/* Step 3 — Your details */}
         {step === 3 && (
+          <div className="bg-white border border-mint-200 rounded-2xl p-8 shadow-sm">
+            <h2 className="text-2xl font-bold text-sage-800 mb-2">
+              A bit about you.
+            </h2>
+            <p className="text-sage-600 mb-8">
+              Just so Mirian knows what to call you. You can change any of this
+              later.
+            </p>
+
+            <div className="space-y-5">
+              <div>
+                <label
+                  htmlFor="ob-name"
+                  className="text-xs text-sage-500 uppercase tracking-wider font-semibold block mb-2"
+                >
+                  Name
+                </label>
+                <input
+                  id="ob-name"
+                  type="text"
+                  value={obName}
+                  onChange={(e) => setObName(e.target.value)}
+                  placeholder="Your full name"
+                  className="w-full bg-white border border-mint-200 rounded-lg px-4 py-3 text-sage-800 placeholder-sage-500 focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand"
+                />
+              </div>
+
+              <div>
+                <label
+                  htmlFor="ob-display"
+                  className="text-xs text-sage-500 uppercase tracking-wider font-semibold block mb-2"
+                >
+                  Display name{" "}
+                  <span className="normal-case tracking-normal font-normal text-sage-500">
+                    — optional
+                  </span>
+                </label>
+                <input
+                  id="ob-display"
+                  type="text"
+                  value={obDisplayName}
+                  onChange={(e) => setObDisplayName(e.target.value)}
+                  placeholder="What we should call you"
+                  className="w-full bg-white border border-mint-200 rounded-lg px-4 py-3 text-sage-800 placeholder-sage-500 focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand"
+                />
+                <p className="text-xs text-sage-500 mt-2">
+                  Used in your greeting. Leave it blank and we&rsquo;ll use your
+                  first name.
+                </p>
+              </div>
+
+              <div>
+                <label
+                  htmlFor="ob-budget"
+                  className="text-xs text-sage-500 uppercase tracking-wider font-semibold block mb-2"
+                >
+                  Monthly budget{" "}
+                  <span className="normal-case tracking-normal font-normal text-sage-500">
+                    — optional
+                  </span>
+                </label>
+                <div className="relative">
+                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-sage-500">
+                    £
+                  </span>
+                  <input
+                    id="ob-budget"
+                    type="number"
+                    inputMode="decimal"
+                    value={obBudget}
+                    onChange={(e) => setObBudget(e.target.value)}
+                    placeholder="0"
+                    className="w-full bg-white border border-mint-200 rounded-lg pl-8 pr-4 py-3 text-sage-800 placeholder-sage-500 focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand"
+                  />
+                </div>
+                <p className="text-xs text-sage-500 mt-2">
+                  What you can put towards debt each month. A rough number is
+                  fine.
+                </p>
+              </div>
+            </div>
+
+            <button
+              onClick={handleSaveDetails}
+              disabled={isSavingDetails}
+              className="w-full mt-8 bg-sage-600 hover:bg-sage-700 text-white font-semibold py-3 rounded-xl transition-all disabled:opacity-50"
+            >
+              {isSavingDetails ? "Saving…" : "Continue"}
+            </button>
+
+            <button
+              onClick={() => setStep(4)}
+              className="w-full mt-3 text-sage-500 hover:text-sage-800 text-sm transition-colors min-h-[44px]"
+            >
+              Skip for now
+            </button>
+          </div>
+        )}
+
+        {/* Step 3 — Add first debt */}
+        {step === 4 && (
           <div className="bg-white border border-mint-200 rounded-2xl p-8 shadow-sm">
             <h2 className="text-2xl font-bold text-sage-800 mb-2">
               Let's start with one debt.
@@ -382,7 +506,7 @@ export default function OnboardingPage() {
         )}
 
         {/* Step 4 — You're in */}
-        {step === 4 && (
+        {step === 5 && (
           <div className="text-center">
             <div className="flex items-center justify-center w-20 h-20 mx-auto mb-6 rounded-pill bg-ok-100 border border-ok-200 text-ok-600">
               <CheckCircle size={40} />
