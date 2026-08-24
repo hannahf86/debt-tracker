@@ -90,6 +90,11 @@ The schema is not yet checked in — the tables (`users`, `debts`, `payments`,
 `missed_payments`) live only in the hosted Supabase project, so a fresh clone
 cannot recreate them. Worth exporting to `supabase/migrations/`.
 
+Two SQL scripts live in `supabase/`, both run from the Supabase SQL editor:
+`rls.sql` (required, see below) and `orphans.sql` (tidying — counts and clears
+payment rows left behind by debt deletions predating the cascade fix in
+`pages/api/debts/[id].ts`).
+
 ### Row-level security
 
 **Run `supabase/rls.sql` once against the project.** The anon key is public

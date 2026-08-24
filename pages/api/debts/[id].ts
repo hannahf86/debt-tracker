@@ -96,7 +96,23 @@ export default async function handler(
 
   if (req.method === "DELETE") {
     try {
-      await supabaseAdmin.from("debts").delete().eq("id", id);
+      // Children first. Whether the foreign keys carry ON DELETE CASCADE isn't
+      // visible from the repo, so remove them explicitly — the result is the
+      // same either way, and it matches how users/delete.ts already works.
+      //
+      // Note .delete() resolves with an { error } rather than throwing, so the
+      // surrounding try/catch does not cover it. Each call has to be checked or
+      // a failure returns 204 and the rows silently survive.
+      for (const table of ["missed_payments", "payments"] as const) {
+        const { error: childError } = await supabaseAdmin
+          .from(table)
+          .delete()
+          .eq("debt_id", id);
+        if (childError) throw childError;
+      }
+
+      const { error } = await supabaseAdmin.from("debts").delete().eq("id", id);
+      if (error) throw error;
 
       return res.status(204).end();
     } catch (error) {

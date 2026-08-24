@@ -14,24 +14,44 @@ export default async function handler(
 
   if (req.method === "DELETE") {
     try {
-      // Delete all user data in order
-      await supabaseAdmin
+      // Delete all user data in order.
+      //
+      // .delete() resolves with an { error } rather than throwing, so every
+      // step needs checking. Unchecked, a half-finished deletion still returned
+      // { success: true } — and this is the endpoint that tells someone their
+      // data is gone.
+      const { error: notesError } = await supabaseAdmin
         .from("missed_payments")
         .delete()
         .eq("user_id", session.user.id);
+      if (notesError) throw notesError;
 
-      const { data: debts } = await supabaseAdmin
+      const { data: debts, error: debtsReadError } = await supabaseAdmin
         .from("debts")
         .select("id")
         .eq("user_id", session.user.id);
+      if (debtsReadError) throw debtsReadError;
 
       if (debts && debts.length > 0) {
         const debtIds = debts.map((d) => d.id);
-        await supabaseAdmin.from("payments").delete().in("debt_id", debtIds);
+        const { error: paymentsError } = await supabaseAdmin
+          .from("payments")
+          .delete()
+          .in("debt_id", debtIds);
+        if (paymentsError) throw paymentsError;
       }
 
-      await supabaseAdmin.from("debts").delete().eq("user_id", session.user.id);
-      await supabaseAdmin.from("users").delete().eq("id", session.user.id);
+      const { error: debtsError } = await supabaseAdmin
+        .from("debts")
+        .delete()
+        .eq("user_id", session.user.id);
+      if (debtsError) throw debtsError;
+
+      const { error: userError } = await supabaseAdmin
+        .from("users")
+        .delete()
+        .eq("id", session.user.id);
+      if (userError) throw userError;
 
       // Delete from Supabase auth
       const { error } = await supabaseAdmin.auth.admin.deleteUser(session.user.id);
