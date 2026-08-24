@@ -126,14 +126,16 @@ export default function SettingsPage() {
     <div className="p-4 md:p-6">
       <div className="max-w-2xl mx-auto">
         <div className="mb-8">
-          <h1 className="text-4xl font-bold text-sage-800 mb-2">Settings</h1>
+          <h1 className="font-display text-[1.75rem] md:text-4xl leading-tight font-extrabold text-sage-800 mb-2">
+            Settings
+          </h1>
           <p className="text-sage-500 text-sm">
             Manage your account and preferences
           </p>
         </div>
 
         {/* Appearance */}
-        <div className="bg-white border border-mint-200 rounded-2xl p-6 mb-6 shadow-sm">
+        <div className="bg-white border border-mint-200 rounded-2xl p-5 md:p-6 mb-6 shadow-sm">
           <h2 className="text-lg font-semibold text-sage-800 mb-2">
             Appearance
           </h2>
@@ -144,7 +146,7 @@ export default function SettingsPage() {
         </div>
 
         {/* Account */}
-        <div className="bg-white border border-mint-200 rounded-2xl p-6 mb-6 shadow-sm">
+        <div className="bg-white border border-mint-200 rounded-2xl p-5 md:p-6 mb-6 shadow-sm">
           <h2 className="text-lg font-semibold text-sage-800 mb-6">Account</h2>
 
           <div className="space-y-4">
@@ -161,7 +163,7 @@ export default function SettingsPage() {
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder="Your full name"
-                className="w-full bg-white border border-mint-200 rounded-lg px-4 py-2 text-sage-800 placeholder-sage-500 focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand"
+                className="w-full min-h-[48px] bg-white border border-mint-200 rounded-lg px-4 py-2 text-sage-800 placeholder-sage-500 focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand"
               />
             </div>
 
@@ -178,7 +180,7 @@ export default function SettingsPage() {
                 value={displayName}
                 onChange={(e) => setDisplayName(e.target.value)}
                 placeholder="What Mirian should call you"
-                className="w-full bg-white border border-mint-200 rounded-lg px-4 py-2 text-sage-800 placeholder-sage-500 focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand"
+                className="w-full min-h-[48px] bg-white border border-mint-200 rounded-lg px-4 py-2 text-sage-800 placeholder-sage-500 focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand"
               />
               <p className="text-xs text-sage-500 mt-2">
                 Used in your greeting. Leave it blank to use your first name.
@@ -197,21 +199,25 @@ export default function SettingsPage() {
             </div>
 
             <div>
-              <label className="text-xs text-sage-500 uppercase tracking-wider font-semibold block mb-2">
+              <label
+                htmlFor="email"
+                className="text-xs text-sage-500 uppercase tracking-wider font-semibold block mb-2"
+              >
                 Email address
               </label>
               <input
+                id="email"
                 type="email"
                 value={session?.user?.email || ""}
                 disabled
-                className="w-full bg-mint-50 border border-mint-200 rounded-lg px-4 py-2 text-sage-500 cursor-not-allowed"
+                className="w-full min-h-[48px] bg-mint-50 border border-mint-200 rounded-lg px-4 py-2 text-sage-500 cursor-not-allowed"
               />
             </div>
 
             <div>
-              <label className="text-xs text-sage-500 uppercase tracking-wider font-semibold block mb-2">
+              <p className="text-xs text-sage-500 uppercase tracking-wider font-semibold mb-2">
                 Password
-              </label>
+              </p>
 
               {passwordSaved && (
                 <div className="mb-3 p-3 bg-ok-100 border border-ok-200 rounded-lg">
@@ -224,7 +230,7 @@ export default function SettingsPage() {
               {!showChangePassword ? (
                 <button
                   onClick={() => setShowChangePassword(true)}
-                  className="px-4 py-2 bg-mint-100 hover:bg-mint-200 text-sage-700 rounded-lg text-sm font-medium transition-colors border border-mint-200"
+                  className="px-4 min-h-[48px] bg-mint-100 hover:bg-mint-200 text-sage-700 rounded-pill text-sm font-semibold transition-colors border border-mint-200"
                 >
                   Change password
                 </button>
@@ -235,19 +241,29 @@ export default function SettingsPage() {
                       <p className="text-alert-600 text-sm">{passwordError}</p>
                     </div>
                   )}
+                  <label htmlFor="new_password" className="sr-only">
+                    New password
+                  </label>
                   <input
+                    id="new_password"
                     type="password"
+                    autoComplete="new-password"
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
                     placeholder="New password"
-                    className="w-full bg-white border border-mint-200 rounded-lg px-4 py-2 text-sage-800 placeholder-sage-500 focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand"
+                    className="w-full min-h-[48px] bg-white border border-mint-200 rounded-lg px-4 py-2 text-sage-800 placeholder-sage-500 focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand"
                   />
+                  <label htmlFor="confirm_password" className="sr-only">
+                    Confirm new password
+                  </label>
                   <input
+                    id="confirm_password"
                     type="password"
+                    autoComplete="new-password"
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     placeholder="Confirm new password"
-                    className="w-full bg-white border border-mint-200 rounded-lg px-4 py-2 text-sage-800 placeholder-sage-500 focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand"
+                    className="w-full min-h-[48px] bg-white border border-mint-200 rounded-lg px-4 py-2 text-sage-800 placeholder-sage-500 focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand"
                   />
                   <div className="flex gap-3">
                     <button
@@ -257,7 +273,7 @@ export default function SettingsPage() {
                         setNewPassword("");
                         setConfirmPassword("");
                       }}
-                      className="flex-1 bg-mint-100 hover:bg-mint-200 text-sage-700 font-medium py-2 rounded-lg transition-colors text-sm border border-mint-200"
+                      className="flex-1 min-h-[48px] px-4 bg-mint-100 hover:bg-mint-200 text-sage-700 font-semibold rounded-pill transition-colors text-sm border border-mint-200"
                     >
                       Cancel
                     </button>
@@ -266,7 +282,7 @@ export default function SettingsPage() {
                       disabled={
                         !newPassword || !confirmPassword || isPasswordLoading
                       }
-                      className="flex-1 bg-sage-600 hover:bg-sage-700 text-white font-medium py-2 rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed text-sm"
+                      className="flex-1 min-h-[48px] px-4 bg-sage-600 hover:bg-sage-700 text-white font-semibold rounded-pill transition-all disabled:opacity-50 disabled:cursor-not-allowed text-sm"
                     >
                       {isPasswordLoading ? "Saving..." : "Update password"}
                     </button>
@@ -278,7 +294,7 @@ export default function SettingsPage() {
         </div>
 
         {/* Budget */}
-        <div className="bg-white border border-mint-200 rounded-2xl p-6 mb-6 shadow-sm">
+        <div className="bg-white border border-mint-200 rounded-2xl p-5 md:p-6 mb-6 shadow-sm">
           <h2 className="text-lg font-semibold text-sage-800 mb-2">
             Monthly budget
           </h2>
@@ -291,24 +307,28 @@ export default function SettingsPage() {
           </p>
 
           <div>
-            <label className="text-xs text-sage-500 uppercase tracking-wider font-semibold block mb-2">
+            <label
+              htmlFor="monthly_budget"
+              className="text-xs text-sage-500 uppercase tracking-wider font-semibold block mb-2"
+            >
               Monthly budget
             </label>
-            <div className="flex items-center gap-3">
-              <div className="flex items-center flex-1 bg-white border border-mint-200 rounded-lg px-4 py-2 focus-within:border-brand focus-within:ring-2 focus-within:ring-brand">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+              <div className="flex items-center min-h-[48px] flex-1 bg-white border border-mint-200 rounded-lg px-4 py-2 focus-within:border-brand focus-within:ring-2 focus-within:ring-brand">
                 <span className="text-sage-500 mr-2">£</span>
                 <input
+                  id="monthly_budget"
                   type="number"
                   value={monthlyBudget}
                   onChange={(e) => setMonthlyBudget(e.target.value)}
                   placeholder="0.00"
-                  className="flex-1 bg-transparent text-sage-800 placeholder-sage-500 focus:outline-none"
+                  className="flex-1 self-stretch min-h-[44px] bg-transparent text-sage-800 placeholder-sage-500 focus:outline-none"
                 />
               </div>
               <button
                 onClick={handleSaveBudget}
                 disabled={!monthlyBudget}
-                className="flex items-center gap-2 px-4 py-2 bg-sage-600 hover:bg-sage-700 text-white rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium"
+                className="flex items-center justify-center gap-2 w-full sm:w-auto px-5 min-h-[48px] shrink-0 bg-sage-600 hover:bg-sage-700 text-white rounded-pill transition-all disabled:opacity-50 disabled:cursor-not-allowed text-sm font-semibold"
               >
                 <Save size={14} />
                 {budgetSaved ? "Saved!" : "Save"}
@@ -318,7 +338,7 @@ export default function SettingsPage() {
         </div>
 
         {/* Danger zone */}
-        <div className="bg-alert-100 border border-alert-200 rounded-2xl p-6">
+        <div className="bg-alert-100 border border-alert-200 rounded-2xl p-5 md:p-6">
           <div className="flex items-center gap-2 mb-2">
             <AlertTriangle size={18} className="text-alert-600" />
             <h2 className="text-lg font-semibold text-alert-600">Danger zone</h2>
@@ -331,7 +351,7 @@ export default function SettingsPage() {
           {!isDeleting ? (
             <button
               onClick={() => setIsDeleting(true)}
-              className="px-4 py-2 bg-alert-100 hover:bg-alert-100 text-alert-600 border border-alert-200 rounded-lg text-sm font-medium transition-all"
+              className="px-4 min-h-[48px] bg-alert-100 hover:bg-alert-200 text-alert-600 border border-alert-200 rounded-pill text-sm font-semibold transition-all"
             >
               Delete account
             </button>
@@ -344,12 +364,16 @@ export default function SettingsPage() {
                 </span>{" "}
                 to confirm
               </p>
+              <label htmlFor="delete_confirm" className="sr-only">
+                Type &ldquo;delete my account&rdquo; to confirm
+              </label>
               <input
+                id="delete_confirm"
                 type="text"
                 value={deleteConfirm}
                 onChange={(e) => setDeleteConfirm(e.target.value)}
                 placeholder="delete my account"
-                className="w-full bg-white border border-alert-200 rounded-lg px-4 py-2 text-sage-800 placeholder-sage-500 focus:outline-none focus:border-alert-600 focus:ring-2 focus:ring-alert-600"
+                className="w-full min-h-[48px] bg-white border border-alert-200 rounded-lg px-4 py-2 text-sage-800 placeholder-sage-500 focus:outline-none focus:border-alert-600 focus:ring-2 focus:ring-alert-600"
               />
               <div className="flex gap-3">
                 <button
@@ -357,7 +381,7 @@ export default function SettingsPage() {
                     setIsDeleting(false);
                     setDeleteConfirm("");
                   }}
-                  className="flex-1 bg-mint-100 hover:bg-mint-200 text-sage-700 font-medium py-2 rounded-lg transition-colors text-sm border border-mint-200"
+                  className="flex-1 min-h-[48px] px-4 bg-mint-100 hover:bg-mint-200 text-sage-700 font-semibold rounded-pill transition-colors text-sm border border-mint-200"
                 >
                   Cancel
                 </button>
@@ -366,7 +390,7 @@ export default function SettingsPage() {
                   disabled={
                     deleteConfirm !== "delete my account" || isDeleteLoading
                   }
-                  className="flex-1 bg-alert-100 hover:bg-alert-200 text-alert-600 border border-alert-200 font-medium py-2 rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed text-sm"
+                  className="flex-1 min-h-[48px] px-4 bg-alert-100 hover:bg-alert-200 text-alert-600 border border-alert-200 font-semibold rounded-pill transition-all disabled:opacity-50 disabled:cursor-not-allowed text-sm"
                 >
                   {isDeleteLoading ? "Deleting..." : "Confirm delete"}
                 </button>
