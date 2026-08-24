@@ -107,35 +107,43 @@ export default function NewDebtPage() {
         )}
 
         <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="bg-white border border-mint-200 rounded-2xl p-6 space-y-4 shadow-sm">
+          <div className="bg-white border border-mint-200 rounded-2xl p-5 md:p-6 space-y-4 shadow-sm">
             <h2 className="text-sm font-semibold text-sage-500 uppercase tracking-wider">
               The basics
             </h2>
 
             <div>
-              <label className="text-xs text-sage-500 uppercase tracking-wider font-semibold block mb-2">
+              <label
+                htmlFor="company"
+                className="text-xs text-sage-500 uppercase tracking-wider font-semibold block mb-2"
+              >
                 Company *
               </label>
               <input
                 type="text"
+                id="company"
                 name="company"
                 value={form.company}
                 onChange={handleChange}
                 placeholder="e.g. Barclays"
-                className="w-full bg-white border border-mint-200 rounded-lg px-4 py-2 text-sage-800 placeholder-sage-500 focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand"
+                className="w-full min-h-[48px] bg-white border border-mint-200 rounded-lg px-4 py-2 text-sage-800 placeholder-sage-500 focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand"
                 required
               />
             </div>
 
             <div>
-              <label className="text-xs text-sage-500 uppercase tracking-wider font-semibold block mb-2">
+              <label
+                htmlFor="category"
+                className="text-xs text-sage-500 uppercase tracking-wider font-semibold block mb-2"
+              >
                 Category *
               </label>
               <select
+                id="category"
                 name="category"
                 value={form.category}
                 onChange={handleChange}
-                className="w-full bg-white border border-mint-200 rounded-lg px-4 py-2 text-sage-800 focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand"
+                className="w-full min-h-[48px] bg-white border border-mint-200 rounded-lg px-4 py-2 text-sage-800 focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand"
                 required
               >
                 <option value="" disabled>
@@ -149,15 +157,17 @@ export default function NewDebtPage() {
               </select>
             </div>
 
-            <div>
-              <label className="text-xs text-sage-500 uppercase tracking-wider font-semibold block mb-2">
+            {/* A real radio group: sr-only rather than hidden, so it stays
+                focusable and announced. The label shows the focus ring. */}
+            <fieldset>
+              <legend className="text-xs text-sage-500 uppercase tracking-wider font-semibold mb-2">
                 Arrangement *
-              </label>
+              </legend>
               <div className="space-y-2">
                 {arrangements.map((arr) => (
                   <label
                     key={arr.value}
-                    className={`flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-all ${
+                    className={`flex items-center gap-3 min-h-[48px] px-3 py-2.5 rounded-lg border cursor-pointer transition-all focus-within:border-brand focus-within:ring-2 focus-within:ring-brand ${
                       form.arrangement === arr.value
                         ? "border-sage-400 bg-sage-50"
                         : "border-mint-200 bg-white hover:border-sage-300"
@@ -169,9 +179,10 @@ export default function NewDebtPage() {
                       value={arr.value}
                       checked={form.arrangement === arr.value}
                       onChange={handleChange}
-                      className="hidden"
+                      required
+                      className="sr-only"
                     />
-                    <span>{arr.icon}</span>
+                    <span aria-hidden="true">{arr.icon}</span>
                     <span
                       className={`text-sm font-medium ${form.arrangement === arr.value ? "text-sage-800" : "text-sage-600"}`}
                     >
@@ -180,40 +191,48 @@ export default function NewDebtPage() {
                   </label>
                 ))}
               </div>
-            </div>
+            </fieldset>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="text-xs text-sage-500 uppercase tracking-wider font-semibold block mb-2">
+                <label
+                  htmlFor="total_amount"
+                  className="text-xs text-sage-500 uppercase tracking-wider font-semibold block mb-2"
+                >
                   Total amount due *
                 </label>
-                <div className="flex items-center bg-white border border-mint-200 rounded-lg px-4 py-2 focus-within:border-brand focus-within:ring-2 focus-within:ring-brand">
+                <div className="flex items-center min-h-[48px] bg-white border border-mint-200 rounded-lg px-4 py-2 focus-within:border-brand focus-within:ring-2 focus-within:ring-brand">
                   <span className="text-sage-500 mr-2">£</span>
                   <input
                     type="number"
+                    id="total_amount"
                     name="total_amount"
                     value={form.total_amount}
                     onChange={handleChange}
                     placeholder="0.00"
-                    className="w-full bg-transparent text-sage-800 placeholder-sage-500 focus:outline-none"
+                    className="w-full self-stretch min-h-[44px] bg-transparent text-sage-800 placeholder-sage-500 focus:outline-none"
                     required
                   />
                 </div>
               </div>
 
               <div>
-                <label className="text-xs text-sage-500 uppercase tracking-wider font-semibold block mb-2">
+                <label
+                  htmlFor="monthly_amount"
+                  className="text-xs text-sage-500 uppercase tracking-wider font-semibold block mb-2"
+                >
                   Monthly amount due *
                 </label>
-                <div className="flex items-center bg-white border border-mint-200 rounded-lg px-4 py-2 focus-within:border-brand focus-within:ring-2 focus-within:ring-brand">
+                <div className="flex items-center min-h-[48px] bg-white border border-mint-200 rounded-lg px-4 py-2 focus-within:border-brand focus-within:ring-2 focus-within:ring-brand">
                   <span className="text-sage-500 mr-2">£</span>
                   <input
                     type="number"
+                    id="monthly_amount"
                     name="monthly_amount"
                     value={form.monthly_amount}
                     onChange={handleChange}
                     placeholder="0.00"
-                    className="w-full bg-transparent text-sage-800 placeholder-sage-500 focus:outline-none"
+                    className="w-full self-stretch min-h-[44px] bg-transparent text-sage-800 placeholder-sage-500 focus:outline-none"
                     required
                   />
                 </div>
@@ -221,7 +240,7 @@ export default function NewDebtPage() {
             </div>
           </div>
 
-          <div className="bg-white border border-mint-200 rounded-2xl p-6 space-y-4 shadow-sm">
+          <div className="bg-white border border-mint-200 rounded-2xl p-5 md:p-6 space-y-4 shadow-sm">
             <div>
               <h2 className="text-sm font-semibold text-sage-500 uppercase tracking-wider">
                 Payment details
@@ -234,46 +253,58 @@ export default function NewDebtPage() {
             </div>
 
             <div>
-              <label className="text-xs text-sage-500 uppercase tracking-wider font-semibold block mb-2">
+              <label
+                htmlFor="direct_debit_date"
+                className="text-xs text-sage-500 uppercase tracking-wider font-semibold block mb-2"
+              >
                 Direct debit date
               </label>
               <input
                 type="number"
+                id="direct_debit_date"
                 name="direct_debit_date"
                 value={form.direct_debit_date}
                 onChange={handleChange}
                 placeholder="e.g. 15 (for the 15th of the month)"
                 min="1"
                 max="31"
-                className="w-full bg-white border border-mint-200 rounded-lg px-4 py-2 text-sage-800 placeholder-sage-500 focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand"
+                className="w-full min-h-[48px] bg-white border border-mint-200 rounded-lg px-4 py-2 text-sage-800 placeholder-sage-500 focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand"
               />
             </div>
 
             <div>
-              <label className="text-xs text-sage-500 uppercase tracking-wider font-semibold block mb-2">
+              <label
+                htmlFor="account_reference"
+                className="text-xs text-sage-500 uppercase tracking-wider font-semibold block mb-2"
+              >
                 Account reference
               </label>
               <input
                 type="text"
+                id="account_reference"
                 name="account_reference"
                 value={form.account_reference}
                 onChange={handleChange}
                 placeholder="e.g. 1234 5678"
-                className="w-full bg-white border border-mint-200 rounded-lg px-4 py-2 text-sage-800 placeholder-sage-500 focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand"
+                className="w-full min-h-[48px] bg-white border border-mint-200 rounded-lg px-4 py-2 text-sage-800 placeholder-sage-500 focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand"
               />
             </div>
 
             <div>
-              <label className="text-xs text-sage-500 uppercase tracking-wider font-semibold block mb-2">
+              <label
+                htmlFor="company_email"
+                className="text-xs text-sage-500 uppercase tracking-wider font-semibold block mb-2"
+              >
                 Company email
               </label>
               <input
                 type="email"
+                id="company_email"
                 name="company_email"
                 value={form.company_email}
                 onChange={handleChange}
                 placeholder="e.g. accounts@barclays.co.uk"
-                className="w-full bg-white border border-mint-200 rounded-lg px-4 py-2 text-sage-800 placeholder-sage-500 focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand"
+                className="w-full min-h-[48px] bg-white border border-mint-200 rounded-lg px-4 py-2 text-sage-800 placeholder-sage-500 focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand"
               />
             </div>
           </div>
@@ -281,7 +312,7 @@ export default function NewDebtPage() {
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full bg-sage-600 hover:bg-sage-700 text-white font-semibold py-3 rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full min-h-[52px] bg-sage-600 hover:bg-sage-700 text-white font-semibold rounded-pill transition-all disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isLoading ? "Adding debt..." : "Add debt"}
           </button>
