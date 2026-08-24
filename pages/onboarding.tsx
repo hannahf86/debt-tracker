@@ -183,7 +183,7 @@ export default function OnboardingPage() {
             </button>
             <button
               onClick={() => router.push("/dashboard")}
-              className="mt-4 text-sage-500 hover:text-sage-600 text-sm transition-colors block mx-auto"
+              className="mt-4 min-h-[44px] px-4 text-sage-500 hover:text-sage-600 text-sm transition-colors block mx-auto"
             >
               Skip for now
             </button>
@@ -253,7 +253,7 @@ export default function OnboardingPage() {
             </button>
             <button
               onClick={() => router.push("/dashboard")}
-              className="mt-3 text-sage-500 hover:text-sage-600 text-sm transition-colors block mx-auto text-center"
+              className="mt-3 min-h-[44px] px-4 text-sage-500 hover:text-sage-600 text-sm transition-colors block mx-auto text-center"
             >
               Skip for now
             </button>
@@ -514,7 +514,7 @@ export default function OnboardingPage() {
             </button>
             <button
               onClick={() => router.push("/dashboard")}
-              className="mt-3 text-sage-500 hover:text-sage-600 text-sm transition-colors block mx-auto text-center"
+              className="mt-3 min-h-[44px] px-4 text-sage-500 hover:text-sage-600 text-sm transition-colors block mx-auto text-center"
             >
               Skip for now
             </button>
