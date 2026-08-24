@@ -47,7 +47,9 @@ export default function LogPaymentModal({
   const isBackfill =
     new Date(paidOn.getFullYear(), paidOn.getMonth(), paidOn.getDate()) <
     new Date(addedOn.getFullYear(), addedOn.getMonth(), addedOn.getDate());
-  const isLate = !isToday;
+  // A payment from before the debt was added was never "late" — it predates
+  // the arrangement. Treating it as late would redden a historic month.
+  const isLate = !isToday && !isBackfill;
   const isShort = parsedAmount < monthlyAmount && parsedAmount > 0;
   const isOver = parsedAmount > monthlyAmount;
   const isCorrect = parsedAmount === monthlyAmount;
@@ -63,7 +65,7 @@ export default function LogPaymentModal({
     if (!amount || parsedAmount <= 0) return;
     if (isOver) setStep("overpaid-confirm");
     else if (isShort) setStep("short-reason");
-    else if (isLate && !isBackfill) setStep("confirm-late");
+    else if (isLate) setStep("confirm-late");
     else handleSubmit("on-time");
   };
 
@@ -136,17 +138,24 @@ export default function LogPaymentModal({
 
   return (
     <div
-      className="fixed inset-0 bg-sage-900/40 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+      role="dialog"
+      aria-modal="true"
+      aria-label={`Log a payment for ${debt.company}`}
+      className="fixed inset-0 z-50 md:bg-sage-900/40 md:backdrop-blur-sm flex md:items-center md:justify-center md:p-4"
       onClick={onClose}
     >
       <div
-        className="w-full max-w-sm max-h-[calc(100dvh-2rem)] overflow-y-auto bg-white border border-mint-200 rounded-2xl p-6 shadow-modal"
+        /* Full-screen sheet on a phone: the steps involve a keyboard and a
+           textarea, which a centred dialog handles badly. */
+        className="w-full min-w-0 max-w-full h-[100dvh] md:h-auto flex flex-col md:block md:max-w-sm md:max-h-[calc(100dvh-2rem)] overflow-x-hidden overflow-y-auto bg-white md:border md:border-mint-200 md:rounded-2xl p-5 md:p-6 md:shadow-modal pb-[max(1.25rem,env(safe-area-inset-bottom))]"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex items-start justify-between mb-6">
-          <div>
-            <h3 className="text-xl font-bold text-sage-800">{debt.company}</h3>
+        <div className="flex items-start justify-between mb-6 shrink-0">
+          <div className="min-w-0">
+            <h3 className="text-xl font-bold text-sage-800 truncate">
+              {debt.company}
+            </h3>
             {monthlyAmount > 0 && (
               <p className="text-sm text-sage-500 mt-0.5">
                 Your monthly DD is{" "}
@@ -156,12 +165,18 @@ export default function LogPaymentModal({
               </p>
             )}
           </div>
-          <button
-            onClick={onClose}
-            className="text-sage-500 hover:text-sage-600 transition-colors"
-          >
-            <X size={20} />
-          </button>
+          <div className="flex items-center gap-2 shrink-0">
+            <span className="text-xs font-bold text-sage-400 whitespace-nowrap">
+              {step === "success" ? "Done" : step === "amount" ? "Step 1" : "Step 2"}
+            </span>
+            <button
+              onClick={onClose}
+              aria-label="Close"
+              className="flex items-center justify-center w-11 h-11 -mr-2 rounded-xl text-sage-500 hover:bg-mint-100 transition-colors duration-base"
+            >
+              <X size={22} />
+            </button>
+          </div>
         </div>
 
         {/* Step: Amount */}
@@ -171,28 +186,85 @@ export default function LogPaymentModal({
               <label className="text-xs text-sage-500 uppercase tracking-wider font-semibold block mb-2">
                 Amount paid
               </label>
-              <div className="flex items-center bg-white border border-mint-200 rounded-lg px-4 py-2 focus-within:border-brand focus-within:ring-2 focus-within:ring-brand">
+              <div className="flex items-center min-h-[56px] bg-white border border-mint-200 rounded-lg px-4 py-2 focus-within:border-brand focus-within:ring-2 focus-within:ring-brand">
                 <span className="text-sage-500 mr-2">£</span>
                 <input
                   type="number"
                   value={amount}
                   onChange={(e) => setAmount(e.target.value)}
                   placeholder="0.00"
-                  className="flex-1 bg-transparent text-sage-800 placeholder-sage-500 focus:outline-none"
+                  className="flex-1 self-stretch min-h-[48px] bg-transparent text-sage-800 placeholder-sage-500 focus:outline-none"
                   autoFocus
                 />
               </div>
+
+              {monthlyAmount > 0 && (
+                <div className="flex gap-2.5 mt-3 min-w-0">
+                  {[
+                    { value: monthlyAmount, why: "agreed" },
+                    {
+                      value: Math.round(monthlyAmount * 0.6 * 100) / 100,
+                      why: "what I can",
+                    },
+                    { value: monthlyAmount + 30, why: "a bit extra" },
+                  ].map(({ value, why }) => (
+                    <button
+                      key={why}
+                      type="button"
+                      onClick={() => setAmount(String(value))}
+                      className="flex-1 min-w-0 flex flex-col items-center justify-center gap-0.5 min-h-[56px] rounded-lg bg-teal-50 border border-teal-200 text-brand active:bg-teal-100 transition-colors duration-fast"
+                    >
+                      <span className="font-display text-base font-extrabold">
+                        £{value}
+                      </span>
+                      <span className="text-2xs">{why}</span>
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
 
             <div>
               <label className="text-xs text-sage-500 uppercase tracking-wider font-semibold block mb-2">
                 Payment date
               </label>
+              <div className="flex gap-2.5 mb-2.5 min-w-0">
+                <button
+                  type="button"
+                  onClick={() =>
+                    setPaymentDate(new Date().toISOString().split("T")[0])
+                  }
+                  aria-pressed={isToday}
+                  className={`flex-1 min-h-[48px] rounded-lg border text-sm font-bold transition-colors duration-fast ${
+                    isToday
+                      ? "bg-teal-50 border-brand text-brand"
+                      : "bg-white border-mint-200 text-sage-700"
+                  }`}
+                >
+                  Today
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    const d = new Date();
+                    d.setDate(Math.max(1, d.getDate() - 7));
+                    setPaymentDate(d.toISOString().split("T")[0]);
+                  }}
+                  aria-pressed={!isToday}
+                  className={`flex-1 min-h-[48px] rounded-lg border text-sm font-bold transition-colors duration-fast ${
+                    !isToday
+                      ? "bg-teal-50 border-brand text-brand"
+                      : "bg-white border-mint-200 text-sage-700"
+                  }`}
+                >
+                  Earlier
+                </button>
+              </div>
               <input
                 type="date"
                 value={paymentDate}
                 onChange={(e) => setPaymentDate(e.target.value)}
-                className="w-full bg-white border border-mint-200 rounded-lg px-4 py-2 text-sage-800 focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand"
+                className="w-full min-h-[52px] bg-white border border-mint-200 rounded-lg px-4 py-2 text-sage-800 focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand"
               />
 
               {isBackfill && (
@@ -236,14 +308,14 @@ export default function LogPaymentModal({
             <div className="flex gap-3 pt-2">
               <button
                 onClick={onClose}
-                className="flex-1 bg-mint-100 hover:bg-mint-200 text-sage-700 font-medium py-2 rounded-lg transition-colors text-sm border border-mint-200"
+                className="flex-1 min-h-[48px] px-4 bg-mint-100 hover:bg-mint-200 text-sage-700 font-medium rounded-pill transition-colors text-sm border border-mint-200"
               >
                 Cancel
               </button>
               <button
                 onClick={handleAmountNext}
                 disabled={!amount || parsedAmount <= 0}
-                className="flex-1 bg-sage-600 hover:bg-sage-700 text-white font-medium py-2 rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed text-sm"
+                className="flex-1 min-h-[48px] px-4 bg-sage-600 hover:bg-sage-700 text-white font-medium rounded-pill transition-all disabled:opacity-50 disabled:cursor-not-allowed text-sm"
               >
                 Next
               </button>
@@ -268,7 +340,7 @@ export default function LogPaymentModal({
             <div className="space-y-2">
               <button
                 onClick={() => setStep("late-reason")}
-                className="w-full p-3 bg-white border border-mint-200 hover:border-sage-300 rounded-lg text-left transition-all"
+                className="w-full min-h-[56px] p-4 bg-white border border-mint-200 hover:border-sage-300 active:bg-mint-100 rounded-xl text-left transition-all"
               >
                 <p className="text-sage-800 text-sm font-medium">
                   It was genuinely late
@@ -279,7 +351,7 @@ export default function LogPaymentModal({
               </button>
               <button
                 onClick={() => handleSubmit("on-time")}
-                className="w-full p-3 bg-white border border-mint-200 hover:border-ok-200 rounded-lg text-left transition-all"
+                className="w-full min-h-[56px] p-4 bg-white border border-mint-200 hover:border-ok-200 active:bg-mint-100 rounded-xl text-left transition-all"
               >
                 <p className="text-sage-800 text-sm font-medium">
                   I just logged it late
@@ -317,7 +389,7 @@ export default function LogPaymentModal({
             <button
               onClick={() => handleSubmit("late")}
               disabled={isLoading}
-              className="w-full bg-sage-600 hover:bg-sage-700 text-white font-semibold py-3 rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full min-h-[52px] bg-sage-600 hover:bg-sage-700 text-white font-semibold rounded-pill transition-all disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isLoading ? "Saving..." : "Save"}
             </button>
@@ -355,7 +427,7 @@ export default function LogPaymentModal({
             <button
               onClick={() => handleSubmit("partial")}
               disabled={isLoading}
-              className="w-full bg-sage-600 hover:bg-sage-700 text-white font-semibold py-3 rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full min-h-[52px] bg-sage-600 hover:bg-sage-700 text-white font-semibold rounded-pill transition-all disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isLoading ? "Saving..." : "Save"}
             </button>
@@ -377,7 +449,7 @@ export default function LogPaymentModal({
               <button
                 onClick={() => handleSubmit("overpaid")}
                 disabled={isLoading}
-                className="w-full p-3 bg-white border border-mint-200 hover:border-ok-200 rounded-lg text-left transition-all"
+                className="w-full min-h-[56px] p-4 bg-white border border-mint-200 hover:border-ok-200 active:bg-mint-100 rounded-xl text-left transition-all"
               >
                 <p className="text-sage-800 text-sm font-medium">
                   Yes, log it — I paid more
@@ -386,7 +458,7 @@ export default function LogPaymentModal({
               </button>
               <button
                 onClick={() => setStep("amount")}
-                className="w-full p-3 bg-white border border-mint-200 hover:border-sage-300 rounded-lg text-left transition-all"
+                className="w-full min-h-[56px] p-4 bg-white border border-mint-200 hover:border-sage-300 active:bg-mint-100 rounded-xl text-left transition-all"
               >
                 <p className="text-sage-800 text-sm font-medium">
                   Let me check the amount
