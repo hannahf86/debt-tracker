@@ -379,28 +379,36 @@ export default function OnboardingPage() {
 
             <div className="space-y-4">
               <div>
-                <label className="text-xs text-sage-500 uppercase tracking-wider font-semibold block mb-2">
+                <label
+                  htmlFor="company"
+                  className="text-xs text-sage-500 uppercase tracking-wider font-semibold block mb-2"
+                >
                   Who do you owe? *
                 </label>
                 <input
                   type="text"
+                  id="company"
                   name="company"
                   value={form.company}
                   onChange={handleChange}
                   placeholder="e.g. Barclays, HMRC, EON"
-                  className="w-full bg-white border border-mint-200 rounded-lg px-4 py-2 text-sage-800 placeholder-sage-500 focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand"
+                  className="w-full bg-white border border-mint-200 min-h-[48px] rounded-lg px-4 py-2 text-sage-800 placeholder-sage-500 focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand"
                 />
               </div>
 
               <div>
-                <label className="text-xs text-sage-500 uppercase tracking-wider font-semibold block mb-2">
+                <label
+                  htmlFor="category"
+                  className="text-xs text-sage-500 uppercase tracking-wider font-semibold block mb-2"
+                >
                   Category *
                 </label>
                 <select
+                  id="category"
                   name="category"
                   value={form.category}
                   onChange={handleChange}
-                  className="w-full bg-white border border-mint-200 rounded-lg px-4 py-2 text-sage-800 focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand"
+                  className="w-full bg-white border border-mint-200 min-h-[48px] rounded-lg px-4 py-2 text-sage-800 focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand"
                 >
                   <option value="" disabled>
                     Select a category
@@ -414,14 +422,14 @@ export default function OnboardingPage() {
               </div>
 
               <div>
-                <label className="text-xs text-sage-500 uppercase tracking-wider font-semibold block mb-2">
-                  What's the situation? *
-                </label>
+                <p className="text-xs text-sage-500 uppercase tracking-wider font-semibold mb-2">
+                  What&rsquo;s the situation? *
+                </p>
                 <div className="space-y-2">
                   {arrangements.map((arr) => (
                     <label
                       key={arr.value}
-                      className={`flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-all ${
+                      className={`flex items-center gap-3 min-h-[48px] px-3 py-2.5 rounded-lg border cursor-pointer transition-all focus-within:border-brand focus-within:ring-2 focus-within:ring-brand ${
                         form.arrangement === arr.value
                           ? "border-sage-400 bg-sage-50"
                           : "border-mint-200 bg-white hover:border-sage-300"
@@ -433,7 +441,7 @@ export default function OnboardingPage() {
                         value={arr.value}
                         checked={form.arrangement === arr.value}
                         onChange={handleChange}
-                        className="hidden"
+                        className="sr-only"
                       />
                       <span>{arr.icon}</span>
                       <span
@@ -446,36 +454,44 @@ export default function OnboardingPage() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="text-xs text-sage-500 uppercase tracking-wider font-semibold block mb-2">
+                  <label
+                    htmlFor="total_amount"
+                    className="text-xs text-sage-500 uppercase tracking-wider font-semibold block mb-2"
+                  >
                     Total owed *
                   </label>
-                  <div className="flex items-center bg-white border border-mint-200 rounded-lg px-4 py-2 focus-within:border-brand focus-within:ring-2 focus-within:ring-brand">
+                  <div className="flex items-center min-h-[48px] bg-white border border-mint-200 rounded-lg px-4 py-2 focus-within:border-brand focus-within:ring-2 focus-within:ring-brand">
                     <span className="text-sage-500 mr-2">£</span>
                     <input
                       type="number"
-                      name="total_amount"
+                      id="total_amount"
+                  name="total_amount"
                       value={form.total_amount}
                       onChange={handleChange}
                       placeholder="0.00"
-                      className="w-full bg-transparent text-sage-800 placeholder-sage-500 focus:outline-none"
+                      className="w-full self-stretch min-h-[44px] bg-transparent text-sage-800 placeholder-sage-500 focus:outline-none"
                     />
                   </div>
                 </div>
                 <div>
-                  <label className="text-xs text-sage-500 uppercase tracking-wider font-semibold block mb-2">
+                  <label
+                    htmlFor="monthly_amount"
+                    className="text-xs text-sage-500 uppercase tracking-wider font-semibold block mb-2"
+                  >
                     Monthly payment *
                   </label>
-                  <div className="flex items-center bg-white border border-mint-200 rounded-lg px-4 py-2 focus-within:border-brand focus-within:ring-2 focus-within:ring-brand">
+                  <div className="flex items-center min-h-[48px] bg-white border border-mint-200 rounded-lg px-4 py-2 focus-within:border-brand focus-within:ring-2 focus-within:ring-brand">
                     <span className="text-sage-500 mr-2">£</span>
                     <input
                       type="number"
-                      name="monthly_amount"
+                      id="monthly_amount"
+                  name="monthly_amount"
                       value={form.monthly_amount}
                       onChange={handleChange}
                       placeholder="0.00"
-                      className="w-full bg-transparent text-sage-800 placeholder-sage-500 focus:outline-none"
+                      className="w-full self-stretch min-h-[44px] bg-transparent text-sage-800 placeholder-sage-500 focus:outline-none"
                     />
                   </div>
                 </div>

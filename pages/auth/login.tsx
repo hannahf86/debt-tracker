@@ -63,29 +63,39 @@ export default function LoginPage() {
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="text-xs text-sage-600 uppercase tracking-wider font-semibold block mb-2">
+              <label
+                htmlFor="email"
+                className="text-xs text-sage-600 uppercase tracking-wider font-semibold block mb-2"
+              >
                 Email
               </label>
               <input
+                id="email"
                 type="email"
+                autoComplete="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="you@example.com"
-                className="w-full bg-white border border-mint-200 rounded-lg px-4 py-2 text-sage-800 placeholder-sage-500 focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand"
+                className="w-full bg-white border border-mint-200 min-h-[48px] rounded-lg px-4 py-2 text-sage-800 placeholder-sage-500 focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand"
                 required
               />
             </div>
 
             <div>
-              <label className="text-xs text-sage-600 uppercase tracking-wider font-semibold block mb-2">
+              <label
+                htmlFor="password"
+                className="text-xs text-sage-600 uppercase tracking-wider font-semibold block mb-2"
+              >
                 Password
               </label>
               <input
+                id="password"
                 type="password"
+                autoComplete="current-password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
-                className="w-full bg-white border border-mint-200 rounded-lg px-4 py-2 text-sage-800 placeholder-sage-500 focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand"
+                className="w-full bg-white border border-mint-200 min-h-[48px] rounded-lg px-4 py-2 text-sage-800 placeholder-sage-500 focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand"
                 required
               />
             </div>
@@ -93,7 +103,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full bg-sage-600 hover:bg-sage-700 text-white font-medium py-2 rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed mt-6"
+              className="w-full min-h-[52px] bg-sage-600 hover:bg-sage-700 text-white font-semibold rounded-pill transition-all disabled:opacity-50 disabled:cursor-not-allowed mt-6"
             >
               {isLoading ? "Signing in..." : "Sign in"}
             </button>
@@ -102,7 +112,7 @@ export default function LoginPage() {
           <p className="mt-4 text-center">
             <Link
               href="/auth/forgot-password"
-              className="text-sage-600 hover:text-sage-800 transition-colors text-sm"
+              className="inline-flex items-center justify-center min-h-[44px] px-3 text-sage-600 hover:text-sage-800 transition-colors text-sm"
             >
               Forgot your password?
             </Link>

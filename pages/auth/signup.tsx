@@ -81,43 +81,58 @@ export default function SignupPage() {
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="text-xs text-sage-600 uppercase tracking-wider font-semibold block mb-2">
+              <label
+                htmlFor="email"
+                className="text-xs text-sage-600 uppercase tracking-wider font-semibold block mb-2"
+              >
                 Email
               </label>
               <input
+                id="email"
                 type="email"
+                autoComplete="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="you@example.com"
-                className="w-full bg-white border border-mint-200 rounded-lg px-4 py-2 text-sage-800 placeholder-sage-500 focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand"
+                className="w-full bg-white border border-mint-200 min-h-[48px] rounded-lg px-4 py-2 text-sage-800 placeholder-sage-500 focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand"
                 required
               />
             </div>
 
             <div>
-              <label className="text-xs text-sage-600 uppercase tracking-wider font-semibold block mb-2">
+              <label
+                htmlFor="password"
+                className="text-xs text-sage-600 uppercase tracking-wider font-semibold block mb-2"
+              >
                 Password
               </label>
               <input
+                id="password"
                 type="password"
+                autoComplete="new-password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
-                className="w-full bg-white border border-mint-200 rounded-lg px-4 py-2 text-sage-800 placeholder-sage-500 focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand"
+                className="w-full bg-white border border-mint-200 min-h-[48px] rounded-lg px-4 py-2 text-sage-800 placeholder-sage-500 focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand"
                 required
               />
             </div>
 
             <div>
-              <label className="text-xs text-sage-600 uppercase tracking-wider font-semibold block mb-2">
+              <label
+                htmlFor="confirm_password"
+                className="text-xs text-sage-600 uppercase tracking-wider font-semibold block mb-2"
+              >
                 Confirm Password
               </label>
               <input
+                id="confirm_password"
                 type="password"
+                autoComplete="new-password"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 placeholder="••••••••"
-                className="w-full bg-white border border-mint-200 rounded-lg px-4 py-2 text-sage-800 placeholder-sage-500 focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand"
+                className="w-full bg-white border border-mint-200 min-h-[48px] rounded-lg px-4 py-2 text-sage-800 placeholder-sage-500 focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand"
                 required
               />
             </div>
@@ -125,7 +140,7 @@ export default function SignupPage() {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full bg-sage-600 hover:bg-sage-700 text-white font-medium py-2 rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed mt-6"
+              className="w-full min-h-[52px] bg-sage-600 hover:bg-sage-700 text-white font-semibold rounded-pill transition-all disabled:opacity-50 disabled:cursor-not-allowed mt-6"
             >
               {isLoading ? "Creating account..." : "Create account"}
             </button>
