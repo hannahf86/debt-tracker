@@ -5,6 +5,8 @@ import { useRouter } from "next/router";
 import { useTracker, getDebtMonthStatus } from "@/lib/hooks/useTracker";
 import { Check, Minus, X, ChevronRight, CheckCircle } from "lucide-react";
 import LogPaymentModal from "@/components/LogPaymentModal";
+import MobileMonth from "@/components/mobile/MobileMonth";
+import { paymentTypeStyle, formatDayMonth } from "@/lib/paymentType";
 import type { Debt } from "@/lib/types";
 
 const monthNames = [
@@ -95,40 +97,6 @@ export default function MonthTrackerPage() {
     fetchAllDetails();
   }, [data.debts, monthIndex, year]);
 
-  const paymentTypeLabel = (type: string) => {
-    if (type === "on-time")
-      return {
-        label: "On time",
-        color: "text-ok-600",
-        icon: <Check size={12} />,
-      };
-    if (type === "late")
-      return {
-        label: "Late",
-        color: "text-warn-600",
-        icon: <ChevronRight size={12} />,
-      };
-    if (type === "partial")
-      return {
-        label: "Short payment",
-        color: "text-warn-600",
-        icon: <Minus size={12} />,
-      };
-    if (type === "partial-late")
-      return {
-        label: "Short & late",
-        color: "text-alert-600",
-        icon: <X size={12} />,
-      };
-    if (type === "overpaid")
-      return {
-        label: "Overpaid",
-        color: "text-sage-600",
-        icon: <Check size={12} />,
-      };
-    return { label: type, color: "text-sage-500", icon: null };
-  };
-
   if (isLoading || loadingDetails) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -143,7 +111,18 @@ export default function MonthTrackerPage() {
   });
 
   return (
-    <div className="p-4 md:p-6">
+    <>
+      <div className="md:hidden">
+        <MobileMonth
+          monthName={monthNames[monthIndex]}
+          year={year}
+          debts={data.debts}
+          details={debtDetails}
+          onLogPayment={setLogPaymentDebt}
+        />
+      </div>
+
+      <div className="hidden md:block p-4 md:p-6">
       <div className="max-w-lg mx-auto">
         <button
           onClick={() => router.push("/tracker")}
@@ -224,22 +203,21 @@ export default function MonthTrackerPage() {
                 {details.payments.length > 0 ? (
                   <div className="space-y-2 mb-4">
                     {details.payments.map((payment, i) => {
-                      const typeInfo = paymentTypeLabel(payment.payment_type);
+                      const typeInfo = paymentTypeStyle(payment.payment_type);
+                      const TypeIcon = typeInfo.Icon;
                       return (
                         <div
                           key={i}
                           className="flex items-center justify-between p-3 bg-mint-50 rounded-lg"
                         >
                           <div className="flex items-center gap-2">
-                            <span className={typeInfo.color}>
-                              {typeInfo.icon}
-                            </span>
+                            <TypeIcon size={14} className={typeInfo.color} />
                             <div>
                               <p className="text-sage-800 text-sm font-medium">
                                 £{payment.amount}
                               </p>
                               <p className="text-sage-500 text-xs">
-                                {payment.payment_date}
+                                {formatDayMonth(payment.payment_date)}
                               </p>
                             </div>
                           </div>
@@ -302,6 +280,7 @@ export default function MonthTrackerPage() {
           Back to dashboard
         </button>
       </div>
+      </div>
 
       {logPaymentDebt && (
         <LogPaymentModal
@@ -312,6 +291,6 @@ export default function MonthTrackerPage() {
           onSuccess={() => setLogPaymentDebt(null)}
         />
       )}
-    </div>
+    </>
   );
 }
