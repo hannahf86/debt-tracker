@@ -1,5 +1,5 @@
 import { getSession } from "@/lib/devAuth";
-import { supabase } from "@/lib/supabase";
+import { supabaseAdmin } from "@/lib/supabaseAdmin";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 /**
@@ -36,7 +36,7 @@ export default async function handler(
   }
 
   // Verify ownership
-  const { data: debt } = await supabase
+  const { data: debt } = await supabaseAdmin
     .from("debts")
     .select("user_id")
     .eq("id", id)
@@ -48,7 +48,7 @@ export default async function handler(
 
   if (req.method === "GET") {
     try {
-      const { data, error } = await supabase
+      const { data, error } = await supabaseAdmin
         .from("debts")
         .select("*")
         .eq("id", id)
@@ -72,7 +72,7 @@ export default async function handler(
     }
 
     try {
-      const { data: updated, error } = await supabase
+      const { data: updated, error } = await supabaseAdmin
         .from("debts")
         .update({
           ...updateData,
@@ -96,7 +96,7 @@ export default async function handler(
 
   if (req.method === "DELETE") {
     try {
-      await supabase.from("debts").delete().eq("id", id);
+      await supabaseAdmin.from("debts").delete().eq("id", id);
 
       return res.status(204).end();
     } catch (error) {

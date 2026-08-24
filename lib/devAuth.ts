@@ -10,7 +10,7 @@
  * `getServerSession(req, res, authOptions)` in pages/api/**.
  */
 import { getServerSession } from "next-auth";
-import { createClient } from "@supabase/supabase-js";
+import { supabaseAdmin } from "@/lib/supabaseAdmin";
 import { authOptions } from "@/lib/authOptions";
 import type { NextApiRequest, NextApiResponse } from "next";
 import type { Session } from "next-auth";
@@ -29,11 +29,11 @@ async function resolveDevUserId(): Promise<string | null> {
     return cachedDevUserId;
   }
 
-  const admin = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!,
-  );
-  const { data } = await admin.from("users").select("id").limit(1).maybeSingle();
+  const { data } = await supabaseAdmin
+    .from("users")
+    .select("id")
+    .limit(1)
+    .maybeSingle();
   cachedDevUserId = data?.id ?? null;
   return cachedDevUserId;
 }

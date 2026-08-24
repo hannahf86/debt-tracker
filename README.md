@@ -84,16 +84,30 @@ debt-tracker/
 └── ...config files
 ```
 
-## Database schema
+## Database
 
-Not yet checked in — the tables (`users`, `debts`, `payments`,
+The schema is not yet checked in — the tables (`users`, `debts`, `payments`,
 `missed_payments`) live only in the hosted Supabase project, so a fresh clone
-cannot recreate them. Worth exporting to `supabase/migrations/` before anyone
-else needs to run this.
+cannot recreate them. Worth exporting to `supabase/migrations/`.
 
-Note that every API route queries through the **anon** key
-(`lib/supabase.ts`), so per-user isolation rests on the `user_id` filters in
-`pages/api/**` unless row-level security is enabled on those tables.
+### Row-level security
+
+**Run `supabase/rls.sql` once against the project.** The anon key is public
+(it ships in the browser bundle), so without RLS anyone holding it can read
+these tables directly through the Supabase REST API.
+
+Two clients, and the split matters:
+
+| Client | Key | Use |
+| --- | --- | --- |
+| `lib/supabase.ts` | anon | auth flows only — sign in, sign up, password reset |
+| `lib/supabaseAdmin.ts` | service role | all table access, from `pages/api` only |
+
+Because the API routes go through the service role (which bypasses RLS), RLS
+can stay fully closed to anon while the app keeps working. Per-user isolation
+is therefore enforced by the `user_id` filters in the route handlers — so
+**every query touching user data must carry one**, and any route taking an id
+from the request must verify ownership before using it.
 
 ## Helpful Links
 

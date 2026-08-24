@@ -1,5 +1,5 @@
 import { getSession } from "@/lib/devAuth";
-import { supabase } from "@/lib/supabase";
+import { supabaseAdmin } from "@/lib/supabaseAdmin";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 export default async function handler(
@@ -32,7 +32,7 @@ export default async function handler(
       // Verify ownership. Both queries below filter on debt_id alone, so
       // without this the debtId in the query string is all it takes to read
       // another account's payment history and their missed-payment reasons.
-      const { data: debt } = await supabase
+      const { data: debt } = await supabaseAdmin
         .from("debts")
         .select("id")
         .eq("id", debtId)
@@ -41,7 +41,7 @@ export default async function handler(
 
       if (!debt) return res.status(403).json({ error: "Forbidden" });
 
-      const { data: payments, error: paymentsError } = await supabase
+      const { data: payments, error: paymentsError } = await supabaseAdmin
         .from("payments")
         .select("*")
         .eq("debt_id", debtId)
@@ -51,7 +51,7 @@ export default async function handler(
 
       if (paymentsError) throw paymentsError;
 
-      const { data: notes, error: notesError } = await supabase
+      const { data: notes, error: notesError } = await supabaseAdmin
         .from("missed_payments")
         .select("*")
         .eq("debt_id", debtId)

@@ -1,5 +1,5 @@
 import { getSession } from "@/lib/devAuth";
-import { supabase } from "@/lib/supabase";
+import { supabaseAdmin } from "@/lib/supabaseAdmin";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 export default async function handler(
@@ -20,7 +20,20 @@ export default async function handler(
     }
 
     try {
-      const { data, error } = await supabase
+      // Verify ownership. user_id below is taken from the session, but debt_id
+      // comes from the body — without this check a note could be attached to
+      // someone else's debt, and it would surface in their tracker as if they
+      // had written it.
+      const { data: debt } = await supabaseAdmin
+        .from("debts")
+        .select("id")
+        .eq("id", debt_id)
+        .eq("user_id", session.user.id)
+        .single();
+
+      if (!debt) return res.status(403).json({ error: "Forbidden" });
+
+      const { data, error } = await supabaseAdmin
         .from("missed_payments")
         .insert([
           {

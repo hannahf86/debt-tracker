@@ -1,5 +1,5 @@
 import { getSession } from "@/lib/devAuth";
-import { supabase } from "@/lib/supabase";
+import { supabaseAdmin } from "@/lib/supabaseAdmin";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 export default async function handler(
@@ -14,7 +14,7 @@ export default async function handler(
 
   if (req.method === "GET") {
     try {
-      const { data: debts, error: debtsError } = await supabase
+      const { data: debts, error: debtsError } = await supabaseAdmin
         .from("debts")
         .select("*")
         .eq("user_id", session.user.id)
@@ -29,7 +29,7 @@ export default async function handler(
       const year = new Date().getFullYear();
       const debtIds = debts.map((d) => d.id);
 
-      const { data: payments, error: paymentsError } = await supabase
+      const { data: payments, error: paymentsError } = await supabaseAdmin
         .from("payments")
         .select("*")
         .in("debt_id", debtIds)

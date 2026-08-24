@@ -1,5 +1,4 @@
 import { getSession } from "@/lib/devAuth";
-import { supabase } from "@/lib/supabase";
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
 import type { NextApiRequest, NextApiResponse } from "next";
 

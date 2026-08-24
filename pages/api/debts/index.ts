@@ -1,5 +1,5 @@
 import { getSession } from "@/lib/devAuth";
-import { supabase } from "@/lib/supabase";
+import { supabaseAdmin } from "@/lib/supabaseAdmin";
 import { describeDbError } from "@/lib/dbError";
 import type { NextApiRequest, NextApiResponse } from "next";
 
@@ -15,7 +15,7 @@ export default async function handler(
 
   if (req.method === "GET") {
     try {
-      const { data: debts, error } = await supabase
+      const { data: debts, error } = await supabaseAdmin
         .from("debts")
         .select("*")
         .eq("user_id", session.user.id)
@@ -48,7 +48,7 @@ export default async function handler(
     }
 
     try {
-      const { data: debt, error } = await supabase
+      const { data: debt, error } = await supabaseAdmin
         .from("debts")
         .insert([
           {
