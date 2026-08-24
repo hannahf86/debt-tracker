@@ -33,7 +33,7 @@ npm install
 3. Create `.env.local` in the root directory:
 
 ```bash
-cp .env.local.example .env.local
+cp .env.example .env.local
 ```
 
 4. Fill in your Supabase credentials:
@@ -41,9 +41,13 @@ cp .env.local.example .env.local
 ```
 NEXT_PUBLIC_SUPABASE_URL=your_project_url
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key
+SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
 NEXTAUTH_SECRET=your_random_secret_here
 NEXTAUTH_URL=http://localhost:3000
 ```
+
+`SUPABASE_SERVICE_ROLE_KEY` is server-only and required — without it the
+settings page (change password, delete account, profile) fails.
 
 ### 4. Generate NextAuth Secret
 
@@ -80,12 +84,16 @@ debt-tracker/
 └── ...config files
 ```
 
-## Next Steps
+## Database schema
 
-1. **Auth is set up!** Users can now sign up and log in
-2. Next: Set up the database schema for debts
-3. Then: Build the dashboard UI
-4. Finally: Add debt tracking features
+Not yet checked in — the tables (`users`, `debts`, `payments`,
+`missed_payments`) live only in the hosted Supabase project, so a fresh clone
+cannot recreate them. Worth exporting to `supabase/migrations/` before anyone
+else needs to run this.
+
+Note that every API route queries through the **anon** key
+(`lib/supabase.ts`), so per-user isolation rests on the `user_id` filters in
+`pages/api/**` unless row-level security is enabled on those tables.
 
 ## Helpful Links
 

@@ -2,6 +2,23 @@ import { getSession } from "@/lib/devAuth";
 import { supabase } from "@/lib/supabase";
 import type { NextApiRequest, NextApiResponse } from "next";
 
+/**
+ * Columns a caller may change through PUT. Spreading req.body straight into
+ * update() also accepted user_id, which let someone move one of their own
+ * debts into another person's account.
+ */
+const EDITABLE_FIELDS = [
+  "name",
+  "company",
+  "category",
+  "total_amount",
+  "monthly_amount",
+  "arrangement",
+  "direct_debit_date",
+  "account_reference",
+  "company_email",
+] as const;
+
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse,
@@ -47,7 +64,12 @@ export default async function handler(
   }
 
   if (req.method === "PUT") {
-    const { amount_owed, status, ...updateData } = req.body;
+    const { amount_owed, status } = req.body;
+
+    const updateData: Record<string, unknown> = {};
+    for (const field of EDITABLE_FIELDS) {
+      if (req.body[field] !== undefined) updateData[field] = req.body[field];
+    }
 
     try {
       const { data: updated, error } = await supabase

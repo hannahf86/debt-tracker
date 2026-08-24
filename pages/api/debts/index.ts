@@ -43,8 +43,6 @@ export default async function handler(
       company_email,
     } = req.body;
 
-    console.log("Request body:", req.body);
-
     if (!company || !total_amount || !category) {
       return res.status(400).json({ error: "Missing required fields" });
     }

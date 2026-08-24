@@ -15,7 +15,7 @@ export default async function handler(
   if (req.method === "GET") {
     const { debtId, month, year } = req.query;
 
-    if (!debtId || !month || !year) {
+    if (!debtId || typeof debtId !== "string" || !month || !year) {
       return res.status(400).json({ error: "Missing required fields" });
     }
 
@@ -29,6 +29,18 @@ export default async function handler(
     const endDate = `${endYear}-${String(endMonth).padStart(2, "0")}-01`;
 
     try {
+      // Verify ownership. Both queries below filter on debt_id alone, so
+      // without this the debtId in the query string is all it takes to read
+      // another account's payment history and their missed-payment reasons.
+      const { data: debt } = await supabase
+        .from("debts")
+        .select("id")
+        .eq("id", debtId)
+        .eq("user_id", session.user.id)
+        .single();
+
+      if (!debt) return res.status(403).json({ error: "Forbidden" });
+
       const { data: payments, error: paymentsError } = await supabase
         .from("payments")
         .select("*")
