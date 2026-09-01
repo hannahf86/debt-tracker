@@ -5,7 +5,7 @@ import MobileTracker from "@/components/mobile/MobileTracker";
 import { useState } from "react";
 import { useRouter } from "next/router";
 import { useTracker, debtMonthStatus } from "@/lib/hooks/useTracker";
-import { Check, X, Minus, MapPin, Loader } from "lucide-react";
+import { Check, Minus, MapPin, Loader } from "lucide-react";
 
 const months = [
   "Jan",
@@ -178,14 +178,14 @@ export default function YearlyTrackerPage() {
                                     : status === "partial"
                                       ? "bg-warn-100 border-warn-200 text-warn-600 hover:bg-warn-100 cursor-pointer"
                                       : status === "missed"
-                                        ? "bg-peach-100 border-peach-200 text-sage-500 hover:bg-peach-200 cursor-pointer"
+                                        ? "bg-warn-100 border-warn-200 text-warn-600 hover:bg-warn-200 cursor-pointer"
                                         : "bg-peach-100/50 border-peach-200 text-peach-300"
                             }`}
                           >
                             {status === "paid" && <Check size={14} />}
                             {status === "partial" && <Minus size={14} />}
                             {status === "missed" && (
-                              <span className="text-xs">—</span>
+                              <span className="text-sm font-bold">?</span>
                             )}
                             {status === "current" && null}
                             {(status === "future" ||

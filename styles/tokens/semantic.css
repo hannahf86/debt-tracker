@@ -36,7 +36,7 @@
   /* Month / payment states */
   --state-paid-bg:rgb(var(--ok-100));--state-paid-line:rgb(var(--ok-200));--state-paid-fg:rgb(var(--ok-600));
   --state-partial-bg:rgb(var(--warn-100));--state-partial-line:rgb(var(--warn-200));--state-partial-fg:rgb(var(--warn-600));
-  --state-missed-bg:rgb(var(--alert-100));--state-missed-line:rgb(var(--alert-200));--state-missed-fg:rgb(var(--alert-600));
+  --state-missed-bg:rgb(var(--warn-100));--state-missed-line:rgb(var(--warn-200));--state-missed-fg:rgb(var(--warn-600));
   --state-now-bg:rgb(var(--now-100));--state-now-line:rgb(var(--now-200));--state-now-fg:rgb(var(--now-600));
   --state-future-bg:rgb(var(--paper-sunk));--state-future-line:rgb(var(--line-200));--state-future-fg:rgb(var(--ink-400));
 

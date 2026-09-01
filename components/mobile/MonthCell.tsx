@@ -1,4 +1,4 @@
-import { Check, Minus, X, MapPin } from "lucide-react";
+import { Check, Minus, MapPin } from "lucide-react";
 import type { MonthStatus } from "@/lib/hooks/useTracker";
 
 /**
@@ -11,32 +11,52 @@ const STATE = {
     word: "Paid",
     cls: "bg-ok-100 border-ok-200 text-ok-600",
     Icon: Check,
+    glyph: "",
+    glyphCls: "",
   },
   partial: {
     word: "Part paid",
     cls: "bg-warn-100 border-warn-200 text-warn-600",
     Icon: Minus,
+    glyph: "",
+    glyphCls: "",
   },
+  // A gap in the months you've filled in. Amber and a question mark, never
+  // red and never a cross — it's an open question, not a verdict.
   missed: {
     word: "Nothing logged",
-    cls: "bg-alert-100 border-alert-200 text-alert-600",
-    Icon: X,
+    cls: "bg-warn-100 border-warn-200 text-warn-600",
+    Icon: null,
+    glyph: "?",
+    glyphCls: "text-sm font-bold",
   },
   current: {
     word: "This month",
     cls: "bg-now-100 border-now-200 text-now-600",
     Icon: MapPin,
+    glyph: "",
+    glyphCls: "",
   },
   now: {
     word: "This month",
     cls: "bg-now-100 border-now-200 text-now-600",
     Icon: MapPin,
+    glyph: "",
+    glyphCls: "",
   },
-  future: { word: "Not yet", cls: "bg-paper-sunk border-mint-200 text-sage-500", Icon: null },
+  future: {
+    word: "Not yet",
+    cls: "bg-paper-sunk border-mint-200 text-sage-500",
+    Icon: null,
+    glyph: "—",
+    glyphCls: "text-xs",
+  },
   "before-signup": {
     word: "Not yet",
     cls: "bg-paper-sunk border-mint-200 text-sage-500",
     Icon: null,
+    glyph: "—",
+    glyphCls: "text-xs",
   },
 } as const;
 
@@ -61,8 +81,8 @@ export default function MonthCell({
       {Icon ? (
         <Icon size={Math.round(size * 0.42)} aria-hidden="true" />
       ) : (
-        <span aria-hidden="true" className="text-xs">
-          —
+        <span aria-hidden="true" className={state.glyphCls}>
+          {state.glyph}
         </span>
       )}
       <span className="sr-only">{`${label} — ${state.word.toLowerCase()}`}</span>

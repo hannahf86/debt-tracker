@@ -5,20 +5,7 @@ import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import { useDebts } from "@/lib/hooks/useDebts";
-import {
-  ChevronDown,
-  Plus,
-  CreditCard,
-  Landmark,
-  Zap,
-  Receipt,
-  Home,
-  MoreHorizontal,
-  Check,
-  Minus,
-  X,
-  MapPin,
-} from "lucide-react";
+import { ChevronDown, Plus, CreditCard, Landmark, Zap, Receipt, Home, MoreHorizontal, Check, Minus, MapPin } from "lucide-react";
 import type { Debt } from "@/lib/types";
 import { arrangementStyle } from "@/lib/arrangement";
 import { useTracker, allDebtsMonthStatus } from "@/lib/hooks/useTracker";
@@ -240,7 +227,7 @@ export default function DashboardPage() {
                             : monthStatus === "partial"
                               ? "bg-warn-100 border-warn-200 text-warn-600 cursor-pointer hover:bg-warn-200 shadow-sm"
                               : monthStatus === "missed"
-                                ? "bg-alert-100 border-alert-200 text-alert-600 cursor-pointer hover:bg-alert-200 shadow-sm"
+                                ? "bg-warn-100 border-warn-200 text-warn-600 cursor-pointer hover:bg-warn-200 shadow-sm"
                                 : monthStatus === "future"
                                   ? "bg-white/40 border-mint-200 text-sage-500 cursor-default"
                                   : "bg-peach-100/50 border-peach-200 text-peach-300 cursor-default"
@@ -250,7 +237,7 @@ export default function DashboardPage() {
                       <Check size={16} />
                     )}
                     {monthStatus === "missed" && (
-                      <X size={16} />
+                      <span className="text-base font-bold">?</span>
                     )}
                     {monthStatus === "partial" && (
                       <Minus size={16} />

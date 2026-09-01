@@ -6,24 +6,7 @@ import { useSession } from "next-auth/react";
 import { useDebts } from "@/lib/hooks/useDebts";
 import { debtMonthStatus } from "@/lib/hooks/useTracker";
 import LogPaymentModal from "@/components/LogPaymentModal";
-import {
-  Check,
-  Minus,
-  X,
-  MapPin,
-  Trash2,
-  Pencil,
-  CreditCard,
-  Landmark,
-  Zap,
-  Receipt,
-  Home,
-  MoreHorizontal,
-  CheckCircle,
-  Moon,
-  Clock,
-  AlertTriangle,
-} from "lucide-react";
+import { Check, Minus, MapPin, Trash2, Pencil, CreditCard, Landmark, Zap, Receipt, Home, MoreHorizontal, CheckCircle, Moon, Clock, AlertTriangle } from "lucide-react";
 import type { Debt, Payment } from "@/lib/types";
 import { clearedDate, formatMonthYear } from "@/lib/projection";
 import { arrangementStyle } from "@/lib/arrangement";
@@ -309,13 +292,13 @@ export default function DebtDetailPage() {
                           : status === "partial"
                             ? "bg-warn-100 border-warn-200 text-warn-600 cursor-pointer hover:bg-warn-100"
                             : status === "missed"
-                              ? "bg-peach-100 border-peach-200 text-sage-500 cursor-pointer hover:bg-peach-200"
+                              ? "bg-warn-100 border-warn-200 text-warn-600 cursor-pointer hover:bg-warn-200"
                               : "bg-peach-100/50 border-peach-200 text-peach-300 cursor-default"
                     }`}
                   >
                     {status === "paid" && <Check size={14} />}
                     {status === "partial" && <Minus size={14} />}
-                    {status === "missed" && <span className="text-xs">—</span>}
+                    {status === "missed" && <span className="text-sm font-bold">?</span>}
                     {status === "current" && null}
                     {status === "future" && <span className="text-xs">—</span>}
                   </button>

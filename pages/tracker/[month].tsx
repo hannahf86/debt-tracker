@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import { useTracker, getDebtMonthStatus } from "@/lib/hooks/useTracker";
-import { Check, Minus, X, ChevronRight, CheckCircle } from "lucide-react";
+import { Check, Minus, ChevronRight, CheckCircle } from "lucide-react";
 import LogPaymentModal from "@/components/LogPaymentModal";
 import MobileMonth from "@/components/mobile/MobileMonth";
 import { paymentTypeStyle, formatDayMonth } from "@/lib/paymentType";
@@ -189,13 +189,13 @@ export default function MonthTrackerPage() {
                         ? "bg-ok-100 border-ok-200 text-ok-600"
                         : displayStatus === "partial"
                           ? "bg-warn-100 border-warn-200 text-warn-600"
-                          : "bg-peach-100 border-peach-200 text-sage-500"
+                          : "bg-warn-100 border-warn-200 text-warn-600"
                     }`}
                   >
                     {displayStatus === "paid" && <Check size={14} />}
                     {displayStatus === "partial" && <Minus size={14} />}
                     {displayStatus === "missed" && (
-                      <span className="text-xs">—</span>
+                      <span className="text-sm font-bold">?</span>
                     )}
                   </div>
                 </div>
