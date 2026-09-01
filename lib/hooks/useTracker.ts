@@ -3,7 +3,10 @@ import type { Debt, Payment } from "@/lib/types";
 
 export type TrackerData = {
   debts: Debt[];
+  /** Payments in the year the tracker is showing. */
   payments: Payment[];
+  /** Every payment ever logged, summed. Includes backfilled history. */
+  totalPaid: number;
 };
 
 export type MonthStatus =
@@ -242,7 +245,11 @@ export function allDebtsMonthStatus(
 }
 
 export function useTracker() {
-  const [data, setData] = useState<TrackerData>({ debts: [], payments: [] });
+  const [data, setData] = useState<TrackerData>({
+    debts: [],
+    payments: [],
+    totalPaid: 0,
+  });
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 

@@ -311,10 +311,10 @@ export default function DashboardPage() {
               Debt cleared <span className="normal-case">so far</span>
             </p>
             <p className="font-display text-3xl font-bold text-sage-800">
-              £{Math.round(projection.totalCleared).toLocaleString()}
+              £{Math.round(trackerData.totalPaid).toLocaleString()}
             </p>
             <p className="text-xs text-sage-500 mt-2">
-              {projection.totalCleared > 0
+              {trackerData.totalPaid > 0
                 ? "Amazing work — keep going"
                 : "Every bit counts"}
             </p>

@@ -23,7 +23,7 @@ export default async function handler(
       if (debtsError) throw debtsError;
 
       if (!debts || debts.length === 0) {
-        return res.status(200).json({ debts: [], payments: [] });
+        return res.status(200).json({ debts: [], payments: [], totalPaid: 0 });
       }
 
       const year = new Date().getFullYear();
@@ -38,7 +38,27 @@ export default async function handler(
 
       if (paymentsError) throw paymentsError;
 
-      return res.status(200).json({ debts, payments: payments || [] });
+      // Everything ever paid, across every year — the grid above is scoped to
+      // the year on screen, but "debt cleared so far" counts the lot,
+      // backfilled history included. It deliberately doesn't match
+      // total_amount - amount_owed: a payment made before the debt was added
+      // is already reflected in the balance entered at signup, so it never
+      // moves that figure, but the user still paid it.
+      const { data: allPayments, error: allPaymentsError } = await supabaseAdmin
+        .from("payments")
+        .select("amount")
+        .in("debt_id", debtIds);
+
+      if (allPaymentsError) throw allPaymentsError;
+
+      const totalPaid = (allPayments ?? []).reduce(
+        (sum, p) => sum + (Number(p.amount) || 0),
+        0,
+      );
+
+      return res
+        .status(200)
+        .json({ debts, payments: payments || [], totalPaid });
     } catch (error) {
       console.error("Error fetching tracker data:", error);
       return res.status(500).json({ error: "Failed to fetch tracker data" });
