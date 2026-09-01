@@ -80,6 +80,14 @@ export function getMonthStatus(
 
   if (allPaid) return "paid";
   if (anyPartial) return "partial";
+
+  // The month in progress is not a missed month — nothing is missed until it
+  // ends. Once any debt is paid this fell through to "missed", so the current
+  // month showed a red cross for a month still being paid.
+  if (year === currentYear && monthIndex === currentMonth) {
+    return hasAnyPayments ? "partial" : "current";
+  }
+
   return "missed";
 }
 
@@ -135,6 +143,40 @@ function isFutureMonth(monthIndex: number, year: number) {
 }
 
 /**
+ * The earliest month this debt has a payment logged into.
+ *
+ * Backfilling is a claim about history: logging April, June and July says
+ * something about May too. From the first month you filled in onwards, an
+ * empty month is a real gap rather than just a month before you signed up.
+ */
+function firstClaimedMonth(
+  payments: Payment[],
+  debtId: string,
+): { year: number; month: number } | null {
+  const dates = payments
+    .filter((p) => p.debt_id === debtId)
+    .map((p) => p.payment_date)
+    .sort();
+  if (dates.length === 0) return null;
+  const [y, m] = dates[0].slice(0, 7).split("-");
+  return { year: Number(y), month: Number(m) - 1 };
+}
+
+/** Is this month inside the stretch of history the user has filled in? */
+function isClaimedMonth(
+  payments: Payment[],
+  debtId: string,
+  monthIndex: number,
+  year: number,
+): boolean {
+  const first = firstClaimedMonth(payments, debtId);
+  if (!first) return false;
+  return (
+    year > first.year || (year === first.year && monthIndex >= first.month)
+  );
+}
+
+/**
  * One debt's status for a month, with the "nothing was owed yet" guard.
  *
  * A payment backfilled into a month that predates the debt always wins — the
@@ -162,7 +204,14 @@ export function debtMonthStatus(
     return getDebtMonthStatus(debt, payments, monthIndex, year);
   }
 
-  if (isBeforeStart(debt.created_at, monthIndex, year)) return neutral;
+  // Neutral only for months you've said nothing about: before the debt
+  // existed *and* before the earliest history you filled in.
+  if (
+    isBeforeStart(debt.created_at, monthIndex, year) &&
+    !isClaimedMonth(payments, debt.id, monthIndex, year)
+  ) {
+    return neutral;
+  }
 
   return getDebtMonthStatus(debt, payments, monthIndex, year);
 }
@@ -184,8 +233,8 @@ export function allDebtsMonthStatus(
   // September — the strip would scold you for a month you did pay.
   const relevant = debts.filter(
     (d) =>
-      hasPaymentInMonth(payments, d.id, monthIndex, year) ||
-      !isBeforeStart(d.created_at, monthIndex, year),
+      !isBeforeStart(d.created_at, monthIndex, year) ||
+      isClaimedMonth(payments, d.id, monthIndex, year),
   );
   if (relevant.length === 0) return neutral;
 
