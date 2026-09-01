@@ -1,9 +1,10 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
 import { useDebts } from "@/lib/hooks/useDebts";
+import { debtMonthStatus } from "@/lib/hooks/useTracker";
 import LogPaymentModal from "@/components/LogPaymentModal";
 import {
   Check,
@@ -117,13 +118,17 @@ export default function DebtDetailPage() {
   const year = new Date().getFullYear();
   const currentMonth = new Date().getMonth();
 
-  useEffect(() => {
+  const loadPayments = useCallback(() => {
     if (!id) return;
     fetch(`/api/payments?debtId=${id}`)
       .then((res) => res.json())
       .then((data) => setPayments(Array.isArray(data) ? data : []))
       .catch(console.error);
   }, [id]);
+
+  useEffect(() => {
+    loadPayments();
+  }, [loadPayments]);
 
   if (!debt) {
     return (
@@ -150,28 +155,8 @@ export default function DebtDetailPage() {
     router.push("/dashboard");
   };
 
-  const getMonthStatus = (monthIdx: number) => {
-    const now = new Date();
-    if (monthIdx > now.getMonth() && year === now.getFullYear())
-      return "future";
-
-    const monthStr = `${year}-${String(monthIdx + 1).padStart(2, "0")}`;
-    const monthPayments = payments.filter((p) =>
-      p.payment_date.startsWith(monthStr),
-    );
-    const totalPaid = monthPayments.reduce((sum, p) => sum + p.amount, 0);
-    const expected = debt.monthly_amount || 0;
-
-    if (
-      year === now.getFullYear() &&
-      monthIdx === now.getMonth() &&
-      totalPaid === 0
-    )
-      return "current";
-    if (totalPaid === 0) return "missed";
-    if (expected > 0 && totalPaid < expected) return "partial";
-    return "paid";
-  };
+  const getMonthStatus = (monthIdx: number) =>
+    debtMonthStatus(debt, payments, monthIdx, year);
 
   return (
     <>
@@ -348,6 +333,9 @@ export default function DebtDetailPage() {
           onClose={() => setLogPaymentDebt(null)}
           onSuccess={(newAmountOwed) => {
             updateDebt(debt.id, { amount_owed: newAmountOwed });
+            // updateDebt refreshes the balance, not the payment list this
+            // page's month grid reads from.
+            loadPayments();
             setLogPaymentDebt(null);
           }}
         />

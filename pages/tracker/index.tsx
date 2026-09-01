@@ -4,11 +4,7 @@ import { ordinal } from "@/lib/format";
 import MobileTracker from "@/components/mobile/MobileTracker";
 import { useState } from "react";
 import { useRouter } from "next/router";
-import {
-  useTracker,
-  getDebtMonthStatus,
-  hasPaymentInMonth,
-} from "@/lib/hooks/useTracker";
+import { useTracker, debtMonthStatus } from "@/lib/hooks/useTracker";
 import { Check, X, Minus, MapPin, Loader } from "lucide-react";
 
 const months = [
@@ -55,19 +51,6 @@ export default function YearlyTrackerPage() {
 
   const year = new Date().getFullYear();
   const currentMonth = new Date().getMonth();
-
-  // Actually take the minimum created_at. Indexing into the array assumed a
-  // newest-first order, but /api/tracker returns debts oldest-first, so this
-  // picked the newest debt and greyed out every month before it as
-  // "before signup".
-  const earliestDebt =
-    data.debts.length > 0
-      ? new Date(
-          Math.min(
-            ...data.debts.map((d) => new Date(d.created_at).getTime()),
-          ),
-        )
-      : null;
 
   const handleCellClick = async (debtId: string, monthIdx: number) => {
     router.push(`/tracker/${monthIdx + 1}`);
@@ -165,34 +148,16 @@ export default function YearlyTrackerPage() {
                       )}
                     </td>
                     {months.map((month, idx) => {
-                      const monthDate = new Date(year, idx, 1);
-                      const isBeforeSignup = earliestDebt
-                        ? monthDate <
-                          new Date(
-                            earliestDebt.getFullYear(),
-                            earliestDebt.getMonth(),
-                            1,
-                          )
-                        : false;
-
-                      // A backfilled payment lands in a month before the
-                      // debt was added. Show it rather than the neutral
-                      // placeholder — otherwise the log-payment modal's
-                      // promise that it still shows in the tracker isn't true.
-                      const backfilled = hasPaymentInMonth(
+                      const status = debtMonthStatus(
+                        debt,
                         data.payments,
-                        debt.id,
                         idx,
                         year,
+                        "before-signup",
                       );
 
-                      const status =
-                        isBeforeSignup && !backfilled
-                          ? "before-signup"
-                          : getDebtMonthStatus(debt, data.payments, idx, year);
-
                       const isClickable =
-                        (!isBeforeSignup || backfilled) && status !== "future";
+                        status !== "future" && status !== "before-signup";
 
                       return (
                         <td

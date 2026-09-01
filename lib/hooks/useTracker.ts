@@ -117,6 +117,81 @@ export function getDebtMonthStatus(
   return "paid";
 }
 
+/** Is this month earlier than the month the debt was added? */
+function isBeforeStart(startedAt: string, monthIndex: number, year: number) {
+  const start = new Date(startedAt);
+  return (
+    new Date(year, monthIndex, 1) <
+    new Date(start.getFullYear(), start.getMonth(), 1)
+  );
+}
+
+function isFutureMonth(monthIndex: number, year: number) {
+  const now = new Date();
+  return (
+    year > now.getFullYear() ||
+    (year === now.getFullYear() && monthIndex > now.getMonth())
+  );
+}
+
+/**
+ * One debt's status for a month, with the "nothing was owed yet" guard.
+ *
+ * A payment backfilled into a month that predates the debt always wins — the
+ * log-payment modal promises it will show in the tracker. Only an *empty*
+ * month from before the debt existed reads as neutral, so a fresh account
+ * isn't greeted by a row of missed payments it was never going to make.
+ *
+ * `neutral` is how that empty pre-debt month renders: the yearly grid has a
+ * distinct "before-signup" treatment, everywhere else reuses "future".
+ *
+ * Use this rather than getDebtMonthStatus directly — that one has no notion
+ * of when the debt started, and every screen that reimplemented the guard
+ * around it got it subtly differently.
+ */
+export function debtMonthStatus(
+  debt: Debt,
+  payments: Payment[],
+  monthIndex: number,
+  year: number,
+  neutral: MonthStatus = "future",
+): MonthStatus {
+  if (isFutureMonth(monthIndex, year)) return "future";
+
+  if (hasPaymentInMonth(payments, debt.id, monthIndex, year)) {
+    return getDebtMonthStatus(debt, payments, monthIndex, year);
+  }
+
+  if (isBeforeStart(debt.created_at, monthIndex, year)) return neutral;
+
+  return getDebtMonthStatus(debt, payments, monthIndex, year);
+}
+
+/** The same rule across every debt, for the dashboard's year strip. */
+export function allDebtsMonthStatus(
+  debts: Debt[],
+  payments: Payment[],
+  monthIndex: number,
+  year: number,
+  neutral: MonthStatus = "future",
+): MonthStatus {
+  if (isFutureMonth(monthIndex, year)) return "future";
+  if (debts.length === 0) return neutral;
+
+  // Only judge the month on debts that actually existed in it, plus any with
+  // a payment backfilled into it. Otherwise one debt paid in May makes the
+  // whole month "missed" on account of debts that weren't added until
+  // September — the strip would scold you for a month you did pay.
+  const relevant = debts.filter(
+    (d) =>
+      hasPaymentInMonth(payments, d.id, monthIndex, year) ||
+      !isBeforeStart(d.created_at, monthIndex, year),
+  );
+  if (relevant.length === 0) return neutral;
+
+  return getMonthStatus(relevant, payments, monthIndex, year);
+}
+
 export function useTracker() {
   const [data, setData] = useState<TrackerData>({ debts: [], payments: [] });
   const [isLoading, setIsLoading] = useState(true);

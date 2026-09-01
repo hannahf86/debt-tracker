@@ -21,7 +21,7 @@ import {
 } from "lucide-react";
 import type { Debt } from "@/lib/types";
 import { arrangementStyle } from "@/lib/arrangement";
-import { useTracker, getMonthStatus } from "@/lib/hooks/useTracker";
+import { useTracker, allDebtsMonthStatus } from "@/lib/hooks/useTracker";
 import { useProfile } from "@/lib/hooks/useProfile";
 import {
   projectDebtFree,
@@ -127,17 +127,6 @@ export default function DashboardPage() {
     await updateDebt(debt.id, { arrangement: next });
   };
 
-  // Take the actual minimum created_at. Indexing the array assumed a
-  // newest-first order, but /api/tracker returns debts oldest-first.
-  const earliestDebt =
-    trackerData.debts.length > 0
-      ? new Date(
-          Math.min(
-            ...trackerData.debts.map((d) => new Date(d.created_at).getTime()),
-          ),
-        )
-      : new Date();
-
   return (
     <>
       <div className="md:hidden">
@@ -213,23 +202,15 @@ export default function DashboardPage() {
 
           <div className="grid grid-cols-6 sm:grid-cols-12 gap-2 sm:gap-3">
             {months.map((month, idx) => {
-              const monthDate = new Date(new Date().getFullYear(), idx, 1);
-              const isBeforeSignup =
-                monthDate <
-                new Date(
-                  earliestDebt.getFullYear(),
-                  earliestDebt.getMonth(),
-                  1,
-                );
-              const monthStatus =
-                isTrackerLoading || isBeforeSignup
-                  ? "future"
-                  : getMonthStatus(
-                      trackerData.debts,
-                      trackerData.payments,
-                      idx,
-                      new Date().getFullYear(),
-                    );
+              const monthStatus = isTrackerLoading
+                ? "future"
+                : allDebtsMonthStatus(
+                    trackerData.debts,
+                    trackerData.payments,
+                    idx,
+                    new Date().getFullYear(),
+                    "before-signup",
+                  );
 
               return (
                 <div key={month} className="flex flex-col items-center gap-2 min-w-0">
@@ -250,7 +231,7 @@ export default function DashboardPage() {
                       }
                     }}
                     className={`w-full aspect-square max-w-12 rounded-lg border flex items-center justify-center transition-all focus:outline-none hover:-translate-y-0.5 hover:shadow-md ${
-                      isBeforeSignup
+                      monthStatus === "before-signup"
                         ? "bg-peach-100/30 border-peach-200/50 text-peach-300 cursor-default"
                         : monthStatus === "current"
                           ? "bg-now-100 border-now-200 text-now-600 cursor-pointer hover:bg-now-200 shadow-sm"
@@ -265,19 +246,20 @@ export default function DashboardPage() {
                                   : "bg-peach-100/50 border-peach-200 text-peach-300 cursor-default"
                     }`}
                   >
-                    {!isBeforeSignup && monthStatus === "paid" && (
+                    {monthStatus === "paid" && (
                       <Check size={16} />
                     )}
-                    {!isBeforeSignup && monthStatus === "missed" && (
+                    {monthStatus === "missed" && (
                       <X size={16} />
                     )}
-                    {!isBeforeSignup && monthStatus === "partial" && (
+                    {monthStatus === "partial" && (
                       <Minus size={16} />
                     )}
-                    {!isBeforeSignup && monthStatus === "current" && (
+                    {monthStatus === "current" && (
                       <MapPin size={16} />
                     )}
-                    {(isBeforeSignup || monthStatus === "future") && (
+                    {(monthStatus === "before-signup" ||
+                      monthStatus === "future") && (
                       <span className="text-xs">—</span>
                     )}
                   </button>

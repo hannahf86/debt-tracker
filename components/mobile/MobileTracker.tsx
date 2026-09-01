@@ -12,8 +12,7 @@ import {
 } from "lucide-react";
 import type { Debt } from "@/lib/types";
 import {
-  getDebtMonthStatus,
-  hasPaymentInMonth,
+  debtMonthStatus,
   type TrackerData,
   type MonthStatus,
 } from "@/lib/hooks/useTracker";
@@ -50,15 +49,6 @@ export default function MobileTracker({
 }) {
   const router = useRouter();
   const year = new Date().getFullYear();
-  const thisMonth = new Date().getMonth();
-
-  // Actual minimum created_at — months before it aren't missed payments.
-  const earliestDebt =
-    data.debts.length > 0
-      ? new Date(
-          Math.min(...data.debts.map((d) => new Date(d.created_at).getTime())),
-        )
-      : null;
 
   const percentOf = (d: Debt) =>
     d.total_amount > 0
@@ -128,32 +118,12 @@ export default function MobileTracker({
             {/* The year transposed: this debt's twelve months, six across. */}
             <div className="grid grid-cols-6 gap-2">
               {MONTHS.map((month, idx) => {
-                const monthStart = new Date(year, idx, 1);
-                const beforeThisDebt = earliestDebt
-                  ? monthStart <
-                    new Date(
-                      new Date(debt.created_at).getFullYear(),
-                      new Date(debt.created_at).getMonth(),
-                      1,
-                    )
-                  : true;
-
-                // Backfilled payments predate the debt, so show them
-                // instead of greying the month out.
-                const backfilled = hasPaymentInMonth(
+                const status: MonthStatus = debtMonthStatus(
+                  debt,
                   data.payments,
-                  debt.id,
                   idx,
                   year,
                 );
-
-                // getDebtMonthStatus already returns "current" for this month
-                // while nothing is paid. Hardcoding it here meant a payment
-                // logged today never turned the cell green.
-                const status: MonthStatus =
-                  idx > thisMonth || (beforeThisDebt && !backfilled)
-                    ? "future"
-                    : getDebtMonthStatus(debt, data.payments, idx, year);
 
                 return (
                   <div key={month} className="flex flex-col items-center gap-1">
@@ -165,7 +135,7 @@ export default function MobileTracker({
                       label={`${month}, ${debt.company}`}
                       size={38}
                       onClick={
-                        idx <= thisMonth && (!beforeThisDebt || backfilled)
+                        status !== "future"
                           ? () => router.push(`/tracker/${idx + 1}`)
                           : undefined
                       }
