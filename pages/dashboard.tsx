@@ -269,9 +269,13 @@ export default function DashboardPage() {
             <p className="font-display text-3xl font-bold text-sage-800">
               £{Math.round(totalDebt).toLocaleString()}
             </p>
+            {/* "from sign up" rather than "originally": this figure is what
+                you entered when you added the debts and never moves, which is
+                why it doesn't reconcile with Debt cleared once past payments
+                are logged. */}
             <p className="text-xs text-sage-500 mt-2">
               of £{Math.round(projection.totalOriginal).toLocaleString()}{" "}
-              originally
+              from sign up
             </p>
           </div>
 
