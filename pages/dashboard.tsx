@@ -371,6 +371,7 @@ export default function DashboardPage() {
                         {debt.company}
                       </h3>
                     </div>
+                    <DueChip dayOfMonth={debt.direct_debit_date} />
                   </div>
                   <div className="flex flex-wrap items-center gap-2 sm:gap-3">
                   {(() => {
@@ -390,7 +391,6 @@ export default function DashboardPage() {
                       </span>
                     );
                   })()}
-                  <DueChip dayOfMonth={debt.direct_debit_date} />
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
