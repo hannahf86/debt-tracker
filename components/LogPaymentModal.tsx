@@ -89,7 +89,16 @@ export default function LogPaymentModal({
 
       if (!response.ok) throw new Error("Failed to log payment");
 
-      const newAmountOwed = Math.max(0, debt.amount_owed - parsedAmount);
+      // The API decides whether this payment moves the balance: one dated
+      // before the debt was added is already counted in the figure entered at
+      // signup, so deducting again would double-count it. Take its answer
+      // rather than deducting here — onSuccess writes this value straight
+      // back through updateDebt, which was silently undoing that decision.
+      const result = await response.json();
+      const returned = Number(result?.new_amount_owed);
+      const newAmountOwed = Number.isFinite(returned)
+        ? returned
+        : debt.amount_owed;
       const percent = Math.round(
         ((debt.total_amount - newAmountOwed) / debt.total_amount) * 100,
       );
