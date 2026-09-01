@@ -8,7 +8,11 @@ import { useDebts } from "@/lib/hooks/useDebts";
 import { ChevronDown, Plus, CreditCard, Landmark, Zap, Receipt, Home, MoreHorizontal, Check, Minus, MapPin } from "lucide-react";
 import type { Debt } from "@/lib/types";
 import { arrangementStyle } from "@/lib/arrangement";
-import { useTracker, allDebtsMonthStatus } from "@/lib/hooks/useTracker";
+import {
+  useTracker,
+  allDebtsMonthStatus,
+  missedMonthCount,
+} from "@/lib/hooks/useTracker";
 import { useProfile } from "@/lib/hooks/useProfile";
 import {
   projectDebtFree,
@@ -369,6 +373,23 @@ export default function DashboardPage() {
                     </div>
                   </div>
                   <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+                  {(() => {
+                    // Same amber and question mark as the tracker's cells, so
+                    // the pill reads as a shorthand for what the grid shows.
+                    const missed = missedMonthCount(debt, trackerData.payments);
+                    if (missed === 0) return null;
+                    return (
+                      <span className="shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-pill border bg-warn-100 border-warn-200 text-warn-600">
+                        <span aria-hidden="true" className="text-xs font-bold">
+                          ?
+                        </span>
+                        <span className="text-xs font-medium whitespace-nowrap">
+                          {missed} month{missed === 1 ? "" : "s"} with nothing
+                          logged
+                        </span>
+                      </span>
+                    );
+                  })()}
                   <DueChip dayOfMonth={debt.direct_debit_date} />
                   <button
                     onClick={(e) => {

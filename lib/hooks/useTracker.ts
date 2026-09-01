@@ -219,6 +219,24 @@ export function debtMonthStatus(
   return getDebtMonthStatus(debt, payments, monthIndex, year);
 }
 
+/**
+ * How many months this year read as missed for one debt — the amber "?" cells.
+ *
+ * Counts through debtMonthStatus rather than its own loop, so the pill and the
+ * tracker grid can't drift apart.
+ */
+export function missedMonthCount(
+  debt: Debt,
+  payments: Payment[],
+  year: number = new Date().getFullYear(),
+): number {
+  let count = 0;
+  for (let m = 0; m < 12; m++) {
+    if (debtMonthStatus(debt, payments, m, year) === "missed") count++;
+  }
+  return count;
+}
+
 /** The same rule across every debt, for the dashboard's year strip. */
 export function allDebtsMonthStatus(
   debts: Debt[],
