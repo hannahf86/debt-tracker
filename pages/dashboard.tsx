@@ -374,8 +374,11 @@ export default function DashboardPage() {
                       <h3 className="font-semibold text-sage-800 text-base truncate">
                         {debt.company}
                       </h3>
+                      <DueChip
+                        dayOfMonth={debt.direct_debit_date}
+                        variant="text"
+                      />
                     </div>
-                    <DueChip dayOfMonth={debt.direct_debit_date} />
                   </div>
                   <div className="flex flex-wrap items-center gap-2 sm:gap-3">
                   {(() => {
