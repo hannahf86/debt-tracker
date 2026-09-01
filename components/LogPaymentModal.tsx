@@ -243,22 +243,6 @@ export default function LogPaymentModal({
                 >
                   Today
                 </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    const d = new Date();
-                    d.setDate(Math.max(1, d.getDate() - 7));
-                    setPaymentDate(d.toISOString().split("T")[0]);
-                  }}
-                  aria-pressed={!isToday}
-                  className={`flex-1 min-h-[48px] rounded-lg border text-sm font-bold transition-colors duration-fast ${
-                    !isToday
-                      ? "bg-teal-50 border-brand text-brand"
-                      : "bg-white border-mint-200 text-sage-700"
-                  }`}
-                >
-                  Earlier
-                </button>
               </div>
               <input
                 type="date"

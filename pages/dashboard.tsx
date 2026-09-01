@@ -76,7 +76,11 @@ export default function DashboardPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
   const { debts, isLoading, error: debtsError, updateDebt } = useDebts();
-  const { data: trackerData, isLoading: isTrackerLoading } = useTracker();
+  const {
+    data: trackerData,
+    isLoading: isTrackerLoading,
+    fetchTracker,
+  } = useTracker();
   const { profile, greetingName } = useProfile();
   const budget = profile.monthly_budget;
   const [logPaymentDebt, setLogPaymentDebt] = useState<Debt | null>(null);
@@ -520,6 +524,9 @@ export default function DashboardPage() {
           onClose={() => setLogPaymentDebt(null)}
           onSuccess={(newAmountOwed) => {
             updateDebt(logPaymentDebt.id, { amount_owed: newAmountOwed });
+            // updateDebt only refreshes the balance; the tracker strip reads
+            // payments, which need fetching again.
+            fetchTracker();
             setTimeout(() => setLogPaymentDebt(null), 2500);
           }}
         />

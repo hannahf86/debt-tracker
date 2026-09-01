@@ -4,7 +4,11 @@ import { ordinal } from "@/lib/format";
 import MobileTracker from "@/components/mobile/MobileTracker";
 import { useState } from "react";
 import { useRouter } from "next/router";
-import { useTracker, getDebtMonthStatus } from "@/lib/hooks/useTracker";
+import {
+  useTracker,
+  getDebtMonthStatus,
+  hasPaymentInMonth,
+} from "@/lib/hooks/useTracker";
 import { Check, X, Minus, MapPin, Loader } from "lucide-react";
 
 const months = [
@@ -171,12 +175,24 @@ export default function YearlyTrackerPage() {
                           )
                         : false;
 
-                      const status = isBeforeSignup
-                        ? "before-signup"
-                        : getDebtMonthStatus(debt, data.payments, idx, year);
+                      // A backfilled payment lands in a month before the
+                      // debt was added. Show it rather than the neutral
+                      // placeholder — otherwise the log-payment modal's
+                      // promise that it still shows in the tracker isn't true.
+                      const backfilled = hasPaymentInMonth(
+                        data.payments,
+                        debt.id,
+                        idx,
+                        year,
+                      );
+
+                      const status =
+                        isBeforeSignup && !backfilled
+                          ? "before-signup"
+                          : getDebtMonthStatus(debt, data.payments, idx, year);
 
                       const isClickable =
-                        !isBeforeSignup && status !== "future";
+                        (!isBeforeSignup || backfilled) && status !== "future";
 
                       return (
                         <td
@@ -188,7 +204,7 @@ export default function YearlyTrackerPage() {
                               isClickable && handleCellClick(debt.id, idx)
                             }
                             className={`w-10 h-10 rounded-lg border flex items-center justify-center mx-auto transition-all ${
-                              isBeforeSignup
+                              status === "before-signup"
                                 ? "bg-peach-100/50 border-peach-200 text-peach-300 cursor-default"
                                 : status === "current"
                                   ? "bg-now-100 border-now-200 text-now-600 hover:bg-now-200 cursor-pointer"

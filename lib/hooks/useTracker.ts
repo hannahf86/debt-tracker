@@ -14,6 +14,19 @@ export type MonthStatus =
   | "current"
   | "before-signup";
 
+/** Does this debt have any payment recorded in the given month? */
+export function hasPaymentInMonth(
+  payments: Payment[],
+  debtId: string,
+  monthIndex: number,
+  year: number,
+): boolean {
+  const monthStr = `${year}-${String(monthIndex + 1).padStart(2, "0")}`;
+  return payments.some(
+    (p) => p.debt_id === debtId && p.payment_date.startsWith(monthStr),
+  );
+}
+
 export function getMonthStatus(
   debts: Debt[],
   payments: Payment[],

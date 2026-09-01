@@ -13,6 +13,7 @@ import {
 import type { Debt } from "@/lib/types";
 import {
   getDebtMonthStatus,
+  hasPaymentInMonth,
   type TrackerData,
   type MonthStatus,
 } from "@/lib/hooks/useTracker";
@@ -137,12 +138,22 @@ export default function MobileTracker({
                     )
                   : true;
 
+                // Backfilled payments predate the debt, so show them
+                // instead of greying the month out.
+                const backfilled = hasPaymentInMonth(
+                  data.payments,
+                  debt.id,
+                  idx,
+                  year,
+                );
+
+                // getDebtMonthStatus already returns "current" for this month
+                // while nothing is paid. Hardcoding it here meant a payment
+                // logged today never turned the cell green.
                 const status: MonthStatus =
-                  beforeThisDebt || idx > thisMonth
+                  idx > thisMonth || (beforeThisDebt && !backfilled)
                     ? "future"
-                    : idx === thisMonth
-                      ? "current"
-                      : getDebtMonthStatus(debt, data.payments, idx, year);
+                    : getDebtMonthStatus(debt, data.payments, idx, year);
 
                 return (
                   <div key={month} className="flex flex-col items-center gap-1">
@@ -154,7 +165,7 @@ export default function MobileTracker({
                       label={`${month}, ${debt.company}`}
                       size={38}
                       onClick={
-                        !beforeThisDebt && idx <= thisMonth
+                        idx <= thisMonth && (!beforeThisDebt || backfilled)
                           ? () => router.push(`/tracker/${idx + 1}`)
                           : undefined
                       }
