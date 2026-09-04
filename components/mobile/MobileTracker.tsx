@@ -12,7 +12,8 @@ import {
 } from "lucide-react";
 import type { Debt } from "@/lib/types";
 import {
-  getDebtMonthStatus,
+  getDebtStripMonthStatus,
+  startOfMonth,
   type TrackerData,
   type MonthStatus,
 } from "@/lib/hooks/useTracker";
@@ -49,15 +50,6 @@ export default function MobileTracker({
 }) {
   const router = useRouter();
   const year = new Date().getFullYear();
-  const thisMonth = new Date().getMonth();
-
-  // Actual minimum created_at — months before it aren't missed payments.
-  const earliestDebt =
-    data.debts.length > 0
-      ? new Date(
-          Math.min(...data.debts.map((d) => new Date(d.created_at).getTime())),
-        )
-      : null;
 
   const percentOf = (d: Debt) =>
     d.total_amount > 0
@@ -127,22 +119,15 @@ export default function MobileTracker({
             {/* The year transposed: this debt's twelve months, six across. */}
             <div className="grid grid-cols-6 gap-2">
               {MONTHS.map((month, idx) => {
-                const monthStart = new Date(year, idx, 1);
-                const beforeThisDebt = earliestDebt
-                  ? monthStart <
-                    new Date(
-                      new Date(debt.created_at).getFullYear(),
-                      new Date(debt.created_at).getMonth(),
-                      1,
-                    )
-                  : true;
-
-                const status: MonthStatus =
-                  beforeThisDebt || idx > thisMonth
-                    ? "future"
-                    : idx === thisMonth
-                      ? "current"
-                      : getDebtMonthStatus(debt, data.payments, idx, year);
+                // Months before this debt was added stay blank unless a
+                // payment was back-dated into one — then it shows.
+                const status: MonthStatus = getDebtStripMonthStatus(
+                  debt,
+                  data.payments,
+                  idx,
+                  year,
+                  startOfMonth(debt.created_at),
+                );
 
                 return (
                   <div key={month} className="flex flex-col items-center gap-1">
@@ -154,7 +139,7 @@ export default function MobileTracker({
                       label={`${month}, ${debt.company}`}
                       size={38}
                       onClick={
-                        !beforeThisDebt && idx <= thisMonth
+                        status !== "future" && status !== "before-signup"
                           ? () => router.push(`/tracker/${idx + 1}`)
                           : undefined
                       }

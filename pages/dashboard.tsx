@@ -21,7 +21,7 @@ import {
 } from "lucide-react";
 import type { Debt } from "@/lib/types";
 import { arrangementStyle } from "@/lib/arrangement";
-import { useTracker, getMonthStatus } from "@/lib/hooks/useTracker";
+import { useTracker, getStripMonthStatus } from "@/lib/hooks/useTracker";
 import { useProfile } from "@/lib/hooks/useProfile";
 import {
   projectDebtFree,
@@ -76,7 +76,11 @@ export default function DashboardPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
   const { debts, isLoading, error: debtsError, updateDebt } = useDebts();
-  const { data: trackerData, isLoading: isTrackerLoading } = useTracker();
+  const {
+    data: trackerData,
+    isLoading: isTrackerLoading,
+    fetchTracker,
+  } = useTracker();
   const { profile, greetingName } = useProfile();
   const budget = profile.monthly_budget;
   const [logPaymentDebt, setLogPaymentDebt] = useState<Debt | null>(null);
@@ -122,17 +126,6 @@ export default function DashboardPage() {
       arrangements[(arrangements.indexOf(current) + 1) % arrangements.length];
     await updateDebt(debt.id, { arrangement: next });
   };
-
-  // Take the actual minimum created_at. Indexing the array assumed a
-  // newest-first order, but /api/tracker returns debts oldest-first.
-  const earliestDebt =
-    trackerData.debts.length > 0
-      ? new Date(
-          Math.min(
-            ...trackerData.debts.map((d) => new Date(d.created_at).getTime()),
-          ),
-        )
-      : new Date();
 
   return (
     <>
@@ -209,23 +202,15 @@ export default function DashboardPage() {
 
           <div className="grid grid-cols-6 sm:grid-cols-12 gap-2 sm:gap-3">
             {months.map((month, idx) => {
-              const monthDate = new Date(new Date().getFullYear(), idx, 1);
-              const isBeforeSignup =
-                monthDate <
-                new Date(
-                  earliestDebt.getFullYear(),
-                  earliestDebt.getMonth(),
-                  1,
-                );
-              const monthStatus =
-                isTrackerLoading || isBeforeSignup
-                  ? "future"
-                  : getMonthStatus(
-                      trackerData.debts,
-                      trackerData.payments,
-                      idx,
-                      new Date().getFullYear(),
-                    );
+              const monthStatus = isTrackerLoading
+                ? "future"
+                : getStripMonthStatus(
+                    trackerData.debts,
+                    trackerData.payments,
+                    idx,
+                    new Date().getFullYear(),
+                  );
+              const isBeforeSignup = monthStatus === "before-signup";
 
               return (
                 <div key={month} className="flex flex-col items-center gap-2 min-w-0">
@@ -520,6 +505,10 @@ export default function DashboardPage() {
           onClose={() => setLogPaymentDebt(null)}
           onSuccess={(newAmountOwed) => {
             updateDebt(logPaymentDebt.id, { amount_owed: newAmountOwed });
+            // The year strip is served by its own fetch, so it stays stale
+            // until we pull it again — a back-dated payment would otherwise
+            // not appear until a reload.
+            fetchTracker();
             setTimeout(() => setLogPaymentDebt(null), 2500);
           }}
         />

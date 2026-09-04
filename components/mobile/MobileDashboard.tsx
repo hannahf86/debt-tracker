@@ -15,7 +15,7 @@ import type { DebtFreeProjection } from "@/lib/projection";
 import { formatLongDate, budgetUsage } from "@/lib/projection";
 import { ordinal } from "@/lib/format";
 import {
-  getMonthStatus,
+  getStripMonthStatus,
   type TrackerData,
   type MonthStatus,
 } from "@/lib/hooks/useTracker";
@@ -119,15 +119,6 @@ export default function MobileDashboard({
   const greeting = timeGreeting();
   const usage = budgetUsage(debts, budget);
 
-  // Earliest debt across the set — the actual minimum, not an array position.
-  const earliestDebt =
-    trackerData.debts.length > 0
-      ? new Date(
-          Math.min(
-            ...trackerData.debts.map((d) => new Date(d.created_at).getTime()),
-          ),
-        )
-      : null;
   const year = new Date().getFullYear();
   const thisMonth = new Date().getMonth();
 
@@ -269,25 +260,17 @@ export default function MobileDashboard({
         </div>
         <div className="flex gap-2 px-4 pb-1 overflow-x-auto no-scrollbar">
           {MONTHS.map((month, idx) => {
-            const monthStart = new Date(year, idx, 1);
-            // Don't mark months that predate the debts as missed — nothing was
-            // owed yet, and a row of red crosses reads as a telling-off.
-            const beforeAnyDebt = earliestDebt
-              ? monthStart <
-                new Date(earliestDebt.getFullYear(), earliestDebt.getMonth(), 1)
-              : true;
-
-            const status: MonthStatus =
-              isLoading || beforeAnyDebt || idx > thisMonth
-                ? "future"
-                : idx === thisMonth
-                  ? "current"
-                  : getMonthStatus(
-                      trackerData.debts,
-                      trackerData.payments,
-                      idx,
-                      year,
-                    );
+            // Months predating the debts stay blank rather than red —
+            // nothing was owed yet, and a row of crosses reads as a
+            // telling-off. But a payment back-dated into one still shows.
+            const status: MonthStatus = isLoading
+              ? "future"
+              : getStripMonthStatus(
+                  trackerData.debts,
+                  trackerData.payments,
+                  idx,
+                  year,
+                );
 
             return (
               <div
@@ -302,7 +285,7 @@ export default function MobileDashboard({
                   label={month}
                   size={46}
                   onClick={
-                    !beforeAnyDebt && idx <= thisMonth
+                    status !== "future" && status !== "before-signup"
                       ? () => router.push(`/tracker/${idx + 1}`)
                       : undefined
                   }

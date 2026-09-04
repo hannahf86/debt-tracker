@@ -6,7 +6,11 @@ import type { Debt, Payment } from "@/lib/types";
 import { clearedDate, formatMonthYear } from "@/lib/projection";
 import { arrangementStyle } from "@/lib/arrangement";
 import { ordinal } from "@/lib/format";
-import { getDebtMonthStatus, type MonthStatus } from "@/lib/hooks/useTracker";
+import {
+  getDebtStripMonthStatus,
+  startOfMonth,
+  type MonthStatus,
+} from "@/lib/hooks/useTracker";
 import MonthCell from "@/components/mobile/MonthCell";
 import { MONTHS, ProgressBar, percentPaid, money } from "@/components/mobile/ui";
 
@@ -84,7 +88,6 @@ export default function MobileDebtDetail({
   const percent = percentPaid(debt.total_amount, debt.amount_owed);
   const arrangement = arrangementStyle(debt.arrangement);
   const year = new Date().getFullYear();
-  const thisMonth = new Date().getMonth();
   const addedOn = new Date(debt.created_at);
 
   return (
@@ -165,15 +168,14 @@ export default function MobileDebtDetail({
         <div className="bg-white border border-mint-200 rounded-xl p-4">
           <div className="grid grid-cols-6 gap-2">
             {MONTHS.map((month, idx) => {
-              const before =
-                new Date(year, idx, 1) <
-                new Date(addedOn.getFullYear(), addedOn.getMonth(), 1);
-              const status: MonthStatus =
-                before || idx > thisMonth
-                  ? "future"
-                  : idx === thisMonth
-                    ? "current"
-                    : getDebtMonthStatus(debt, payments, idx, year);
+              const status: MonthStatus = getDebtStripMonthStatus(
+                debt,
+                payments,
+                idx,
+                year,
+                startOfMonth(addedOn),
+              );
+              const before = status === "before-signup";
               return (
                 <div key={month} className="flex flex-col items-center gap-1">
                   <span className="text-2xs font-bold tracking-caps uppercase text-sage-400">
@@ -184,7 +186,7 @@ export default function MobileDebtDetail({
                     label={`${month}, ${debt.company}`}
                     size={38}
                     onClick={
-                      !before && idx <= thisMonth
+                      !before && status !== "future"
                         ? () => router.push(`/tracker/${idx + 1}`)
                         : undefined
                     }

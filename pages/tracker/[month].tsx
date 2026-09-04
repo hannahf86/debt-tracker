@@ -61,7 +61,7 @@ export default function MonthTrackerPage() {
     return `${y}-${String(monthIndex + 1).padStart(2, "0")}-${String(lastDay).padStart(2, "0")}`;
   })();
   const year = new Date().getFullYear();
-  const { data, isLoading } = useTracker();
+  const { data, isLoading, fetchTracker } = useTracker();
   const [debtDetails, setDebtDetails] = useState<DebtDetails>({});
   const [loadingDetails, setLoadingDetails] = useState(false);
   const [logPaymentDebt, setLogPaymentDebt] = useState<Debt | null>(null);
@@ -288,7 +288,11 @@ export default function MonthTrackerPage() {
           // Logging from a month's view should default to that month, not today.
           defaultDate={defaultDateForMonth}
           onClose={() => setLogPaymentDebt(null)}
-          onSuccess={() => setLogPaymentDebt(null)}
+          onSuccess={() => {
+            // Refresh the month's cells and the per-debt detail beneath them.
+            fetchTracker();
+            setLogPaymentDebt(null);
+          }}
         />
       )}
     </>
