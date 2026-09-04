@@ -1,6 +1,5 @@
 import { getSession } from "@/lib/devAuth";
-import { supabase } from "@/lib/supabase";
-import { supabaseAdmin } from "@/lib/supabaseAdmin";
+import { db, supabaseAdmin } from "@/lib/supabaseAdmin";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 export default async function handler(
@@ -16,23 +15,23 @@ export default async function handler(
   if (req.method === "DELETE") {
     try {
       // Delete all user data in order
-      await supabase
+      await db
         .from("missed_payments")
         .delete()
         .eq("user_id", session.user.id);
 
-      const { data: debts } = await supabase
+      const { data: debts } = await db
         .from("debts")
         .select("id")
         .eq("user_id", session.user.id);
 
       if (debts && debts.length > 0) {
         const debtIds = debts.map((d) => d.id);
-        await supabase.from("payments").delete().in("debt_id", debtIds);
+        await db.from("payments").delete().in("debt_id", debtIds);
       }
 
-      await supabase.from("debts").delete().eq("user_id", session.user.id);
-      await supabase.from("users").delete().eq("id", session.user.id);
+      await db.from("debts").delete().eq("user_id", session.user.id);
+      await db.from("users").delete().eq("id", session.user.id);
 
       // Delete from Supabase auth
       const { error } = await supabaseAdmin.auth.admin.deleteUser(session.user.id);

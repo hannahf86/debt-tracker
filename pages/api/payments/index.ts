@@ -1,5 +1,5 @@
 import { getSession } from "@/lib/devAuth";
-import { supabase } from "@/lib/supabase";
+import { db } from "@/lib/supabaseAdmin";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 export default async function handler(
@@ -20,7 +20,7 @@ export default async function handler(
     }
 
     try {
-      const { data: debt } = await supabase
+      const { data: debt } = await db
         .from("debts")
         .select("id")
         .eq("id", debtId)
@@ -29,7 +29,7 @@ export default async function handler(
 
       if (!debt) return res.status(403).json({ error: "Forbidden" });
 
-      const { data: payments, error } = await supabase
+      const { data: payments, error } = await db
         .from("payments")
         .select("*")
         .eq("debt_id", debtId)
@@ -60,7 +60,7 @@ export default async function handler(
     }
 
     try {
-      const { data: debt } = await supabase
+      const { data: debt } = await db
         .from("debts")
         .select("id, amount_owed, monthly_amount, created_at")
         .eq("id", debt_id)
@@ -70,7 +70,7 @@ export default async function handler(
       if (!debt) return res.status(403).json({ error: "Forbidden" });
 
       // Create payment
-      const { data: payment, error: paymentError } = await supabase
+      const { data: payment, error: paymentError } = await db
         .from("payments")
         .insert([
           {
@@ -103,7 +103,7 @@ export default async function handler(
         : Math.max(0, debt.amount_owed - parseFloat(amount));
 
       if (!isBackfill) {
-        const { error: updateError } = await supabase
+        const { error: updateError } = await db
           .from("debts")
           .update({ amount_owed: newAmount })
           .eq("id", debt_id);
@@ -119,7 +119,7 @@ export default async function handler(
           payment_type === "partial-late")
       ) {
         const paymentDateObj = new Date(payment_date);
-        await supabase.from("missed_payments").insert([
+        await db.from("missed_payments").insert([
           {
             user_id: session.user.id,
             debt_id,

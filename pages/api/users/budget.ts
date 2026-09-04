@@ -1,5 +1,5 @@
 import { getSession } from "@/lib/devAuth";
-import { supabase } from "@/lib/supabase";
+import { db } from "@/lib/supabaseAdmin";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 export default async function handler(
@@ -14,7 +14,7 @@ export default async function handler(
 
   if (req.method === "GET") {
     try {
-      const { data, error } = await supabase
+      const { data, error } = await db
         .from("users")
         .select("monthly_budget")
         .eq("id", session.user.id)
@@ -36,7 +36,7 @@ export default async function handler(
       // Upsert rather than update: signing up creates the auth.users row but
       // nothing creates the matching public.users row, so a plain update on a
       // brand-new account would silently affect zero rows.
-      const { error } = await supabase.from("users").upsert(
+      const { error } = await db.from("users").upsert(
         {
           id: session.user.id,
           email: session.user.email,

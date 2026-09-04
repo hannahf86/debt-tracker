@@ -1,6 +1,5 @@
 import { getSession } from "@/lib/devAuth";
-import { supabase } from "@/lib/supabase";
-import { supabaseAdmin } from "@/lib/supabaseAdmin";
+import { db, supabaseAdmin } from "@/lib/supabaseAdmin";
 import { describeDbError } from "@/lib/dbError";
 import type { NextApiRequest, NextApiResponse } from "next";
 
@@ -26,7 +25,7 @@ export default async function handler(
     try {
       const [{ data: authUser }, { data: row }] = await Promise.all([
         supabaseAdmin.auth.admin.getUserById(userId),
-        supabase
+        db
           .from("users")
           .select("monthly_budget")
           .eq("id", userId)
@@ -64,7 +63,7 @@ export default async function handler(
       }
 
       if (monthly_budget !== undefined) {
-        const { error } = await supabase.from("users").upsert(
+        const { error } = await db.from("users").upsert(
           {
             id: userId,
             email: session.user.email,

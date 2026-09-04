@@ -1,5 +1,5 @@
 import { getSession } from "@/lib/devAuth";
-import { supabase } from "@/lib/supabase";
+import { db } from "@/lib/supabaseAdmin";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 export default async function handler(
@@ -20,7 +20,18 @@ export default async function handler(
     }
 
     try {
-      const { data, error } = await supabase
+      // debt_id comes from the request, so confirm it is this user's before
+      // attaching a note to it.
+      const { data: ownDebt } = await db
+        .from("debts")
+        .select("id")
+        .eq("id", debt_id)
+        .eq("user_id", session.user.id)
+        .maybeSingle();
+
+      if (!ownDebt) return res.status(403).json({ error: "Forbidden" });
+
+      const { data, error } = await db
         .from("missed_payments")
         .insert([
           {
