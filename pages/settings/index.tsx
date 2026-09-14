@@ -333,6 +333,16 @@ export default function SettingsPage() {
             Go to your data →
           </span>
         </Link>
+
+        {/* Privacy notice — a separate link, since the card above is itself a link */}
+        <p className="mt-4 text-center">
+          <Link
+            href="/privacy"
+            className="inline-flex items-center justify-center min-h-[44px] px-3 text-sm font-semibold text-brand hover:underline"
+          >
+            Read our privacy notice
+          </Link>
+        </p>
       </div>
     </div>
   );
