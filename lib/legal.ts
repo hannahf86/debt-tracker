@@ -7,13 +7,11 @@
  */
 export const LEGAL = {
   service: "Mirian",
-  /** The data controller, per the policy drafts. */
-  controller: "Sael North Ltd",
-  registeredIn: "England and Wales",
-  /** Companies House number. Shown once set. */
-  companyNumber: null as string | null,
-  /** Registered office address. Shown once set. */
-  registeredOffice: null as string | null,
+  /**
+   * The data controller. A sole trader, so there's no Companies House number
+   * or registered office to show.
+   */
+  controller: "Hannah Feehan, trading as Jorvik Web Dev (Sael North)",
   /** CONFIRM: the drafts leave the data protection contact blank. */
   contactEmail: "hello@jorvikweb.dev",
   /** ICO data protection fee registration number, once registered. */

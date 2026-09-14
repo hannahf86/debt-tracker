@@ -95,15 +95,10 @@ export default function PrivacyPage() {
           <div className="bg-white border border-mint-200 rounded-2xl p-5 md:p-6 shadow-sm">
             <Section id="who" title="Who we are">
               <p>
-                {LEGAL.service} is provided by {LEGAL.controller}, a company
-                registered in {LEGAL.registeredIn}
-                {LEGAL.companyNumber && <> (company number {LEGAL.companyNumber})</>}
-                {LEGAL.registeredOffice && (
-                  <>, with its registered office at {LEGAL.registeredOffice}</>
-                )}
-                . We&rsquo;re responsible for looking after your personal data,
-                which makes us the &ldquo;data controller&rdquo; under UK data
-                protection law.
+                {LEGAL.service} is provided by {LEGAL.controller}. As a sole
+                trader, Hannah is personally responsible for looking after your
+                data, which makes her the &ldquo;data controller&rdquo; under UK
+                data protection law.
               </p>
               {LEGAL.icoRegistration && (
                 <p>
