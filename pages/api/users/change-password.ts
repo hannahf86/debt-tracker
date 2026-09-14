@@ -15,10 +15,10 @@ export default async function handler(
   if (req.method === "POST") {
     const { password } = req.body;
 
-    if (!password || password.length < 6) {
+    if (typeof password !== "string" || password.length < 8) {
       return res
         .status(400)
-        .json({ error: "Password must be at least 6 characters" });
+        .json({ error: "Password must be at least 8 characters" });
     }
 
     try {

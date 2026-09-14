@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState, useEffect } from "react";
 import { useSession, signOut } from "next-auth/react";
 import { useDebts } from "@/lib/hooks/useDebts";
@@ -43,9 +44,6 @@ export default function SettingsPage() {
 
   const [monthlyBudget, setMonthlyBudget] = useState("");
   const [budgetSaved, setBudgetSaved] = useState(false);
-  const [isDeleting, setIsDeleting] = useState(false);
-  const [deleteConfirm, setDeleteConfirm] = useState("");
-  const [isDeleteLoading, setIsDeleteLoading] = useState(false);
 
   const [showChangePassword, setShowChangePassword] = useState(false);
   const [newPassword, setNewPassword] = useState("");
@@ -79,8 +77,8 @@ export default function SettingsPage() {
       setPasswordError("Passwords do not match");
       return;
     }
-    if (newPassword.length < 6) {
-      setPasswordError("Password must be at least 6 characters");
+    if (newPassword.length < 8) {
+      setPasswordError("Password must be at least 8 characters");
       return;
     }
 
@@ -103,22 +101,6 @@ export default function SettingsPage() {
       setPasswordError("Something went wrong. Please try again.");
     } finally {
       setIsPasswordLoading(false);
-    }
-  };
-
-  const handleDeleteAccount = async () => {
-    setIsDeleteLoading(true);
-    try {
-      const res = await fetch("/api/users/delete", {
-        method: "DELETE",
-      });
-
-      if (!res.ok) throw new Error("Failed to delete account");
-
-      await signOut({ callbackUrl: "/auth/login" });
-    } catch (error) {
-      console.error("Error deleting account:", error);
-      setIsDeleteLoading(false);
     }
   };
 
@@ -337,67 +319,20 @@ export default function SettingsPage() {
           </div>
         </div>
 
-        {/* Danger zone */}
-        <div className="bg-alert-100 border border-alert-200 rounded-2xl p-5 md:p-6">
-          <div className="flex items-center gap-2 mb-2">
-            <AlertTriangle size={18} className="text-alert-600" />
-            <h2 className="text-lg font-semibold text-alert-600">Danger zone</h2>
-          </div>
-          <p className="text-sage-500 text-sm mb-6">
-            Deleting your account is permanent and cannot be undone. All your
-            debts, payments and notes will be lost.
+        {/* Your data — download or delete */}
+        <Link
+          href="/settings/data"
+          className="block bg-white border border-mint-200 rounded-2xl p-5 md:p-6 shadow-sm hover:border-sage-300 transition-colors"
+        >
+          <h2 className="text-lg font-semibold text-sage-800">Your data</h2>
+          <p className="text-sage-500 text-sm mt-1">
+            Download a copy of everything you&rsquo;ve added, or delete your
+            account and all your data.
           </p>
-
-          {!isDeleting ? (
-            <button
-              onClick={() => setIsDeleting(true)}
-              className="px-4 min-h-[48px] bg-alert-100 hover:bg-alert-200 text-alert-600 border border-alert-200 rounded-pill text-sm font-semibold transition-all"
-            >
-              Delete account
-            </button>
-          ) : (
-            <div className="space-y-3">
-              <p className="text-sage-600 text-sm">
-                Type{" "}
-                <span className="text-sage-800 font-mono font-bold">
-                  delete my account
-                </span>{" "}
-                to confirm
-              </p>
-              <label htmlFor="delete_confirm" className="sr-only">
-                Type &ldquo;delete my account&rdquo; to confirm
-              </label>
-              <input
-                id="delete_confirm"
-                type="text"
-                value={deleteConfirm}
-                onChange={(e) => setDeleteConfirm(e.target.value)}
-                placeholder="delete my account"
-                className="w-full min-h-[48px] bg-white border border-alert-200 rounded-lg px-4 py-2 text-sage-800 placeholder-sage-500 focus:outline-none focus:border-alert-600 focus:ring-2 focus:ring-alert-600"
-              />
-              <div className="flex gap-3">
-                <button
-                  onClick={() => {
-                    setIsDeleting(false);
-                    setDeleteConfirm("");
-                  }}
-                  className="flex-1 min-h-[48px] px-4 bg-mint-100 hover:bg-mint-200 text-sage-700 font-semibold rounded-pill transition-colors text-sm border border-mint-200"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={handleDeleteAccount}
-                  disabled={
-                    deleteConfirm !== "delete my account" || isDeleteLoading
-                  }
-                  className="flex-1 min-h-[48px] px-4 bg-alert-100 hover:bg-alert-200 text-alert-600 border border-alert-200 font-semibold rounded-pill transition-all disabled:opacity-50 disabled:cursor-not-allowed text-sm"
-                >
-                  {isDeleteLoading ? "Deleting..." : "Confirm delete"}
-                </button>
-              </div>
-            </div>
-          )}
-        </div>
+          <span className="inline-block mt-3 text-sm font-semibold text-brand">
+            Go to your data →
+          </span>
+        </Link>
       </div>
     </div>
   );

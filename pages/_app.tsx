@@ -14,6 +14,7 @@ const authRoutes = [
   "/auth/forgot-password",
   "/auth/reset-password",
   "/onboarding",
+  "/privacy",
   "/404",
 ];
 

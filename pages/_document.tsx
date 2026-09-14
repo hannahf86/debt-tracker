@@ -1,5 +1,4 @@
 import { Html, Head, Main, NextScript } from "next/document";
-import { NO_FLASH_SCRIPT } from "@/lib/theme";
 
 export default function Document() {
   return (
@@ -11,8 +10,10 @@ export default function Document() {
         <meta name="theme-color" content="#1a666a" />
       </Head>
       <body>
-        {/* Applies the saved theme before first paint. */}
-        <script dangerouslySetInnerHTML={{ __html: NO_FLASH_SCRIPT }} />
+        {/* Applies the saved theme before first paint. Deliberately
+            synchronous: it has to run before anything renders. */}
+        {/* eslint-disable-next-line @next/next/no-sync-scripts */}
+        <script src="/theme-init.js" />
         <Main />
         <NextScript />
       </body>

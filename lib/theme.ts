@@ -43,9 +43,6 @@ export function readTheme(): Theme {
   return "system";
 }
 
-/**
- * Runs before first paint, inlined in the document head. Without it the page
- * renders light and then snaps to dark, which is exactly the kind of flash
- * this app shouldn't be doing to anyone.
- */
-export const NO_FLASH_SCRIPT = `(function(){try{var t=localStorage.getItem('${THEME_KEY}');if(t==='dark'||t==='light'){document.documentElement.setAttribute('data-theme',t)}}catch(e){}})();`;
+// The before-first-paint theme script lives in public/theme-init.js, loaded
+// from _document. It was inline, which a Content-Security-Policy can only allow
+// by permitting all inline scripts. If THEME_KEY changes, change it there too.

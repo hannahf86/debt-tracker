@@ -25,8 +25,8 @@ export default function SignupPage() {
       return;
     }
 
-    if (password.length < 6) {
-      setError("Password must be at least 6 characters");
+    if (password.length < 8) {
+      setError("Password must be at least 8 characters");
       setIsLoading(false);
       return;
     }
@@ -181,6 +181,18 @@ export default function SignupPage() {
               {isLoading ? "Creating account..." : "Create account"}
             </button>
           </form>
+
+          {/* How we look after their data */}
+          <p className="mt-5 text-xs text-sage-500 text-center">
+            We only use your details to run your account. Read our{" "}
+            <Link
+              href="/privacy"
+              className="font-semibold text-sage-700 hover:text-sage-900 underline"
+            >
+              privacy notice
+            </Link>
+            .
+          </p>
 
           <div className="mt-6 pt-6 border-t border-mint-200">
             <p className="text-sage-600 text-sm text-center">

@@ -134,6 +134,15 @@ export default function LoginPage() {
                 Sign up
               </Link>
             </p>
+            {/* Privacy notice, reachable before signing in */}
+            <p className="mt-3 text-center">
+              <Link
+                href="/privacy"
+                className="inline-flex items-center justify-center min-h-[44px] px-3 text-xs text-sage-500 hover:text-sage-700 underline"
+              >
+                Privacy notice
+              </Link>
+            </p>
           </div>
         </div>
       </div>

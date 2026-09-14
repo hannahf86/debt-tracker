@@ -16,6 +16,13 @@ export default async function handler(
     return res.status(400).json({ error: "Email and password required" });
   }
 
+  // Checked here too: the page's own check is only a convenience.
+  if (typeof password !== "string" || password.length < 8) {
+    return res
+      .status(400)
+      .json({ error: "Password must be at least 8 characters" });
+  }
+
   const supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,

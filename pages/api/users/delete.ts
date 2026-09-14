@@ -26,6 +26,17 @@ export default async function handler(
         .eq("user_id", session.user.id);
       if (notesError) throw notesError;
 
+      // Contact history would go with the debts via its foreign key anyway,
+      // but deletion is the one place that must not rely on a schema detail
+      // someone could change. IF YOU ADD A TABLE THAT STORES PERSONAL DATA,
+      // DELETE IT HERE, and add it to users/export.ts.
+      const { error: contactsError } = await supabaseAdmin
+        .from("contact_log")
+        .delete()
+        .eq("user_id", session.user.id);
+      // 42P01: the table hasn't been created, so there's nothing to delete.
+      if (contactsError && contactsError.code !== "42P01") throw contactsError;
+
       const { data: debts, error: debtsReadError } = await supabaseAdmin
         .from("debts")
         .select("id")
