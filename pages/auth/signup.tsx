@@ -11,6 +11,8 @@ export default function SignupPage() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  // Set once the account is created; replaces the form with the inbox prompt.
+  const [sentTo, setSentTo] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -44,9 +46,11 @@ export default function SignupPage() {
         return;
       }
 
-      router.push(
-        "/auth/login?message=Account created! Check your email to confirm.",
-      );
+      // Stay on this page rather than sending them to a sign-in form they
+      // can't use yet. The email link lands on /auth/callback, which is the
+      // route to sign in once confirmed.
+      setSentTo(email);
+      setIsLoading(false);
     } catch (err) {
       setError("An error occurred. Please try again.");
       setIsLoading(false);
@@ -65,6 +69,38 @@ export default function SignupPage() {
           </p>
         </div>
 
+        {/* Check your inbox — shown after signup instead of the form */}
+        {sentTo ? (
+          <div className="bg-white border border-mint-200 rounded-2xl p-8 shadow-sm text-center">
+            <h2 className="text-xl font-semibold text-sage-800 mb-2">
+              Check your inbox
+            </h2>
+            <p className="text-sage-600 text-sm mb-4">
+              We&rsquo;ve sent a link to{" "}
+              <span className="font-semibold text-sage-800 break-all">
+                {sentTo}
+              </span>
+              . Click it to confirm your email, and you&rsquo;ll be taken
+              straight to sign in.
+            </p>
+            <p className="text-sage-500 text-xs mb-6">
+              Nothing there after a few minutes? Check your spam or junk
+              folder.
+            </p>
+            <button
+              type="button"
+              onClick={() => {
+                setSentTo(null);
+                setPassword("");
+                setConfirmPassword("");
+              }}
+              className="text-sm font-semibold text-sage-700 hover:text-sage-900 transition-colors"
+            >
+              Used the wrong email? Start again
+            </button>
+          </div>
+        ) : (
+        /* Create account form */
         <div className="bg-white border border-mint-200 rounded-2xl p-8 shadow-sm">
           <h2 className="text-xl font-semibold text-sage-800 mb-2">
             Create account
@@ -158,6 +194,7 @@ export default function SignupPage() {
             </p>
           </div>
         </div>
+        )}
       </div>
     </div>
   );

@@ -26,7 +26,13 @@ export default function LoginPage() {
     });
 
     if (result?.error) {
-      setError("Invalid email or password");
+      // authOptions passes Supabase's message through. An unconfirmed account
+      // has the right password, so "invalid" would send them round in circles.
+      setError(
+        /not confirmed/i.test(result.error)
+          ? "Please confirm your email first — check your inbox for the link we sent."
+          : "Invalid email or password",
+      );
       setIsLoading(false);
       return;
     }

@@ -33,5 +33,16 @@ export default async function handler(
     return res.status(400).json({ error: error.message });
   }
 
-  return res.status(200).json({ user: data.user });
+  // No session back means Supabase is holding the account until the email link
+  // is clicked. A session means "Confirm email" is switched off in the
+  // dashboard, so the account is already usable — worth shouting about in logs.
+  const confirmationRequired = !data.session;
+  if (!confirmationRequired) {
+    console.warn(
+      "Signup returned a session: 'Confirm email' is OFF in Supabase, so new accounts skip verification.",
+    );
+  }
+
+  // Only what the page needs — the full user object isn't the browser's business.
+  return res.status(200).json({ confirmationRequired });
 }
