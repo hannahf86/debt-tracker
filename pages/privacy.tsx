@@ -201,7 +201,11 @@ export default function PrivacyPage() {
                 </li>
               </List>
               {LEGAL.databaseRegion && (
-                <p>Your data is stored in {LEGAL.databaseRegion}.</p>
+                <p>
+                  Your data is stored in {LEGAL.databaseRegion}. UK law recognises
+                  countries in the European Economic Area as protecting personal
+                  data to the same standard as the UK.
+                </p>
               )}
               <p>
                 Some of these companies are based in the United States, so your

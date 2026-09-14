@@ -16,7 +16,7 @@ export const LEGAL = {
   contactEmail: "hello@jorvikweb.dev",
   /** ICO data protection fee registration number, once registered. */
   icoRegistration: null as string | null,
-  /** Where the Supabase project is hosted, e.g. "London, UK". CONFIRM. */
-  databaseRegion: null as string | null,
+  /** Where the Supabase project is hosted (eu-central-1). */
+  databaseRegion: "Frankfurt, Germany" as string | null,
   lastUpdated: "14 September 2026",
 };
