@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { useSession, signOut } from "next-auth/react";
 import { Download, AlertTriangle } from "lucide-react";
+import { downloadDataPdf } from "@/lib/dataExportPdf";
 
 const CONFIRM_PHRASE = "delete my account";
 
@@ -17,7 +18,7 @@ export default function YourDataPage() {
   const router = useRouter();
   const { status } = useSession();
 
-  const [isDownloading, setIsDownloading] = useState(false);
+  const [isDownloading, setIsDownloading] = useState<"pdf" | "json" | null>(null);
   const [downloadError, setDownloadError] = useState("");
 
   const [isDeleting, setIsDeleting] = useState(false);
@@ -30,28 +31,34 @@ export default function YourDataPage() {
     return null;
   }
 
-  const handleDownload = async () => {
+  // PDF to read and keep; the JSON data file is what portability needs, for
+  // moving to another service. Both come from the same export.
+  const handleDownload = async (format: "pdf" | "json") => {
     setDownloadError("");
-    setIsDownloading(true);
+    setIsDownloading(format);
     try {
       const response = await fetch("/api/users/export");
       if (!response.ok) throw new Error("export failed");
 
-      const blob = await response.blob();
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = `mirian-data-${new Date().toISOString().slice(0, 10)}.json`;
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
-      URL.revokeObjectURL(url);
+      if (format === "pdf") {
+        await downloadDataPdf(await response.json());
+      } else {
+        const blob = await response.blob();
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = `mirian-data-${new Date().toISOString().slice(0, 10)}.json`;
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        URL.revokeObjectURL(url);
+      }
     } catch {
       setDownloadError(
         "We couldn't prepare your data just now. Please try again in a moment.",
       );
     } finally {
-      setIsDownloading(false);
+      setIsDownloading(null);
     }
   };
 
@@ -122,16 +129,31 @@ export default function YourDataPage() {
               <li>your contact history with companies</li>
             </ul>
             <p className="text-sage-500 text-xs mb-5">
-              It downloads as a file that other apps and services can read.
+              It downloads as a PDF you can read, print or keep, set out debt by
+              debt.
             </p>
             <button
-              onClick={handleDownload}
-              disabled={isDownloading}
+              onClick={() => handleDownload("pdf")}
+              disabled={isDownloading !== null}
               className="inline-flex items-center justify-center gap-2 w-full sm:w-auto min-h-[48px] px-5 bg-sage-600 hover:bg-sage-700 text-white font-semibold rounded-pill transition-colors disabled:opacity-50 text-sm"
             >
               <Download size={18} aria-hidden="true" />
-              {isDownloading ? "Preparing your data…" : "Download my data"}
+              {isDownloading === "pdf" ? "Preparing your PDF…" : "Download my data (PDF)"}
             </button>
+
+            {/* Data file — the machine-readable copy portability requires */}
+            <p className="mt-4 text-xs text-sage-500">
+              Moving to another app?{" "}
+              <button
+                type="button"
+                onClick={() => handleDownload("json")}
+                disabled={isDownloading !== null}
+                className="inline-flex items-center min-h-[32px] font-semibold text-brand underline disabled:opacity-50"
+              >
+                {isDownloading === "json" ? "Preparing…" : "Download it as a data file"}
+              </button>{" "}
+              that other services can read.
+            </p>
             {downloadError && (
               <p role="alert" className="mt-3 text-sm text-warn-700">
                 {downloadError}

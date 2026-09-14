@@ -242,7 +242,7 @@ export default function PrivacyPage() {
                   <Link href="/settings/data" className="font-semibold text-brand underline">
                     Your data
                   </Link>
-                  . It comes as a file that other apps and services can read.
+                  . You can get it as a PDF to read or print, or as a data file that other apps and services can read.
                 </li>
                 <li>
                   <strong>Correct it.</strong> You can edit your details, debts and
