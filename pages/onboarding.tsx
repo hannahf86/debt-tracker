@@ -181,12 +181,6 @@ export default function OnboardingPage() {
             >
               Let's go →
             </button>
-            <button
-              onClick={() => router.push("/dashboard")}
-              className="mt-4 min-h-[44px] px-4 text-sage-500 hover:text-sage-600 text-sm transition-colors block mx-auto"
-            >
-              Skip for now
-            </button>
           </div>
         )}
 
@@ -250,12 +244,6 @@ export default function OnboardingPage() {
               className="w-full bg-sage-600 hover:bg-sage-700 text-white font-semibold py-3 rounded-xl transition-all"
             >
               Add my first debt →
-            </button>
-            <button
-              onClick={() => router.push("/dashboard")}
-              className="mt-3 min-h-[44px] px-4 text-sage-500 hover:text-sage-600 text-sm transition-colors block mx-auto text-center"
-            >
-              Skip for now
             </button>
           </div>
         )}
@@ -352,6 +340,9 @@ export default function OnboardingPage() {
               {isSavingDetails ? "Saving…" : "Continue"}
             </button>
 
+            {/* Skip details — the only skip left in onboarding. It moves on to
+                adding a debt rather than leaving, because the dashboard sends
+                anyone with no debts straight back here. */}
             <button
               onClick={() => setStep(4)}
               className="w-full mt-3 text-sage-500 hover:text-sage-800 text-sm transition-colors min-h-[44px]"
@@ -511,12 +502,6 @@ export default function OnboardingPage() {
               className="w-full mt-8 bg-sage-600 hover:bg-sage-700 text-white font-semibold py-3 rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isLoading ? "Adding..." : "Add debt →"}
-            </button>
-            <button
-              onClick={() => router.push("/dashboard")}
-              className="mt-3 min-h-[44px] px-4 text-sage-500 hover:text-sage-600 text-sm transition-colors block mx-auto text-center"
-            >
-              Skip for now
             </button>
           </div>
         )}
