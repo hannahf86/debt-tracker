@@ -73,12 +73,15 @@ export default function MobileDebtDetail({
   onLogPayment,
   onDelete,
   isDeleting,
+  getInTouch,
 }: {
   debt: Debt;
   payments: Payment[];
   onLogPayment: () => void;
   onDelete: () => void;
   isDeleting: boolean;
+  /** The get-in-touch section, built by the page so both layouts share its data. */
+  getInTouch?: React.ReactNode;
 }) {
   const router = useRouter();
   const percent = percentPaid(debt.total_amount, debt.amount_owed);
@@ -198,6 +201,9 @@ export default function MobileDebtDetail({
           label={`${percent}% of ${debt.company} paid`}
         />
       </div>
+
+      {/* Get in touch */}
+      {getInTouch}
 
       {/* Pinned action. Deliberately breaks the design system's "nothing
           follows you down the page" rule: on a phone this is the reason

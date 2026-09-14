@@ -11,6 +11,9 @@ import type { Debt, Payment } from "@/lib/types";
 import { clearedDate, formatMonthYear } from "@/lib/projection";
 import { arrangementStyle } from "@/lib/arrangement";
 import MobileDebtDetail from "@/components/mobile/MobileDebtDetail";
+import GetInTouch from "@/components/GetInTouch";
+import { useContacts } from "@/lib/hooks/useContacts";
+import { useProfile } from "@/lib/hooks/useProfile";
 
 const months = [
   "Jan",
@@ -95,6 +98,13 @@ export default function DebtDetailPage() {
   const [payments, setPayments] = useState<Payment[]>([]);
   const [logPaymentDebt, setLogPaymentDebt] = useState<Debt | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
+  const {
+    contacts,
+    isLoading: contactsLoading,
+    error: contactsError,
+    logContact,
+  } = useContacts(typeof id === "string" ? id : null);
+  const { profile } = useProfile();
 
   const debt = debts.find((d) => d.id === id);
 
@@ -141,6 +151,20 @@ export default function DebtDetailPage() {
   const getMonthStatus = (monthIdx: number) =>
     debtMonthStatus(debt, payments, monthIdx, year);
 
+  // Get in touch — rendered in both layouts; each keeps its own modal state.
+  const getInTouch = (compact: boolean) => (
+    <GetInTouch
+      debt={debt}
+      contacts={contacts}
+      isLoading={contactsLoading}
+      error={contactsError}
+      yourName={profile.name ?? ""}
+      onLogged={logContact}
+      onSaveDetails={(updates) => updateDebt(debt.id, updates)}
+      compact={compact}
+    />
+  );
+
   return (
     <>
       <div className="md:hidden">
@@ -150,6 +174,7 @@ export default function DebtDetailPage() {
           onLogPayment={() => setLogPaymentDebt(debt)}
           onDelete={handleDelete}
           isDeleting={isDeleting}
+          getInTouch={getInTouch(true)}
         />
       </div>
 
@@ -307,6 +332,9 @@ export default function DebtDetailPage() {
             })}
           </div>
         </div>
+
+        {/* Get in touch */}
+        <div className="mt-6">{getInTouch(false)}</div>
       </div>
       </div>
 

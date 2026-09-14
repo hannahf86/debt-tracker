@@ -44,3 +44,16 @@ export type User = {
   created_at: string;
   updated_at: string;
 };
+
+export type ContactMethod = "email" | "copy" | "letter";
+
+/** A message someone has sent a creditor, kept so they don't have to remember. */
+export type ContactLog = {
+  id: number | string;
+  debt_id: string;
+  template: string;
+  method: ContactMethod;
+  subject: string | null;
+  body: string;
+  sent_at: string;
+};
