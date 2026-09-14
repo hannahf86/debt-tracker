@@ -17,6 +17,7 @@ const EDITABLE_FIELDS = [
   "direct_debit_date",
   "account_reference",
   "company_email",
+  "creditor_id",
 ] as const;
 
 export default async function handler(

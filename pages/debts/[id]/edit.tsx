@@ -4,6 +4,9 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import { useDebts } from "@/lib/hooks/useDebts";
 import { CheckCircle, Moon, Clock } from "lucide-react";
+import type { Creditor } from "@/lib/types";
+import CreditorField from "@/components/CreditorField";
+import { useCreditor } from "@/lib/hooks/useCreditor";
 
 const categories = [
   { value: "credit-card", label: "Credit Card" },
@@ -51,6 +54,9 @@ export default function EditDebtPage() {
   });
 
   const debt = debts.find((d) => d.id === id);
+  const { creditor: savedCreditor } = useCreditor(debt?.creditor_id ?? null);
+  // undefined = untouched, so saving leaves the link as it was.
+  const [linked, setLinked] = useState<Creditor | null | undefined>(undefined);
 
   useEffect(() => {
     if (debt) {
@@ -95,6 +101,7 @@ export default function EditDebtPage() {
           : null,
         account_reference: form.account_reference || null,
         company_email: form.company_email || null,
+        ...(linked !== undefined ? { creditor_id: linked?.id ?? null } : {}),
       });
 
       router.push(`/debts/${id}`);
@@ -151,6 +158,22 @@ export default function EditDebtPage() {
                 onChange={handleChange}
                 className="w-full bg-white border border-mint-200 min-h-[48px] rounded-lg px-4 py-2 text-sage-800 placeholder-sage-500 focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand"
                 required
+              />
+              {/* Find how to contact them */}
+              <CreditorField
+                creditor={linked === undefined ? savedCreditor : linked}
+                onChange={(picked) => {
+                  setLinked(picked);
+                  if (picked) {
+                    setForm((f) => ({
+                      ...f,
+                      // Council tax links GOV.UK guidance, not a company name.
+                      company:
+                        picked.category === "council_tax" ? f.company : picked.name,
+                      company_email: picked.email ?? f.company_email,
+                    }));
+                  }
+                }}
               />
             </div>
 
@@ -333,7 +356,7 @@ export default function EditDebtPage() {
                 name="company_email"
                 value={form.company_email}
                 onChange={handleChange}
-                placeholder="e.g. accounts@barclays.co.uk"
+                placeholder="Only if they give you one"
                 className="w-full bg-white border border-mint-200 min-h-[48px] rounded-lg px-4 py-2 text-sage-800 placeholder-sage-500 focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand"
               />
             </div>

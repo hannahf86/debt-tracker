@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { useRouter } from "next/router";
 import { CheckCircle, Moon, Clock } from "lucide-react";
+import type { Creditor } from "@/lib/types";
+import CreditorField from "@/components/CreditorField";
 
 const categories = [
   { value: "credit-card", label: "Credit Card" },
@@ -35,6 +37,8 @@ export default function NewDebtPage() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+  // The directory company they picked, if any.
+  const [linked, setLinked] = useState<Creditor | null>(null);
   const [form, setForm] = useState({
     company: "",
     amount_owed: "",
@@ -65,6 +69,7 @@ export default function NewDebtPage() {
         body: JSON.stringify({
           ...form,
           name: form.company,
+          ...(linked ? { creditor_id: linked.id } : {}),
         }),
       });
 
@@ -128,6 +133,22 @@ export default function NewDebtPage() {
                 placeholder="e.g. Barclays"
                 className="w-full min-h-[48px] bg-white border border-mint-200 rounded-lg px-4 py-2 text-sage-800 placeholder-sage-500 focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand"
                 required
+              />
+              {/* Find how to contact them */}
+              <CreditorField
+                creditor={linked}
+                onChange={(picked) => {
+                  setLinked(picked);
+                  if (picked) {
+                    setForm((f) => ({
+                      ...f,
+                      // Council tax links GOV.UK guidance, not a company name.
+                      company:
+                        picked.category === "council_tax" ? f.company : picked.name,
+                      company_email: picked.email ?? f.company_email,
+                    }));
+                  }
+                }}
               />
             </div>
 
@@ -303,7 +324,7 @@ export default function NewDebtPage() {
                 name="company_email"
                 value={form.company_email}
                 onChange={handleChange}
-                placeholder="e.g. accounts@barclays.co.uk"
+                placeholder="Only if they give you one"
                 className="w-full min-h-[48px] bg-white border border-mint-200 rounded-lg px-4 py-2 text-sage-800 placeholder-sage-500 focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand"
               />
             </div>

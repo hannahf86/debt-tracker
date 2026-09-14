@@ -23,6 +23,8 @@ export type Debt = {
   direct_debit_date: number | null;
   account_reference: string | null;
   company_email: string | null;
+  /** Linked entry in the company directory, if they picked one. */
+  creditor_id?: number | null;
   created_at: string;
   updated_at: string;
 };
@@ -56,4 +58,21 @@ export type ContactLog = {
   subject: string | null;
   body: string;
   sent_at: string;
+};
+
+export type CreditorCategory =
+  | "banks_credit_cards"
+  | "energy"
+  | "water"
+  | "phone_broadband"
+  | "buy_now_pay_later"
+  | "council_tax";
+
+/** A company in the directory, and the written ways to reach them. */
+export type Creditor = {
+  id: number;
+  name: string;
+  category: CreditorCategory;
+  support_url: string;
+  email: string | null;
 };

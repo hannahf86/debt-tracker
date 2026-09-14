@@ -8,9 +8,11 @@ import {
   FileDown,
   Check,
   ChevronLeft,
+  ExternalLink,
   type LucideIcon,
 } from "lucide-react";
-import type { ContactLog, ContactMethod, Debt } from "@/lib/types";
+import type { ContactLog, ContactMethod, Creditor, Debt } from "@/lib/types";
+import { helpPageLabel } from "@/lib/creditors";
 import {
   TEMPLATES,
   FIELDS,
@@ -37,6 +39,8 @@ type Props = {
   debt: Debt;
   /** From the profile; may arrive after the modal opens. */
   yourName: string;
+  /** The directory entry this debt is linked to, if any. */
+  creditor?: Creditor | null;
   onClose: () => void;
   onLogged: (entry: NewContact) => Promise<ContactLog>;
   onSaveDetails: SaveDetails;
@@ -123,6 +127,7 @@ function ActionButton({
 export default function ContactModal({
   debt,
   yourName,
+  creditor,
   onClose,
   onLogged,
   onSaveDetails,
@@ -133,7 +138,7 @@ export default function ContactModal({
     account_reference: debt.account_reference ?? "",
     offer_amount: "",
   });
-  const [email, setEmail] = useState(debt.company_email ?? "");
+  const [email, setEmail] = useState(debt.company_email || creditor?.email || "");
   const [subject, setSubject] = useState("");
   const [body, setBody] = useState("");
   const [bodyEdited, setBodyEdited] = useState(false);
@@ -169,6 +174,13 @@ export default function ContactModal({
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [onClose]);
+
+  // The linked company can load after the modal opens; use its email if
+  // there isn't one yet.
+  useEffect(() => {
+    if (creditor?.email && !email.trim()) setEmail(creditor.email);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [creditor?.email]);
 
   const choose = (t: Template) => {
     setTemplate(t);
@@ -220,7 +232,11 @@ export default function ContactModal({
       document.execCommand("copy");
     }
     setLastMethod("copy");
-    setNotice("Copied. You can paste it into their web form or online chat.");
+    setNotice(
+      creditor
+        ? "Copied. Open their help page below and paste it into their form or chat."
+        : "Copied. You can paste it into their web form or online chat.",
+    );
   };
 
   const openEmail = () => {
@@ -289,6 +305,13 @@ export default function ContactModal({
 
   const gaps = remainingGaps(`${subject}\n${body}`);
   const willSave = Object.keys(detailsToSave()).length > 0;
+
+  // Tailor the email tip when we know the company: most don't publish one.
+  const emailTip = creditor?.email
+    ? `${creditor.name} publish this address for customers who need help with payments.`
+    : creditor
+      ? `${creditor.name} don't publish an email for this. Their help page usually has a web form or online chat, so copying the message is the easiest way.`
+      : tipFor(EMAIL_TIP, debt.company);
 
   return (
     <div
@@ -476,7 +499,7 @@ export default function ContactModal({
                 htmlFor="contact-email"
                 label={`${debt.company}'s email`}
                 tipLabel="Where do I find this?"
-                tip={tipFor(EMAIL_TIP, debt.company)}
+                tip={emailTip}
                 open={openTip === "email"}
                 onToggle={() =>
                   setOpenTip(openTip === "email" ? null : "email")
@@ -506,6 +529,20 @@ export default function ContactModal({
               <ActionButton icon={Mail} label="Open in email" onClick={openEmail} />
               <ActionButton icon={FileDown} label="Download letter" onClick={letter} />
             </div>
+
+            {/* The company's own help page, where the web form or chat lives */}
+            {creditor && (
+              <a
+                href={creditor.support_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-center gap-2 min-h-[48px] text-sm font-semibold text-brand hover:underline"
+              >
+                {helpPageLabel(creditor)}
+                <ExternalLink size={15} aria-hidden="true" />
+                <span className="sr-only">(opens in a new tab)</span>
+              </a>
+            )}
 
             <p aria-live="polite" className="text-sm text-sage-600 empty:hidden">
               {notice}

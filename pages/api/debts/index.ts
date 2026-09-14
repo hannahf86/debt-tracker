@@ -41,6 +41,7 @@ export default async function handler(
       direct_debit_date,
       account_reference,
       company_email,
+      creditor_id,
     } = req.body;
 
     if (!company || !total_amount || !category) {
@@ -65,6 +66,8 @@ export default async function handler(
               : null,
             account_reference: account_reference || null,
             company_email: company_email || null,
+            // Only sent when they picked a company from the directory.
+            ...(creditor_id ? { creditor_id: Number(creditor_id) } : {}),
           },
         ])
         .select()

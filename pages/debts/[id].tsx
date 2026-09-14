@@ -14,6 +14,7 @@ import MobileDebtDetail from "@/components/mobile/MobileDebtDetail";
 import GetInTouch from "@/components/GetInTouch";
 import { useContacts } from "@/lib/hooks/useContacts";
 import { useProfile } from "@/lib/hooks/useProfile";
+import { useCreditor } from "@/lib/hooks/useCreditor";
 
 const months = [
   "Jan",
@@ -107,6 +108,7 @@ export default function DebtDetailPage() {
   const { profile } = useProfile();
 
   const debt = debts.find((d) => d.id === id);
+  const { creditor } = useCreditor(debt?.creditor_id ?? null);
 
   const year = new Date().getFullYear();
   const currentMonth = new Date().getMonth();
@@ -161,6 +163,7 @@ export default function DebtDetailPage() {
       yourName={profile.name ?? ""}
       onLogged={logContact}
       onSaveDetails={(updates) => updateDebt(debt.id, updates)}
+      creditor={creditor}
       compact={compact}
     />
   );

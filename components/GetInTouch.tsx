@@ -1,7 +1,9 @@
 "use client";
 
 import { useId, useState } from "react";
-import type { ContactLog, Debt } from "@/lib/types";
+import { ExternalLink } from "lucide-react";
+import type { ContactLog, Creditor, Debt } from "@/lib/types";
+import { helpPageLabel } from "@/lib/creditors";
 import type { NewContact } from "@/lib/hooks/useContacts";
 import { describeContact } from "@/lib/templates";
 import ContactModal, { type SaveDetails } from "@/components/ContactModal";
@@ -19,6 +21,7 @@ export default function GetInTouch({
   yourName,
   onLogged,
   onSaveDetails,
+  creditor = null,
   compact = false,
 }: {
   debt: Debt;
@@ -28,6 +31,8 @@ export default function GetInTouch({
   yourName: string;
   onLogged: (entry: NewContact) => Promise<ContactLog>;
   onSaveDetails: SaveDetails;
+  /** The directory entry this debt is linked to, if any. */
+  creditor?: Creditor | null;
   /** Tighter padding for the phone layout. */
   compact?: boolean;
 }) {
@@ -54,6 +59,18 @@ export default function GetInTouch({
       >
         Get in touch with {debt.company}
       </button>
+      {creditor && (
+        <a
+          href={creditor.support_url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="mt-3 flex sm:inline-flex sm:ml-4 items-center justify-center gap-1.5 min-h-[44px] text-sm font-semibold text-brand hover:underline"
+        >
+          {helpPageLabel(creditor)}
+          <ExternalLink size={14} aria-hidden="true" />
+          <span className="sr-only">(opens in a new tab)</span>
+        </a>
+      )}
 
       {/* Contact history */}
       <div className="mt-6">
@@ -102,6 +119,7 @@ export default function GetInTouch({
           onClose={() => setIsOpen(false)}
           onLogged={onLogged}
           onSaveDetails={onSaveDetails}
+          creditor={creditor}
         />
       )}
     </section>
