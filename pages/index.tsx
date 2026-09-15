@@ -124,9 +124,18 @@ const AUDIENCE = [
 ];
 
 const QUOTES = [
-  "I opened it without that drop in my stomach. That's the first time an app about money has done that.",
-  "Logging a half payment and not being told off changed how often I logged anything at all.",
-  "The date moved forward by two months and I cried a bit, honestly.",
+  {
+    text: "The way the app works gets rid of the drop in my stomach. Somehow it makes it far easier to use than other trackers I've tried.",
+    name: "Jenny",
+  },
+  {
+    text: "Being able to log any payment I made and then put a note to remind myself what happened is really helpful.",
+    name: "Steph",
+  },
+  {
+    text: "Knowing EXACTLY when I'll be debt free is a game changer. I'm planning my party already!",
+    name: "Norah",
+  },
 ];
 
 const FAQS = [
@@ -665,7 +674,7 @@ export default function HomePage() {
         </Section>
 
         {/* ---------- Testimonials (clearly labelled as samples) ---------- */}
-        <Section background="rgb(var(--white))" label="What we're hoping people will say">
+        <Section background="rgb(var(--white))" label="What people say">
           <div style={{ maxWidth: 1120, margin: "0 auto", padding: "84px 24px" }}>
             <div
               style={{
@@ -689,25 +698,8 @@ export default function HomePage() {
                   textWrap: "pretty",
                 }}
               >
-                What we&rsquo;re hoping people will say
+                What people say
               </h2>
-              <div
-                style={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: 8,
-                  background: "rgb(var(--paper-sunk))",
-                  border: "1px solid rgb(var(--line-200))",
-                  borderRadius: "var(--radius-pill)",
-                  padding: "8px 14px",
-                  fontSize: 13,
-                  fontWeight: 600,
-                  color: "rgb(var(--ink-500))",
-                }}
-              >
-                <Info size={16} aria-hidden="true" />
-                Sample quotes — real ones coming after beta
-              </div>
             </div>
 
             <div
@@ -717,12 +709,12 @@ export default function HomePage() {
                 gap: 20,
               }}
             >
-              {QUOTES.map((text) => (
+              {QUOTES.map((quote) => (
                 <div
-                  key={text}
+                  key={quote.name}
                   style={{
                     background: "rgb(var(--paper))",
-                    border: "1px dashed rgb(var(--line-300))",
+                    border: "1px solid rgb(var(--line-200))",
                     borderRadius: "var(--radius-xl)",
                     padding: 26,
                     display: "flex",
@@ -740,7 +732,7 @@ export default function HomePage() {
                       textWrap: "pretty",
                     }}
                   >
-                    {text}
+                    {quote.text}
                   </p>
                   <div
                     style={{
@@ -761,10 +753,10 @@ export default function HomePage() {
                     />
                     <div>
                       <div style={{ fontSize: 15, fontWeight: 700, color: "rgb(var(--ink-700))" }}>
-                        Sample quote
+                        {quote.name}
                       </div>
                       <div style={{ fontSize: 13, color: "rgb(var(--ink-400))" }}>
-                        Illustrative placeholder
+                        Mirian tester
                       </div>
                     </div>
                   </div>

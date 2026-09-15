@@ -1,15 +1,14 @@
-import { useState } from "react";
+import { useRef, useState, type FormEvent } from "react";
 import Head from "next/head";
-import { Info } from "lucide-react";
-import { SiteLayout, SiteButton, Field } from "@/components/site/SiteChrome";
-import { LEGAL } from "@/lib/legal";
+import { Info, Check } from "lucide-react";
+import { SiteLayout, Field } from "@/components/site/SiteChrome";
 
 /**
  * Feedback page, from Mirian Website.dc.html.
  *
- * Like the contact form, this opens the sender's own email app rather than
- * pretending to submit. Name and email are optional on purpose: the design
- * marks them so, and anonymous feedback is still worth having.
+ * Posts to /api/site/message like the contact form. Name and email stay
+ * optional on purpose: the design marks them so, and anonymous feedback is
+ * still worth having.
  */
 
 const CARD = {
@@ -35,6 +34,21 @@ const INPUT = {
   color: "rgb(var(--ink-900))",
 } as const;
 
+const SUBMIT = {
+  display: "inline-flex",
+  alignItems: "center",
+  justifyContent: "center",
+  minHeight: 56,
+  padding: "0 26px",
+  borderRadius: "var(--radius-pill)",
+  border: "1px solid transparent",
+  background: "rgb(var(--teal-700))",
+  color: "rgb(var(--white))",
+  fontFamily: "var(--font-body)",
+  fontSize: 18,
+  fontWeight: 700,
+} as const;
+
 const TYPES = [
   { value: "bug", label: "Something's broken" },
   { value: "feature", label: "Feature request" },
@@ -46,14 +60,40 @@ export default function FeedbackPage() {
   const [email, setEmail] = useState("");
   const [type, setType] = useState("bug");
   const [message, setMessage] = useState("");
+  const [website, setWebsite] = useState(""); // honeypot
+  const [status, setStatus] = useState<"idle" | "sending" | "sent">("idle");
+  const [error, setError] = useState("");
+  const openedAt = useRef(Date.now());
 
-  const mailto = () => {
-    const label = TYPES.find((t) => t.value === type)?.label ?? "Feedback";
-    const signOff = [name, email].filter(Boolean).join("\n");
-    const body = `${message}${signOff ? `\n\n—\n${signOff}` : ""}`;
-    return `mailto:${LEGAL.contactEmail}?subject=${encodeURIComponent(
-      `Mirian feedback: ${label}`,
-    )}&body=${encodeURIComponent(body)}`;
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    setError("");
+    setStatus("sending");
+    try {
+      const response = await fetch("/api/site/message", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          form: "feedback",
+          name,
+          email,
+          type,
+          message,
+          website,
+          startedAt: openedAt.current,
+        }),
+      });
+      const data = await response.json().catch(() => null);
+      if (!response.ok) throw new Error(data?.error ?? "Something went wrong.");
+      setStatus("sent");
+    } catch (err) {
+      setError(
+        err instanceof Error
+          ? err.message
+          : "We couldn't send that just now. Please try again.",
+      );
+      setStatus("idle");
+    }
   };
 
   return (
@@ -69,7 +109,10 @@ export default function FeedbackPage() {
       <SiteLayout>
         <section
           aria-label="Feedback"
-          style={{ background: "linear-gradient(180deg,rgb(var(--ice-100)) 0%,rgb(var(--paper)) 46%)" }}
+          style={{
+            background:
+              "linear-gradient(180deg,rgb(var(--ice-100)) 0%,rgb(var(--paper)) 46%)",
+          }}
         >
           <div style={{ maxWidth: 680, margin: "0 auto", padding: "72px 24px 96px" }}>
             <h1
@@ -84,7 +127,14 @@ export default function FeedbackPage() {
             >
               Help shape Mirian
             </h1>
-            <p style={{ fontSize: 19, color: "rgb(var(--ink-700))", margin: "0 0 28px", maxWidth: "52ch" }}>
+            <p
+              style={{
+                fontSize: 19,
+                color: "rgb(var(--ink-700))",
+                margin: "0 0 28px",
+                maxWidth: "52ch",
+              }}
+            >
               If something is confusing, broken, or missing, we want to hear it.
               Feedback is the point — it&rsquo;s how the next version gets less
               annoying.
@@ -107,7 +157,13 @@ export default function FeedbackPage() {
                 <Info size={20} aria-hidden="true" />
               </span>
               <div>
-                <div style={{ fontWeight: 700, color: "rgb(var(--ink-900))", marginBottom: 2 }}>
+                <div
+                  style={{
+                    fontWeight: 700,
+                    color: "rgb(var(--ink-900))",
+                    marginBottom: 2,
+                  }}
+                >
                   Nothing is too small
                 </div>
                 <div style={{ fontSize: 16, color: "rgb(var(--ink-700))" }}>
@@ -117,71 +173,163 @@ export default function FeedbackPage() {
               </div>
             </div>
 
-            <div style={CARD}>
-              <Field label="Name" htmlFor="f-name" hint="Optional — skip if you'd rather not">
-                <input
-                  id="f-name"
-                  style={INPUT}
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  placeholder="Optional"
-                />
-              </Field>
-
-              <Field label="Email" htmlFor="f-email" hint="Optional — only if you'd like a reply">
-                <input
-                  id="f-email"
-                  type="email"
-                  style={INPUT}
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="Optional"
-                />
-              </Field>
-
-              <Field label="Type of feedback" htmlFor="f-type">
-                <select
-                  id="f-type"
-                  style={INPUT}
-                  value={type}
-                  onChange={(e) => setType(e.target.value)}
+            {status === "sent" ? (
+              /* Sent */
+              <div style={{ ...CARD, alignItems: "center", textAlign: "center" }}>
+                <span
+                  style={{
+                    width: 48,
+                    height: 48,
+                    borderRadius: "var(--radius-pill)",
+                    background: "rgb(var(--ok-100))",
+                    color: "rgb(var(--ok-600))",
+                    display: "grid",
+                    placeItems: "center",
+                  }}
                 >
-                  {TYPES.map((t) => (
-                    <option key={t.value} value={t.value}>
-                      {t.label}
-                    </option>
-                  ))}
-                </select>
-              </Field>
-
-              <Field label="Tell us more" htmlFor="f-msg" hint="No need to tidy it up first.">
-                <textarea
-                  id="f-msg"
-                  rows={6}
-                  style={{ ...INPUT, minHeight: 140, resize: "vertical", lineHeight: 1.5 }}
-                  value={message}
-                  onChange={(e) => setMessage(e.target.value)}
-                  placeholder="What happened, or what would help?"
-                />
-              </Field>
-
-              <div
-                style={{
-                  display: "flex",
-                  gap: 14,
-                  alignItems: "center",
-                  flexWrap: "wrap",
-                  marginTop: 4,
-                }}
-              >
-                <SiteButton href={mailto()} size="lg">
-                  Send feedback
-                </SiteButton>
-                <span style={{ fontSize: 15, color: "rgb(var(--ink-500))" }}>
-                  This opens your own email app. Thank you, genuinely.
+                  <Check size={24} aria-hidden="true" />
                 </span>
+                <h2
+                  style={{
+                    fontFamily: "var(--font-display)",
+                    fontSize: 24,
+                    fontWeight: 800,
+                    color: "rgb(var(--ink-900))",
+                    margin: 0,
+                  }}
+                >
+                  Thank you, genuinely.
+                </h2>
+                <p style={{ fontSize: 17, color: "rgb(var(--ink-700))", margin: 0 }}>
+                  That&rsquo;s gone straight to the person building Mirian
+                  {email ? `, and we'll reply to ${email} if it needs one` : ""}.
+                </p>
               </div>
-            </div>
+            ) : (
+              <form onSubmit={handleSubmit} style={CARD} noValidate>
+                <Field
+                  label="Name"
+                  htmlFor="f-name"
+                  hint="Optional — skip if you'd rather not"
+                >
+                  <input
+                    id="f-name"
+                    name="name"
+                    autoComplete="name"
+                    style={INPUT}
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    placeholder="Optional"
+                  />
+                </Field>
+
+                <Field
+                  label="Email"
+                  htmlFor="f-email"
+                  hint="Optional — only if you'd like a reply"
+                >
+                  <input
+                    id="f-email"
+                    name="email"
+                    type="email"
+                    autoComplete="email"
+                    style={INPUT}
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="Optional"
+                  />
+                </Field>
+
+                <Field label="Type of feedback" htmlFor="f-type">
+                  <select
+                    id="f-type"
+                    name="type"
+                    style={INPUT}
+                    value={type}
+                    onChange={(e) => setType(e.target.value)}
+                  >
+                    {TYPES.map((t) => (
+                      <option key={t.value} value={t.value}>
+                        {t.label}
+                      </option>
+                    ))}
+                  </select>
+                </Field>
+
+                <Field label="Tell us more" htmlFor="f-msg" hint="No need to tidy it up first.">
+                  <textarea
+                    id="f-msg"
+                    name="message"
+                    rows={6}
+                    required
+                    style={{
+                      ...INPUT,
+                      minHeight: 140,
+                      resize: "vertical",
+                      lineHeight: 1.5,
+                    }}
+                    value={message}
+                    onChange={(e) => setMessage(e.target.value)}
+                    placeholder="What happened, or what would help?"
+                  />
+                </Field>
+
+                {/* Honeypot: hidden from people, irresistible to bots */}
+                <div aria-hidden="true" style={{ position: "absolute", left: "-9999px" }}>
+                  <label htmlFor="f-website">Leave this empty</label>
+                  <input
+                    id="f-website"
+                    name="website"
+                    tabIndex={-1}
+                    autoComplete="off"
+                    value={website}
+                    onChange={(e) => setWebsite(e.target.value)}
+                  />
+                </div>
+
+                {error && (
+                  <p
+                    role="alert"
+                    style={{
+                      margin: 0,
+                      padding: "12px 14px",
+                      borderRadius: "var(--radius-sm)",
+                      background: "rgb(var(--warn-100))",
+                      border: "1px solid rgb(var(--warn-200))",
+                      color: "rgb(var(--warn-600))",
+                      fontSize: 16,
+                    }}
+                  >
+                    {error}
+                  </p>
+                )}
+
+                <div
+                  style={{
+                    display: "flex",
+                    gap: 14,
+                    alignItems: "center",
+                    flexWrap: "wrap",
+                    marginTop: 4,
+                  }}
+                >
+                  <button
+                    type="submit"
+                    disabled={status === "sending"}
+                    style={{
+                      ...SUBMIT,
+                      cursor: status === "sending" ? "wait" : "pointer",
+                      opacity: status === "sending" ? 0.6 : 1,
+                    }}
+                  >
+                    {status === "sending" ? "Sending…" : "Send feedback"}
+                  </button>
+                  <span style={{ fontSize: 15, color: "rgb(var(--ink-500))" }}>
+                    Thank you, genuinely.
+                  </span>
+                </div>
+              </form>
+            )}
           </div>
         </section>
       </SiteLayout>

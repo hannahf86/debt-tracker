@@ -145,6 +145,13 @@ export default function PrivacyPage() {
                   you&rsquo;ve sent to companies, and when.
                 </li>
                 <li>
+                  <strong>Messages you send us:</strong> if you use the contact
+                  or feedback form, whatever you write, plus your name and email
+                  if you give them. These are emailed to us and not stored in
+                  {LEGAL.service}. We also briefly check the address your device
+                  is connecting from, to stop the form being flooded with spam.
+                </li>
+                <li>
                   <strong>Technical information:</strong> a cookie that keeps you
                   signed in, and short-lived logs kept by our hosting provider
                   (such as your IP address and when a page was requested) to keep
@@ -173,6 +180,10 @@ export default function PrivacyPage() {
                   email address or resetting your password.
                 </li>
                 <li>
+                  <strong>To answer you</strong> when you send a message through
+                  the website.
+                </li>
+                <li>
                   <strong>To keep {LEGAL.service} secure</strong> and fix problems.
                   We have a legitimate interest in doing this.
                 </li>
@@ -197,7 +208,7 @@ export default function PrivacyPage() {
                   <strong>Vercel</strong> hosts the app.
                 </li>
                 <li>
-                  <strong>Resend</strong> sends account emails.
+                  <strong>Resend</strong> sends account emails and delivers messages from the contact and feedback forms.
                 </li>
               </List>
               {LEGAL.databaseRegion && (
