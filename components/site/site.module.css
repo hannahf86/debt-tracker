@@ -1,0 +1,88 @@
+/* Marketing site: hover and focus states.
+   The layout itself uses inline style objects so it stays a direct
+   translation of Mirian Website.dc.html, which is written the same way.
+   Only states CSS can express live here. */
+
+.navLink:hover {
+  background: rgb(var(--teal-50));
+}
+
+.btnPrimary:hover {
+  background: rgb(var(--teal-800));
+}
+
+.btnGhost:hover,
+.btnSecondary:hover {
+  background: rgb(var(--teal-50));
+}
+
+.footerLink:hover {
+  color: var(--teal-900);
+}
+
+.faqButton:hover {
+  background: rgb(var(--paper-sunk));
+}
+
+.navLink:focus-visible,
+.btnPrimary:focus-visible,
+.btnGhost:focus-visible,
+.btnSecondary:focus-visible,
+.footerLink:focus-visible,
+.faqButton:focus-visible {
+  outline: var(--focus-outline);
+  outline-offset: var(--focus-offset);
+}
+
+/* Cards in the hero are rotated for effect; straighten them on a phone,
+   where the stack becomes a single column and tilt just looks broken. */
+@media (max-width: 720px) {
+  .tilt {
+    transform: none !important;
+  }
+}
+
+/* Header layout.
+   On a phone: logo and Sign in share the top row, nav sits centred beneath,
+   so the links don't wrap into a three-line stack that pushes the page down.
+   From 768px it becomes the single centred row the design specifies. */
+.headerInner {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 12px 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.headerBrand {
+  margin-right: auto;
+}
+
+.headerNav {
+  order: 3;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  gap: 2px;
+  flex-wrap: wrap;
+}
+
+@media (min-width: 768px) {
+  .headerInner {
+    gap: 24px;
+    padding: 14px 24px;
+  }
+
+  .headerBrand {
+    margin-right: 0;
+  }
+
+  .headerNav {
+    order: 0;
+    width: auto;
+    flex: 1;
+    gap: 4px;
+  }
+}

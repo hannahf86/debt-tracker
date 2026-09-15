@@ -7,7 +7,12 @@ import Sidebar from "@/components/Sidebar";
 import MobileTopBar from "@/components/MobileTopBar";
 import "@/styles/globals.css";
 
+// Routes rendered without the app sidebar: sign-in screens, onboarding,
+// and the public marketing site.
 const authRoutes = [
+  "/",
+  "/contact",
+  "/feedback",
   "/auth/login",
   "/auth/signup",
   "/auth/callback",
