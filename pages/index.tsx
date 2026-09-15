@@ -126,18 +126,18 @@ const AUDIENCE = [
 const QUOTES = [
   {
     text: "The way the app works gets rid of the drop in my stomach. Somehow it makes it far easier to use than other trackers I've tried.",
-    name: "Jenny",
     nd: "ADHD",
+    id: "adhd",
   },
   {
     text: "Being able to log any payment I made and then put a note to remind myself what happened is really helpful.",
-    name: "Steph",
     nd: "ASC",
+    id: "asc",
   },
   {
     text: "Knowing EXACTLY when I'll be debt free is a game changer. I'm planning my party already!",
-    name: "Norah",
     nd: "AuDHD",
+    id: "audhd",
   },
 ];
 
@@ -677,7 +677,7 @@ export default function HomePage() {
         </Section>
 
         {/* ---------- Testimonials (clearly labelled as samples) ---------- */}
-        <Section background="rgb(var(--white))" label="What people say">
+        <Section background="rgb(var(--white))" label="What we hope people will say">
           <div style={{ maxWidth: 1120, margin: "0 auto", padding: "84px 24px" }}>
             <div
               style={{
@@ -701,8 +701,25 @@ export default function HomePage() {
                   textWrap: "pretty",
                 }}
               >
-                What people say
+                What we&rsquo;re hoping people will say
               </h2>
+              <div
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: 8,
+                  background: "rgb(var(--paper-sunk))",
+                  border: "1px solid rgb(var(--line-200))",
+                  borderRadius: "var(--radius-pill)",
+                  padding: "8px 14px",
+                  fontSize: 13,
+                  fontWeight: 600,
+                  color: "rgb(var(--ink-500))",
+                }}
+              >
+                <Info size={16} aria-hidden="true" />
+                Examples for now — real quotes once testing is done
+              </div>
             </div>
 
             <div
@@ -714,10 +731,10 @@ export default function HomePage() {
             >
               {QUOTES.map((quote) => (
                 <div
-                  key={quote.name}
+                  key={quote.id}
                   style={{
                     background: "rgb(var(--paper))",
-                    border: "1px solid rgb(var(--line-200))",
+                    border: "1px dashed rgb(var(--line-300))",
                     borderRadius: "var(--radius-xl)",
                     padding: 26,
                     display: "flex",
@@ -740,10 +757,10 @@ export default function HomePage() {
                   <div style={{ marginTop: "auto" }}>
                     <div>
                       <div style={{ fontSize: 15, fontWeight: 700, color: "rgb(var(--ink-700))" }}>
-                        {quote.name}
+                        Example · {quote.nd}
                       </div>
                       <div style={{ fontSize: 13, color: "rgb(var(--ink-400))" }}>
-                        Mirian tester · {quote.nd}
+                        Written to show the kind of thing we hope to hear
                       </div>
                     </div>
                   </div>

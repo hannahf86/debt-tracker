@@ -49,7 +49,11 @@ type ButtonProps = {
 const BUTTON_VARIANT: Record<string, CSSProperties> = {
   primary: { background: "rgb(var(--teal-700))", color: "rgb(var(--white))", border: "1px solid transparent" },
   ghost: { background: "transparent", color: "rgb(var(--teal-700))", border: "1px solid rgb(var(--line-200))" },
-  secondary: { background: "rgb(var(--white))", color: "rgb(var(--teal-800))", border: "1px solid transparent" },
+  secondary: {
+    background: "rgb(var(--white))",
+    color: "rgb(var(--teal-800))",
+    border: "1px solid rgb(var(--line-200))",
+  },
 };
 
 export function SiteButton({
@@ -230,8 +234,8 @@ export function Field({
 
 const NAV_LINKS = [
   { href: "/", label: "Home" },
-  { href: "/contact", label: "Contact" },
   { href: "/feedback", label: "Feedback" },
+  { href: "/contact", label: "Contact" },
 ];
 
 export function SiteHeader() {
@@ -285,9 +289,14 @@ export function SiteHeader() {
           })}
         </nav>
 
-        <SiteButton href="/auth/login" iconAfter>
-          Sign in
-        </SiteButton>
+        <div style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap" }}>
+          <SiteButton href="/auth/signup" variant="secondary">
+            Create an account
+          </SiteButton>
+          <SiteButton href="/auth/login" iconAfter>
+            Sign in
+          </SiteButton>
+        </div>
       </div>
     </header>
   );
@@ -332,7 +341,12 @@ export function SiteFooter() {
           >
             Pages
           </div>
-          {[...NAV_LINKS, { href: "/auth/login", label: "Sign in" }, { href: "/privacy", label: "Privacy notice" }].map(
+          {[
+            ...NAV_LINKS,
+            { href: "/auth/signup", label: "Create an account" },
+            { href: "/auth/login", label: "Sign in" },
+            { href: "/privacy", label: "Privacy notice" },
+          ].map(
             (link) => (
               <Link
                 key={link.href}
