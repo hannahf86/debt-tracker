@@ -127,14 +127,17 @@ const QUOTES = [
   {
     text: "The way the app works gets rid of the drop in my stomach. Somehow it makes it far easier to use than other trackers I've tried.",
     name: "Jenny",
+    nd: "ADHD",
   },
   {
     text: "Being able to log any payment I made and then put a note to remind myself what happened is really helpful.",
     name: "Steph",
+    nd: "ASC",
   },
   {
     text: "Knowing EXACTLY when I'll be debt free is a game changer. I'm planning my party already!",
     name: "Norah",
+    nd: "AuDHD",
   },
 ];
 
@@ -734,29 +737,13 @@ export default function HomePage() {
                   >
                     {quote.text}
                   </p>
-                  <div
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 12,
-                      marginTop: "auto",
-                    }}
-                  >
-                    <div
-                      style={{
-                        width: 36,
-                        height: 36,
-                        borderRadius: "var(--radius-pill)",
-                        background: "rgb(var(--ice-100))",
-                        border: "1px solid rgb(var(--line-200))",
-                      }}
-                    />
+                  <div style={{ marginTop: "auto" }}>
                     <div>
                       <div style={{ fontSize: 15, fontWeight: 700, color: "rgb(var(--ink-700))" }}>
                         {quote.name}
                       </div>
                       <div style={{ fontSize: 13, color: "rgb(var(--ink-400))" }}>
-                        Mirian tester
+                        Mirian tester · {quote.nd}
                       </div>
                     </div>
                   </div>
