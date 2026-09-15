@@ -16,6 +16,9 @@ import {
   Info,
   ChevronDown,
   ChevronUp,
+  Minus,
+  MapPin,
+  Circle,
   type LucideIcon,
 } from "lucide-react";
 import {
@@ -164,6 +167,30 @@ const FAQS = [
   },
 ];
 
+/* This year, in the hero card: paid, paid, part paid, paid, now, then blanks. */
+const MONTH_CELLS: [string, string][] = [
+  ["--ok-100", "--ok-200"],
+  ["--ok-100", "--ok-200"],
+  ["--warn-100", "--warn-200"],
+  ["--ok-100", "--ok-200"],
+  ["--now-100", "--now-200"],
+  ["--paper-sunk", "--line-200"],
+  ["--paper-sunk", "--line-200"],
+  ["--paper-sunk", "--line-200"],
+];
+
+/* The specimen year beside the lead feature: a glyph per payment state. */
+const SPECIMEN_MONTHS: { name: string; icon: LucideIcon }[] = [
+  { name: "Jan", icon: Check },
+  { name: "Feb", icon: Check },
+  { name: "Mar", icon: Minus },
+  { name: "Apr", icon: Check },
+  { name: "May", icon: MapPin },
+  { name: "Jun", icon: Circle },
+  { name: "Jul", icon: Circle },
+  { name: "Aug", icon: Circle },
+];
+
 /* ---------- Small building blocks ---------- */
 
 const SECTION_HEADING = {
@@ -234,96 +261,203 @@ export default function HomePage() {
           aria-label="Mirian"
           style={{
             background:
-              "linear-gradient(160deg,rgb(var(--ice-100)) 0%,rgb(var(--paper)) 52%,rgb(var(--teal-50)) 100%)",
+              "linear-gradient(180deg,rgb(var(--ice-100)) 0%,rgb(var(--paper)) 70%)",
             borderBottom: "1px solid rgb(var(--line-200))",
             overflow: "hidden",
           }}
         >
           <div
             style={{
-              maxWidth: 1120,
+              maxWidth: 880,
               margin: "0 auto",
-              padding: "80px 24px 88px",
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fit,minmax(340px,1fr))",
-              gap: 56,
-              alignItems: "center",
+              padding: "76px 24px 0",
+              textAlign: "center",
             }}
           >
-            <div>
-              <div
-                style={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: 8,
-                  background: "rgb(var(--white))",
-                  border: "1px solid rgb(var(--line-200))",
-                  borderRadius: "var(--radius-pill)",
-                  padding: "7px 14px",
-                  fontSize: 13,
-                  fontWeight: 600,
-                  color: "rgb(var(--teal-700))",
-                  marginBottom: 22,
-                }}
-              >
-                <Sprout size={16} aria-hidden="true" />
-                Built for ADHD and PDA brains
-              </div>
-
-              <h1
-                style={{
-                  fontFamily: "var(--font-display)",
-                  fontSize: "clamp(36px,5vw,60px)",
-                  lineHeight: 1.08,
-                  letterSpacing: "-0.02em",
-                  fontWeight: 800,
-                  color: "rgb(var(--ink-900))",
-                  margin: "0 0 20px",
-                  textWrap: "pretty",
-                }}
-              >
-                You have a debt-free date. Mirian&nbsp;helps you find it.
-              </h1>
-
-              <p
-                style={{
-                  fontSize: 20,
-                  lineHeight: 1.55,
-                  color: "rgb(var(--ink-700))",
-                  margin: "0 0 32px",
-                  maxWidth: "52ch",
-                  textWrap: "pretty",
-                }}
-              >
-                Not a shrinking balance you have to stare at. Not a streak you can
-                break. Just the date it all ends, and a calmer way to get there —
-                flexible, non-punishing, judgment-free.
-              </p>
-
-              <div style={{ display: "flex", gap: 12, flexWrap: "wrap", alignItems: "center" }}>
-                <SiteButton href="/auth/signup" size="lg" iconAfter>
-                  Get started
-                </SiteButton>
-                <SiteButton href="#how" size="lg" variant="ghost">
-                  See how it works
-                </SiteButton>
-              </div>
-
-              <p style={{ fontSize: 15, color: "rgb(var(--ink-500))", margin: "22px 0 0" }}>
-                Two fields is enough to start. You can stop half-way and it still
-                counts.
-              </p>
+            <div
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 8,
+                background: "rgb(var(--white))",
+                border: "1px solid rgb(var(--line-200))",
+                borderRadius: "var(--radius-pill)",
+                padding: "7px 14px",
+                fontSize: 13,
+                fontWeight: 600,
+                color: "rgb(var(--teal-700))",
+                marginBottom: 22,
+              }}
+            >
+              <Sprout size={16} aria-hidden="true" />
+              Built for ADHD and PDA brains
             </div>
 
-            {/* Layered cards: a glimpse of the app itself */}
-            <div style={{ position: "relative", minHeight: 496 }}>
+            <h1
+              style={{
+                fontFamily: "var(--font-display)",
+                fontSize: "clamp(36px,5.4vw,60px)",
+                lineHeight: 1.08,
+                letterSpacing: "-0.02em",
+                fontWeight: 800,
+                color: "rgb(var(--ink-900))",
+                margin: "0 0 20px",
+                textWrap: "pretty",
+              }}
+            >
+              A debt-free date, not a running total of everything you owe
+            </h1>
+
+            <p
+              style={{
+                fontSize: 20,
+                lineHeight: 1.55,
+                color: "rgb(var(--ink-700))",
+                margin: "0 auto 32px",
+                maxWidth: "56ch",
+                textWrap: "pretty",
+              }}
+            >
+              Mirian is a debt tracker for ADHD and PDA brains. Flexible,
+              non-punishing, judgment-free &mdash; and nothing on screen tells you
+              off.
+            </p>
+
+            <div
+              style={{
+                display: "flex",
+                gap: 12,
+                flexWrap: "wrap",
+                justifyContent: "center",
+              }}
+            >
+              <SiteButton href="/auth/signup" size="lg" iconAfter>
+                Get started
+              </SiteButton>
+              <SiteButton href="#how" size="lg" variant="ghost">
+                See how it works
+              </SiteButton>
+            </div>
+          </div>
+
+          {/* Three cards beneath, the date in the middle */}
+          <div
+            style={{
+              maxWidth: 1000,
+              margin: "0 auto",
+              padding: "52px 24px 0",
+              position: "relative",
+            }}
+          >
+            <div
+              style={{
+                display: "flex",
+                gap: 16,
+                alignItems: "flex-end",
+                justifyContent: "center",
+                flexWrap: "wrap",
+              }}
+            >
               <div
                 className={styles.tilt}
                 style={{
-                  position: "absolute",
-                  right: 0,
-                  top: 0,
-                  width: "min(100%,360px)",
+                  flex: 1,
+                  minWidth: 200,
+                  maxWidth: 260,
+                  background: "rgb(var(--white))",
+                  border: "1px solid rgb(var(--line-200))",
+                  borderRadius: "var(--radius-2xl)",
+                  boxShadow: "var(--shadow-md)",
+                  padding: 20,
+                  transform: "rotate(-2deg)",
+                }}
+              >
+                <div
+                  style={{
+                    fontSize: 12,
+                    fontWeight: 700,
+                    letterSpacing: ".1em",
+                    textTransform: "uppercase",
+                    color: "rgb(var(--ink-500))",
+                    marginBottom: 10,
+                  }}
+                >
+                  Paid so far
+                </div>
+                <div
+                  style={{
+                    fontFamily: "var(--font-display)",
+                    fontSize: 32,
+                    fontWeight: 800,
+                    color: "rgb(var(--ink-900))",
+                  }}
+                >
+                  &pound;5,180
+                </div>
+                <div style={{ marginTop: 14 }}>
+                  <ProgressBar percent={42} label="42% paid overall" />
+                </div>
+              </div>
+
+              <div
+                style={{
+                  flex: 1.4,
+                  minWidth: 280,
+                  maxWidth: 380,
+                  background: "rgb(var(--white))",
+                  border: "1px solid rgb(var(--line-200))",
+                  borderRadius: "var(--radius-2xl)",
+                  boxShadow: "var(--shadow-lg)",
+                  padding: 28,
+                  position: "relative",
+                  zIndex: 2,
+                }}
+              >
+                <div
+                  style={{
+                    fontSize: 12,
+                    fontWeight: 700,
+                    letterSpacing: ".1em",
+                    textTransform: "uppercase",
+                    color: "rgb(var(--ink-500))",
+                  }}
+                >
+                  Debt-free by
+                </div>
+                <div
+                  style={{
+                    fontFamily: "var(--font-display)",
+                    fontSize: 46,
+                    fontWeight: 800,
+                    color: "rgb(var(--ink-900))",
+                    lineHeight: 1.1,
+                    margin: "8px 0 4px",
+                  }}
+                >
+                  March 2029
+                </div>
+                <div style={{ fontSize: 15, color: "rgb(var(--ink-500))" }}>
+                  31 months to go
+                </div>
+                <div
+                  style={{
+                    marginTop: 20,
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: 8,
+                  }}
+                >
+                  <StatusChip label="Payment plan in place" state="plan" />
+                  <StatusChip label="Needs setting up" state="todo" />
+                </div>
+              </div>
+
+              <div
+                className={styles.tilt}
+                style={{
+                  flex: 1,
+                  minWidth: 200,
+                  maxWidth: 260,
                   background: "rgb(var(--white))",
                   border: "1px solid rgb(var(--line-200))",
                   borderRadius: "var(--radius-2xl)",
@@ -344,108 +478,28 @@ export default function HomePage() {
                 >
                   This year
                 </div>
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(6,1fr)", gap: 8 }}>
-                  {[
-                    { m: "J", bg: "rgb(var(--ok-100))", line: "rgb(var(--ok-200))", fg: "rgb(var(--ok-600))" },
-                    { m: "F", bg: "rgb(var(--ok-100))", line: "rgb(var(--ok-200))", fg: "rgb(var(--ok-600))" },
-                    { m: "M", bg: "rgb(var(--warn-100))", line: "rgb(var(--warn-200))", fg: "rgb(var(--warn-600))" },
-                    { m: "A", bg: "rgb(var(--ok-100))", line: "rgb(var(--ok-200))", fg: "rgb(var(--ok-600))" },
-                    { m: "M", bg: "rgb(var(--now-100))", line: "rgb(var(--now-200))", fg: "rgb(var(--now-600))" },
-                    { m: "J", bg: "rgb(var(--paper-sunk))", line: "rgb(var(--line-200))", fg: "rgb(var(--ink-400))" },
-                  ].map((cell, i) => (
+                <div
+                  style={{
+                    display: "grid",
+                    gridTemplateColumns: "repeat(4,1fr)",
+                    gap: 7,
+                  }}
+                >
+                  {MONTH_CELLS.map(([bg, line], i) => (
                     <div
                       key={i}
                       style={{
-                        height: 38,
+                        height: 34,
                         borderRadius: "var(--radius-sm)",
-                        background: cell.bg,
-                        border: `1px solid ${cell.line}`,
-                        display: "grid",
-                        placeItems: "center",
-                        fontSize: 12,
-                        fontWeight: 700,
-                        color: cell.fg,
+                        background: `rgb(var(${bg}))`,
+                        border: `1px solid rgb(var(${line}))`,
                       }}
-                    >
-                      {cell.m}
-                    </div>
+                    />
                   ))}
                 </div>
               </div>
-
-              <div
-                style={{
-                  position: "absolute",
-                  left: 0,
-                  top: 96,
-                  width: "min(100%,340px)",
-                  background: "rgb(var(--white))",
-                  border: "1px solid rgb(var(--line-200))",
-                  borderRadius: "var(--radius-2xl)",
-                  boxShadow: "var(--shadow-lg)",
-                  padding: 26,
-                }}
-              >
-                <div
-                  style={{
-                    fontSize: 12,
-                    fontWeight: 700,
-                    letterSpacing: ".1em",
-                    textTransform: "uppercase",
-                    color: "rgb(var(--ink-500))",
-                  }}
-                >
-                  Debt-free by
-                </div>
-                <div
-                  style={{
-                    fontFamily: "var(--font-display)",
-                    fontSize: 44,
-                    fontWeight: 800,
-                    color: "rgb(var(--ink-900))",
-                    lineHeight: 1.1,
-                    margin: "8px 0 4px",
-                  }}
-                >
-                  March 2029
-                </div>
-                <div style={{ fontSize: 15, color: "rgb(var(--ink-500))", marginBottom: 20 }}>
-                  31 months to go · 2 months sooner than last time
-                </div>
-                <ProgressBar percent={42} label="42% paid overall" />
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    marginTop: 10,
-                    fontSize: 15,
-                    color: "rgb(var(--ink-700))",
-                  }}
-                >
-                  <span>£5,180 paid</span>
-                  <span style={{ color: "rgb(var(--ink-500))" }}>£7,120 left</span>
-                </div>
-              </div>
-
-              <div
-                style={{
-                  position: "absolute",
-                  right: 0,
-                  top: 364,
-                  background: "rgb(var(--white))",
-                  border: "1px solid rgb(var(--line-200))",
-                  borderRadius: "var(--radius-xl)",
-                  boxShadow: "var(--shadow-md)",
-                  padding: "14px 16px",
-                  display: "flex",
-                  flexDirection: "column",
-                  gap: 10,
-                }}
-              >
-                <StatusChip label="Payment plan in place" state="plan" />
-                <StatusChip label="Awaiting response" state="waiting" />
-              </div>
             </div>
+            <div style={{ height: 56 }} />
           </div>
         </section>
 
@@ -515,12 +569,135 @@ export default function HomePage() {
         {/* ---------- What's inside ---------- */}
         <Section background="rgb(var(--paper))" label="What's inside">
           <div style={{ maxWidth: 1120, margin: "0 auto", padding: "84px 24px" }}>
-            <div style={{ maxWidth: "60ch", marginBottom: 44 }}>
+            <div style={{ maxWidth: "60ch", marginBottom: 52 }}>
               <Eyebrow>What&rsquo;s inside</Eyebrow>
               <h2 style={{ ...SECTION_HEADING, margin: 0 }}>
                 Enough detail to be honest, not enough to be a chore
               </h2>
             </div>
+
+            {/* Lead feature, with a year of payments beside it */}
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fit,minmax(320px,1fr))",
+                gap: 48,
+                alignItems: "center",
+                marginBottom: 64,
+              }}
+            >
+              <div>
+                <h3
+                  style={{
+                    fontFamily: "var(--font-display)",
+                    fontSize: 26,
+                    fontWeight: 800,
+                    color: "rgb(var(--ink-900))",
+                    margin: "0 0 12px",
+                  }}
+                >
+                  Four honest states, not a tick box
+                </h3>
+                <p
+                  style={{
+                    fontSize: 18,
+                    color: "rgb(var(--ink-700))",
+                    margin: "0 0 14px",
+                    maxWidth: "50ch",
+                  }}
+                >
+                  Paid on time, late, part paid, or part paid and late. Each one
+                  has a word and a glyph, so you can read a year at a glance
+                  without decoding colours.
+                </p>
+                <p
+                  style={{
+                    fontSize: 16,
+                    color: "rgb(var(--ink-500))",
+                    margin: 0,
+                    maxWidth: "50ch",
+                  }}
+                >
+                  Overpayments are recorded too, and they move your date forward.
+                </p>
+              </div>
+
+              <div
+                style={{
+                  background: "rgb(var(--white))",
+                  border: "1px solid rgb(var(--line-200))",
+                  borderRadius: "var(--radius-2xl)",
+                  boxShadow: "var(--shadow-md)",
+                  padding: 24,
+                }}
+              >
+                <div
+                  style={{
+                    fontSize: 12,
+                    fontWeight: 700,
+                    letterSpacing: ".1em",
+                    textTransform: "uppercase",
+                    color: "rgb(var(--ink-500))",
+                    marginBottom: 14,
+                  }}
+                >
+                  Barclaycard &middot; 2026
+                </div>
+                <div
+                  style={{
+                    display: "grid",
+                    gridTemplateColumns: "repeat(4,1fr)",
+                    gap: 10,
+                  }}
+                >
+                  {SPECIMEN_MONTHS.map(({ name, icon: Glyph }) => (
+                    <div
+                      key={name}
+                      style={{
+                        borderRadius: "var(--radius-md)",
+                        padding: "10px 8px",
+                        textAlign: "center",
+                        border: "1px solid rgb(var(--line-200))",
+                        background: "rgb(var(--paper-sunk))",
+                      }}
+                    >
+                      <div
+                        style={{
+                          fontSize: 12,
+                          fontWeight: 700,
+                          letterSpacing: ".06em",
+                          textTransform: "uppercase",
+                          color: "rgb(var(--ink-500))",
+                        }}
+                      >
+                        {name}
+                      </div>
+                      <div
+                        style={{
+                          marginTop: 6,
+                          display: "grid",
+                          placeItems: "center",
+                          color: "rgb(var(--ink-400))",
+                        }}
+                      >
+                        <Glyph size={18} aria-hidden="true" />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <p
+                  style={{
+                    fontSize: 15,
+                    color: "rgb(var(--ink-500))",
+                    margin: "16px 0 0",
+                  }}
+                >
+                  Late payments happen &mdash; what matters is you&rsquo;re on it.
+                </p>
+              </div>
+            </div>
+
+            {/* The rest of what is inside */}
             <div
               style={{
                 display: "grid",
@@ -528,7 +705,7 @@ export default function HomePage() {
                 gap: 20,
               }}
             >
-              {FEATURES.map((f) => (
+              {FEATURES.slice(1).map((f) => (
                 <div
                   key={f.title}
                   style={{
@@ -536,25 +713,30 @@ export default function HomePage() {
                     border: "1px solid rgb(var(--line-200))",
                     borderRadius: "var(--radius-xl)",
                     boxShadow: "var(--shadow-sm)",
-                    padding: 26,
+                    padding: 24,
+                    display: "flex",
+                    gap: 16,
+                    alignItems: "flex-start",
                   }}
                 >
-                  <div style={{ marginBottom: 18 }}>
-                    <IconTile icon={f.icon} />
+                  <IconTile icon={f.icon} size={40} />
+                  <div>
+                    <h3
+                      style={{
+                        fontFamily: "var(--font-display)",
+                        fontSize: 19,
+                        fontWeight: 700,
+                        color: "rgb(var(--ink-900))",
+                        margin: "0 0 6px",
+                        lineHeight: 1.3,
+                      }}
+                    >
+                      {f.title}
+                    </h3>
+                    <p style={{ fontSize: 16, color: "rgb(var(--ink-500))", margin: 0 }}>
+                      {f.body}
+                    </p>
                   </div>
-                  <h3
-                    style={{
-                      fontFamily: "var(--font-display)",
-                      fontSize: 20,
-                      fontWeight: 700,
-                      color: "rgb(var(--ink-900))",
-                      margin: "0 0 8px",
-                      lineHeight: 1.3,
-                    }}
-                  >
-                    {f.title}
-                  </h3>
-                  <p style={{ fontSize: 16, color: "rgb(var(--ink-500))", margin: 0 }}>{f.body}</p>
                 </div>
               ))}
             </div>
