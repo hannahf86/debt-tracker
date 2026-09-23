@@ -206,15 +206,17 @@ const FAQS = [
 ];
 
 /* This year, in the hero card: paid, paid, part paid, paid, now, then blanks. */
-const MONTH_CELLS: [string, string][] = [
-  ["--ok-100", "--ok-200"],
-  ["--ok-100", "--ok-200"],
-  ["--warn-100", "--warn-200"],
-  ["--ok-100", "--ok-200"],
-  ["--now-100", "--now-200"],
-  ["--paper-sunk", "--line-200"],
-  ["--paper-sunk", "--line-200"],
-  ["--paper-sunk", "--line-200"],
+/* Glyphs match the real grid in the dashboard: tick for paid, "?" for a
+   month with nothing in it, a pin for the month we're in, dash for later. */
+const MONTH_CELLS: { bg: string; line: string; fg: string; mark: "paid" | "missed" | "now" | "later" }[] = [
+  { bg: "--ok-100", line: "--ok-200", fg: "--ok-600", mark: "paid" },
+  { bg: "--ok-100", line: "--ok-200", fg: "--ok-600", mark: "paid" },
+  { bg: "--warn-100", line: "--warn-200", fg: "--warn-600", mark: "missed" },
+  { bg: "--ok-100", line: "--ok-200", fg: "--ok-600", mark: "paid" },
+  { bg: "--now-100", line: "--now-200", fg: "--now-600", mark: "now" },
+  { bg: "--paper-sunk", line: "--line-200", fg: "--ink-400", mark: "later" },
+  { bg: "--paper-sunk", line: "--line-200", fg: "--ink-400", mark: "later" },
+  { bg: "--paper-sunk", line: "--line-200", fg: "--ink-400", mark: "later" },
 ];
 
 /* The specimen year beside the lead feature: a glyph per payment state. */
@@ -263,15 +265,22 @@ function Section({
   children,
   background,
   label,
+  id,
 }: {
   children: ReactNode;
   background: string;
   label: string;
+  id?: string;
 }) {
   return (
     <section
+      id={id}
       aria-label={label}
-      style={{ background, borderBottom: "1px solid rgb(var(--line-200))" }}
+      style={{
+        background,
+        borderBottom: "1px solid rgb(var(--line-200))",
+        scrollMarginTop: 24,
+      }}
     >
       {children}
     </section>
@@ -523,16 +532,32 @@ export default function HomePage() {
                     gap: 7,
                   }}
                 >
-                  {MONTH_CELLS.map(([bg, line], i) => (
+                  {MONTH_CELLS.map((cell, i) => (
                     <div
                       key={i}
                       style={{
                         height: 34,
                         borderRadius: "var(--radius-sm)",
-                        background: `rgb(var(${bg}))`,
-                        border: `1px solid rgb(var(${line}))`,
+                        background: `rgb(var(${cell.bg}))`,
+                        border: `1px solid rgb(var(${cell.line}))`,
+                        color: `rgb(var(${cell.fg}))`,
+                        display: "grid",
+                        placeItems: "center",
                       }}
-                    />
+                    >
+                      {cell.mark === "paid" && <Check size={16} aria-hidden="true" />}
+                      {cell.mark === "missed" && (
+                        <span style={{ fontSize: 15, fontWeight: 700 }} aria-hidden="true">
+                          ?
+                        </span>
+                      )}
+                      {cell.mark === "now" && <MapPin size={15} aria-hidden="true" />}
+                      {cell.mark === "later" && (
+                        <span style={{ fontSize: 13 }} aria-hidden="true">
+                          &mdash;
+                        </span>
+                      )}
+                    </div>
                   ))}
                 </div>
               </div>
@@ -605,7 +630,7 @@ export default function HomePage() {
         </Section>
 
         {/* ---------- The research ---------- */}
-        <Section background="rgb(var(--paper-sunk))" label="The research">
+        <Section id="research" background="rgb(var(--paper-sunk))" label="The research">
           <div style={{ maxWidth: 1120, margin: "0 auto", padding: "84px 24px" }}>
             <div style={{ maxWidth: "60ch", marginBottom: 44 }}>
               <Eyebrow>The research</Eyebrow>
@@ -863,80 +888,6 @@ export default function HomePage() {
           </div>
         </Section>
 
-        {/* ---------- What we're building next ---------- */}
-        <Section background="rgb(var(--ice-100))" label="What we're building next">
-          <div style={{ maxWidth: 1120, margin: "0 auto", padding: "84px 24px" }}>
-            <div style={{ maxWidth: "60ch", marginBottom: 44 }}>
-              <Eyebrow>What we&rsquo;re building next</Eyebrow>
-              <h2 style={{ ...SECTION_HEADING, margin: "0 0 14px" }}>
-                Three things we&rsquo;re working on
-              </h2>
-              <p style={{ fontSize: 18, color: "rgb(var(--ink-700))", margin: 0 }}>
-                No dates attached — we&rsquo;d rather show you than promise you. If the
-                order looks wrong to you, say so and we&rsquo;ll change it.
-              </p>
-            </div>
-
-            {/* Dashed borders, because none of this is built yet. */}
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: "repeat(auto-fit,minmax(290px,1fr))",
-                gap: 20,
-              }}
-            >
-              {NEXT_UP.map((f) => (
-                <div
-                  key={f.title}
-                  style={{
-                    background: "rgb(var(--white))",
-                    border: "1px dashed rgb(var(--line-300))",
-                    borderRadius: "var(--radius-xl)",
-                    padding: 24,
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: 14,
-                  }}
-                >
-                  <IconTile icon={f.icon} size={40} />
-                  <h3
-                    style={{
-                      fontFamily: "var(--font-display)",
-                      fontSize: 19,
-                      fontWeight: 700,
-                      color: "rgb(var(--ink-900))",
-                      margin: 0,
-                      lineHeight: 1.3,
-                    }}
-                  >
-                    {f.title}
-                  </h3>
-                  <p style={{ fontSize: 16, color: "rgb(var(--ink-500))", margin: 0 }}>
-                    {f.body}
-                  </p>
-                </div>
-              ))}
-            </div>
-
-            <div
-              style={{
-                display: "flex",
-                gap: 16,
-                alignItems: "center",
-                flexWrap: "wrap",
-                marginTop: 36,
-              }}
-            >
-              <SiteButton href="/feedback" variant="ghost" iconAfter>
-                Tell us which would help most
-              </SiteButton>
-              <span style={{ fontSize: 16, color: "rgb(var(--ink-500))" }}>
-                A sentence is plenty.
-              </span>
-            </div>
-          </div>
-        </Section>
-
         {/* ---------- How it works ---------- */}
         <section
           id="how"
@@ -1046,7 +997,7 @@ export default function HomePage() {
         </Section>
 
         {/* ---------- Testimonials (clearly labelled as samples) ---------- */}
-        <Section background="rgb(var(--white))" label="What we hope people will say">
+        <Section background="rgb(var(--white))" label="What people say">
           <div style={{ maxWidth: 1120, margin: "0 auto", padding: "84px 24px" }}>
             <div
               style={{
@@ -1070,7 +1021,7 @@ export default function HomePage() {
                   textWrap: "pretty",
                 }}
               >
-                What we&rsquo;re hoping people will say
+                What people say
               </h2>
               <div
                 style={{
@@ -1130,6 +1081,80 @@ export default function HomePage() {
                   </div>
                 </div>
               ))}
+            </div>
+          </div>
+        </Section>
+
+        {/* ---------- What we're building next ---------- */}
+        <Section background="rgb(var(--ice-100))" label="What we're building next">
+          <div style={{ maxWidth: 1120, margin: "0 auto", padding: "84px 24px" }}>
+            <div style={{ maxWidth: "60ch", marginBottom: 44 }}>
+              <Eyebrow>What we&rsquo;re building next</Eyebrow>
+              <h2 style={{ ...SECTION_HEADING, margin: "0 0 14px" }}>
+                Three things we&rsquo;re working on
+              </h2>
+              <p style={{ fontSize: 18, color: "rgb(var(--ink-700))", margin: 0 }}>
+                No dates attached — we&rsquo;d rather show you than promise you. If the
+                order looks wrong to you, say so and we&rsquo;ll change it.
+              </p>
+            </div>
+
+            {/* Dashed borders, because none of this is built yet. */}
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fit,minmax(290px,1fr))",
+                gap: 20,
+              }}
+            >
+              {NEXT_UP.map((f) => (
+                <div
+                  key={f.title}
+                  style={{
+                    background: "rgb(var(--white))",
+                    border: "1px dashed rgb(var(--line-300))",
+                    borderRadius: "var(--radius-xl)",
+                    padding: 24,
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: 14,
+                  }}
+                >
+                  <IconTile icon={f.icon} size={40} />
+                  <h3
+                    style={{
+                      fontFamily: "var(--font-display)",
+                      fontSize: 19,
+                      fontWeight: 700,
+                      color: "rgb(var(--ink-900))",
+                      margin: 0,
+                      lineHeight: 1.3,
+                    }}
+                  >
+                    {f.title}
+                  </h3>
+                  <p style={{ fontSize: 16, color: "rgb(var(--ink-500))", margin: 0 }}>
+                    {f.body}
+                  </p>
+                </div>
+              ))}
+            </div>
+
+            <div
+              style={{
+                display: "flex",
+                gap: 16,
+                alignItems: "center",
+                flexWrap: "wrap",
+                marginTop: 36,
+              }}
+            >
+              <SiteButton href="/feedback" variant="ghost" iconAfter>
+                Tell us which would help most
+              </SiteButton>
+              <span style={{ fontSize: 16, color: "rgb(var(--ink-500))" }}>
+                A sentence is plenty.
+              </span>
             </div>
           </div>
         </Section>

@@ -1,4 +1,4 @@
-import { useEffect, useState, type CSSProperties, type ReactNode } from "react";
+import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { ArrowRight, Menu, X } from "lucide-react";
@@ -234,6 +234,7 @@ export function Field({
 
 const NAV_LINKS = [
   { href: "/", label: "Home" },
+  { href: "/#research", label: "Research" },
   { href: "/feedback", label: "Feedback" },
   { href: "/contact", label: "Contact" },
 ];
@@ -241,11 +242,33 @@ const NAV_LINKS = [
 export function SiteHeader() {
   const { pathname } = useRouter();
   const [open, setOpen] = useState(false);
+  const panelRef = useRef<HTMLElement | null>(null);
 
   // Close on arrival: tapping a link shouldn't leave the menu hanging open.
   useEffect(() => {
     setOpen(false);
   }, [pathname]);
+
+  /* Jumping to a section on this page: do the scroll here rather than
+     leaving it to the browser. Closing the menu re-renders the header in the
+     same tick and the browser drops its own jump when that happens. The open
+     panel's height comes off the target, since the panel is about to go and
+     everything below it will move up by exactly that much. */
+  const jumpTo = (href: string) => (event: { preventDefault: () => void }) => {
+    const id = href.split("#")[1];
+    if (!id || pathname !== "/") return;
+    const target = document.getElementById(id);
+    if (!target) return;
+
+    event.preventDefault();
+    const panelHeight = panelRef.current?.offsetHeight ?? 0;
+    const top = target.getBoundingClientRect().top + window.scrollY - panelHeight - 12;
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    setOpen(false);
+    window.history.replaceState(null, "", `#${id}`);
+    window.scrollTo({ top: Math.max(top, 0), behavior: reduced ? "instant" : "smooth" });
+  };
 
   // Escape closes it, the way every other menu on the web does.
   useEffect(() => {
@@ -282,35 +305,53 @@ export function SiteHeader() {
           className={styles.menuButton}
           aria-expanded={open}
           aria-controls="site-menu"
+          aria-label={open ? "Close menu" : "Menu"}
           onClick={() => setOpen((wasOpen) => !wasOpen)}
         >
-          {open ? <X size={20} aria-hidden="true" /> : <Menu size={20} aria-hidden="true" />}
-          {open ? "Close" : "Menu"}
+          {open ? <X size={22} aria-hidden="true" /> : <Menu size={22} aria-hidden="true" />}
         </button>
 
         {/* Desktop: the centred links from the design. */}
         <nav aria-label="Site" className={styles.headerNav}>
           {NAV_LINKS.map((link) => {
             const current = pathname === link.href;
+            const style = {
+              fontFamily: "var(--font-body)",
+              fontSize: 17,
+              padding: "12px 16px",
+              minHeight: 48,
+              display: "inline-flex",
+              alignItems: "center",
+              borderRadius: "var(--radius-pill)",
+              textDecoration: "none",
+              transition: "background 200ms cubic-bezier(.16,1,.3,1)",
+              color: current ? "rgb(var(--ink-900))" : "rgb(var(--ink-700))",
+              fontWeight: current ? 700 : 400,
+            } as const;
+
+            // A hash link has to be a plain anchor: next/link sets the hash
+            // but leaves the page where it was.
+            if (link.href.includes("#")) {
+              return (
+                <a
+                  key={link.href}
+                  href={link.href}
+                  className={styles.navLink}
+                  style={style}
+                  onClick={jumpTo(link.href)}
+                >
+                  {link.label}
+                </a>
+              );
+            }
+
             return (
               <Link
                 key={link.href}
                 href={link.href}
                 aria-current={current ? "page" : undefined}
                 className={styles.navLink}
-                style={{
-                  fontFamily: "var(--font-body)",
-                  fontSize: 17,
-                  padding: "12px 16px",
-                  minHeight: 48,
-                  display: "inline-flex",
-                  alignItems: "center",
-                  borderRadius: "var(--radius-pill)",
-                  textDecoration: "none",
-                  transition: "background 200ms cubic-bezier(.16,1,.3,1)",
-                  color: current ? "rgb(var(--ink-900))" : "rgb(var(--ink-700))",
-                  fontWeight: current ? 700 : 400,
-                }}
+                style={style}
               >
                 {link.label}
               </Link>
@@ -329,15 +370,33 @@ export function SiteHeader() {
       </div>
 
       {open && (
-        <nav id="site-menu" aria-label="Site" className={styles.menuPanel}>
+        <nav id="site-menu" aria-label="Site" className={styles.menuPanel} ref={panelRef}>
           {NAV_LINKS.map((link) => {
             const current = pathname === link.href;
+            const className = `${styles.menuLink} ${current ? styles.menuCurrent : ""}`;
+
+            // Same again, plus: a hash link doesn't change the route, so the
+            // panel has to be told to close itself.
+            if (link.href.includes("#")) {
+              return (
+                <a
+                  key={link.href}
+                  href={link.href}
+                  className={className}
+                  onClick={jumpTo(link.href)}
+                >
+                  {link.label}
+                </a>
+              );
+            }
+
             return (
               <Link
                 key={link.href}
                 href={link.href}
                 aria-current={current ? "page" : undefined}
-                className={`${styles.menuLink} ${current ? styles.menuCurrent : ""}`}
+                className={className}
+                onClick={() => setOpen(false)}
               >
                 {link.label}
               </Link>
