@@ -139,6 +139,8 @@ const STEPS = [
     title: "Add your debts",
     body: "Company and amount is enough. The rest can wait, or stay blank forever.",
     shot: "/how/step-1.png",
+    w: 240,
+    h: 134,
     alt: "The new debt form: company, a link reading find how to contact them, and a category to pick.",
   },
   {
@@ -146,6 +148,8 @@ const STEPS = [
     title: "Set up arrangements",
     body: "Mark each one as in place, needs setting up, or awaiting response. Honest status, no pressure.",
     shot: "/how/step-2.png",
+    w: 240,
+    h: 120,
     alt: "Three arrangement choices: payment plan in place, more details can be added, awaiting response.",
   },
   {
@@ -153,6 +157,8 @@ const STEPS = [
     title: "Log payments your way",
     body: "On time, late, part paid, overpaid — with a note if you want one.",
     shot: "/how/step-3.png",
+    w: 120,
+    h: 160,
     alt: "Logging a payment to Eon Next: an amount box, shortcuts for the agreed amount, what I can and a bit extra, and a date.",
   },
   {
@@ -160,6 +166,8 @@ const STEPS = [
     title: "Watch the date come closer",
     body: "Every payment you log moves your debt-free date. That's the whole reward.",
     shot: "/how/step-4.png",
+    w: 240,
+    h: 129,
     alt: "A card reading your debt free day, 30th Nov 2028, based on your current pay schedule.",
   },
 ];
@@ -1005,6 +1013,10 @@ export default function HomePage() {
                     <img
                       src={s.shot}
                       alt={s.alt}
+                      /* Real pixel sizes: the browser reserves the space
+                         before the image arrives, so nothing shuffles. */
+                      width={s.w}
+                      height={s.h}
                       loading="lazy"
                       style={{
                         maxWidth: "100%",

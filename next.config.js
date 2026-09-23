@@ -1,10 +1,14 @@
 /**
  * Security headers for every response.
  *
- * The Content-Security-Policy is REPORT-ONLY to start with: browsers log
- * anything it would have blocked to the console, but don't block it. Once a
- * full click-through of the app shows no violations, rename the header to
- * "Content-Security-Policy" to enforce it.
+ * The Content-Security-Policy is ENFORCED as of 2026-09-23. It ran in
+ * report-only mode first, and a click through the public pages and the sign-in
+ * screens with it enforcing produced no violations. Everything the app loads —
+ * scripts, fonts, images — comes from this origin; the only outside connection
+ * is Supabase, which the reset-password page talks to directly.
+ *
+ * If something ever breaks with "Refused to..." in the console, the fix is to
+ * name the source it's asking for, not to widen a directive to a wildcard.
  */
 const isProd = process.env.NODE_ENV === "production";
 
@@ -22,6 +26,9 @@ const contentSecurityPolicy = [
   "base-uri 'self'",
   "form-action 'self'",
   "object-src 'none'",
+  // The data download builds a PDF in the browser and hands it over as a
+  // blob; some browsers route that through a frame.
+  "frame-src 'self' blob:",
 ].join("; ");
 
 const securityHeaders = [
@@ -37,7 +44,7 @@ const securityHeaders = [
   { key: "Strict-Transport-Security", value: "max-age=63072000; includeSubDomains" },
   { key: "Cross-Origin-Opener-Policy", value: "same-origin" },
   ...(isProd
-    ? [{ key: "Content-Security-Policy-Report-Only", value: contentSecurityPolicy }]
+    ? [{ key: "Content-Security-Policy", value: contentSecurityPolicy }]
     : []),
 ];
 
