@@ -86,3 +86,34 @@
     gap: 4px;
   }
 }
+
+/* Final call to action: buttons stacked, full width on a phone,
+   right-aligned and only as wide as they need to be on a desktop. */
+.ctaStack {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: stretch;
+}
+
+@media (min-width: 768px) {
+  .ctaStack {
+    align-items: flex-end;
+  }
+}
+
+/* "Who it's for": the pills get the wider half, so the longest line
+   stays on one line instead of wrapping onto a lonely second row. */
+.audienceGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 40px;
+}
+
+@media (min-width: 900px) {
+  .audienceGrid {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.5fr);
+    gap: 48px;
+    align-items: center;
+  }
+}

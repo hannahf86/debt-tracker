@@ -19,6 +19,9 @@ import {
   Minus,
   MapPin,
   Circle,
+  Wallet,
+  BellRing,
+  FileText,
   type LucideIcon,
 } from "lucide-react";
 import {
@@ -63,6 +66,19 @@ const PROBLEMS: { icon: LucideIcon; title: string; body: string }[] = [
   },
 ];
 
+/* StepChange/Equifax, 2025. Figures as published; the link is on the page. */
+const RESEARCH = [
+  {
+    figure: "97%",
+    body: "of neurodivergent people say their neurodivergence makes debt harder to manage",
+  },
+  { figure: "64%", body: "didn't ask their creditors for help" },
+  {
+    figure: "32%",
+    body: "of those who reach debt advice disclose being neurodivergent at all",
+  },
+];
+
 const FEATURES: { icon: LucideIcon; title: string; body: string }[] = [
   {
     icon: CheckCircle,
@@ -93,6 +109,25 @@ const FEATURES: { icon: LucideIcon; title: string; body: string }[] = [
     icon: Landmark,
     title: "Arrangements and contacts",
     body: "Plan in place, needs setting up, awaiting response — plus the creditor's number, kept with the debt.",
+  },
+];
+
+/* Version two. Three only: a roadmap you can finish is worth more than a long one. */
+const NEXT_UP: { icon: LucideIcon; title: string; body: string }[] = [
+  {
+    icon: Wallet,
+    title: "Your money and the bank's money, side by side",
+    body: "Your banking app shows one number. Some of that is yours and some is the overdraft. Mirian will show you both, separately, so a full-looking balance can't catch you out.",
+  },
+  {
+    icon: BellRing,
+    title: "A nudge when it's time to chase",
+    body: "When you've sent a creditor a message and heard nothing back, Mirian will quietly remind you. No pressure, and no counting how long it's been.",
+  },
+  {
+    icon: FileText,
+    title: "A record you can hand over",
+    body: "Every payment and every message, as one file you can print or send. For the times someone asks you to prove it.",
   },
 ];
 
@@ -566,6 +601,76 @@ export default function HomePage() {
           </div>
         </Section>
 
+        {/* ---------- The research ---------- */}
+        <Section background="rgb(var(--paper-sunk))" label="The research">
+          <div style={{ maxWidth: 1120, margin: "0 auto", padding: "84px 24px" }}>
+            <div style={{ maxWidth: "60ch", marginBottom: 44 }}>
+              <Eyebrow>The research</Eyebrow>
+              <h2 style={{ ...SECTION_HEADING, margin: 0 }}>
+                Almost everyone finds this harder. Almost nobody says so.
+              </h2>
+            </div>
+
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fit,minmax(240px,1fr))",
+                gap: 24,
+                marginBottom: 40,
+              }}
+            >
+              {RESEARCH.map((stat) => (
+                <div
+                  key={stat.figure}
+                  style={{ borderTop: "2px solid rgb(var(--teal-200))", paddingTop: 20 }}
+                >
+                  <div
+                    style={{
+                      fontFamily: "var(--font-display)",
+                      fontSize: "clamp(40px,5vw,54px)",
+                      lineHeight: 1,
+                      fontWeight: 800,
+                      color: "rgb(var(--teal-700))",
+                      marginBottom: 12,
+                    }}
+                  >
+                    {stat.figure}
+                  </div>
+                  <p style={{ fontSize: 17, color: "rgb(var(--ink-700))", margin: 0 }}>
+                    {stat.body}
+                  </p>
+                </div>
+              ))}
+            </div>
+
+            <div style={{ maxWidth: "62ch" }}>
+              <p style={{ fontSize: 18, color: "rgb(var(--ink-700))", margin: "0 0 16px" }}>
+                The gap isn&rsquo;t awareness. It&rsquo;s shame — overwhelm, anxiety and
+                stigma are the top reasons people go quiet at exactly the moment
+                support would help most.
+              </p>
+              <p style={{ fontSize: 18, color: "rgb(var(--ink-700))", margin: "0 0 16px" }}>
+                With a PDA profile it goes further. Demands themselves set off anxiety
+                and avoidance, so the harder an app pushes &ldquo;pay now&rdquo;, the
+                more surely it gets ignored. Mirian is built to lower the demand, not
+                raise it.
+              </p>
+              <p style={{ fontSize: 15, color: "rgb(var(--ink-500))", margin: 0 }}>
+                Figures from{" "}
+                <a
+                  href="https://www.stepchange.org/about-us/impact-report-2025/equifax.aspx"
+                  target="_blank"
+                  rel="noreferrer"
+                  style={{ color: "rgb(var(--teal-700))", fontWeight: 700 }}
+                >
+                  StepChange and Equifax, 2025
+                </a>
+                .
+              </p>
+            </div>
+          </div>
+        </Section>
+
         {/* ---------- What's inside ---------- */}
         <Section background="rgb(var(--paper))" label="What's inside">
           <div style={{ maxWidth: 1120, margin: "0 auto", padding: "84px 24px" }}>
@@ -743,6 +848,80 @@ export default function HomePage() {
           </div>
         </Section>
 
+        {/* ---------- What we're building next ---------- */}
+        <Section background="rgb(var(--ice-100))" label="What we're building next">
+          <div style={{ maxWidth: 1120, margin: "0 auto", padding: "84px 24px" }}>
+            <div style={{ maxWidth: "60ch", marginBottom: 44 }}>
+              <Eyebrow>What we&rsquo;re building next</Eyebrow>
+              <h2 style={{ ...SECTION_HEADING, margin: "0 0 14px" }}>
+                Three things we&rsquo;re working on
+              </h2>
+              <p style={{ fontSize: 18, color: "rgb(var(--ink-700))", margin: 0 }}>
+                No dates attached — we&rsquo;d rather show you than promise you. If the
+                order looks wrong to you, say so and we&rsquo;ll change it.
+              </p>
+            </div>
+
+            {/* Dashed borders, because none of this is built yet. */}
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fit,minmax(290px,1fr))",
+                gap: 20,
+              }}
+            >
+              {NEXT_UP.map((f) => (
+                <div
+                  key={f.title}
+                  style={{
+                    background: "rgb(var(--white))",
+                    border: "1px dashed rgb(var(--line-300))",
+                    borderRadius: "var(--radius-xl)",
+                    padding: 24,
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: 14,
+                  }}
+                >
+                  <IconTile icon={f.icon} size={40} />
+                  <h3
+                    style={{
+                      fontFamily: "var(--font-display)",
+                      fontSize: 19,
+                      fontWeight: 700,
+                      color: "rgb(var(--ink-900))",
+                      margin: 0,
+                      lineHeight: 1.3,
+                    }}
+                  >
+                    {f.title}
+                  </h3>
+                  <p style={{ fontSize: 16, color: "rgb(var(--ink-500))", margin: 0 }}>
+                    {f.body}
+                  </p>
+                </div>
+              ))}
+            </div>
+
+            <div
+              style={{
+                display: "flex",
+                gap: 16,
+                alignItems: "center",
+                flexWrap: "wrap",
+                marginTop: 36,
+              }}
+            >
+              <SiteButton href="/feedback" variant="ghost" iconAfter>
+                Tell us which would help most
+              </SiteButton>
+              <span style={{ fontSize: 16, color: "rgb(var(--ink-500))" }}>
+                A sentence is plenty.
+              </span>
+            </div>
+          </div>
+        </Section>
+
         {/* ---------- How it works ---------- */}
         <section
           id="how"
@@ -806,15 +985,8 @@ export default function HomePage() {
           label="Who it's for"
         >
           <div
-            style={{
-              maxWidth: 1120,
-              margin: "0 auto",
-              padding: "84px 24px",
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fit,minmax(300px,1fr))",
-              gap: 48,
-              alignItems: "center",
-            }}
+            className={styles.audienceGrid}
+            style={{ maxWidth: 1120, margin: "0 auto", padding: "84px 24px" }}
           >
             <div>
               <Eyebrow>Who it&rsquo;s for</Eyebrow>
@@ -1064,16 +1236,12 @@ export default function HomePage() {
                   come back in a month, and nothing will have told you off.
                 </p>
               </div>
-              <div
-                style={{
-                  display: "flex",
-                  gap: 12,
-                  flexWrap: "wrap",
-                  justifyContent: "flex-end",
-                }}
-              >
+              <div className={styles.ctaStack}>
                 <SiteButton href="/auth/login" size="lg" iconAfter>
                   Sign in to Mirian
+                </SiteButton>
+                <SiteButton href="/auth/signup" size="lg" variant="secondary">
+                  Create an account
                 </SiteButton>
               </div>
             </div>
