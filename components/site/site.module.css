@@ -96,6 +96,11 @@
   padding: 8px 20px 20px;
   display: flex;
   flex-direction: column;
+  /* The bar floats over the page now, so a long panel needs its own scroll
+     on a short screen rather than running off the bottom. */
+  max-height: calc(100vh - 73px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
 }
 
 .menuLink {

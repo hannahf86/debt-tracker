@@ -243,17 +243,41 @@ export function SiteHeader() {
   const { pathname } = useRouter();
   const [open, setOpen] = useState(false);
   const panelRef = useRef<HTMLElement | null>(null);
+  const barRef = useRef<HTMLDivElement | null>(null);
+  const [barHeight, setBarHeight] = useState(73);
 
   // Close on arrival: tapping a link shouldn't leave the menu hanging open.
   useEffect(() => {
     setOpen(false);
   }, [pathname]);
 
+  /* The bar is fixed, so it is out of the flow and the page would slide up
+     underneath it. A spacer of the same height stands in for it, and the
+     height is measured rather than guessed because it changes at 960px. */
+  useEffect(() => {
+    const measure = () => {
+      if (barRef.current) setBarHeight(barRef.current.offsetHeight);
+    };
+    measure();
+    window.addEventListener("resize", measure);
+    return () => window.removeEventListener("resize", measure);
+  }, []);
+
+  // With the bar fixed, the panel floats over the page: a tap anywhere else
+  // should put it away.
+  useEffect(() => {
+    if (!open) return;
+    const onDown = (event: MouseEvent | TouchEvent) => {
+      const header = barRef.current?.parentElement;
+      if (header && !header.contains(event.target as Node)) setOpen(false);
+    };
+    document.addEventListener("pointerdown", onDown as EventListener);
+    return () => document.removeEventListener("pointerdown", onDown as EventListener);
+  }, [open]);
+
   /* Jumping to a section on this page: do the scroll here rather than
-     leaving it to the browser. Closing the menu re-renders the header in the
-     same tick and the browser drops its own jump when that happens. The open
-     panel's height comes off the target, since the panel is about to go and
-     everything below it will move up by exactly that much. */
+     leaving it to the browser, which drops its own jump when the header
+     re-renders in the same tick. */
   const jumpTo = (href: string) => (event: { preventDefault: () => void }) => {
     const id = href.split("#")[1];
     if (!id || pathname !== "/") return;
@@ -261,13 +285,14 @@ export function SiteHeader() {
     if (!target) return;
 
     event.preventDefault();
-    const panelHeight = panelRef.current?.offsetHeight ?? 0;
-    const top = target.getBoundingClientRect().top + window.scrollY - panelHeight - 12;
-    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-    setOpen(false);
+    // The bar sits over the page, so the section has to clear it.
+    const top = target.getBoundingClientRect().top + window.scrollY - barHeight - 12;
+    /* Jump rather than glide. A smooth scroll is cancelled by the menu
+       closing behind it, and a page that travels on its own is the kind of
+       motion this audience can do without anyway. */
     window.history.replaceState(null, "", `#${id}`);
-    window.scrollTo({ top: Math.max(top, 0), behavior: reduced ? "instant" : "smooth" });
+    window.scrollTo({ top: Math.max(top, 0), behavior: "instant" });
+    setOpen(false);
   };
 
   // Escape closes it, the way every other menu on the web does.
@@ -281,15 +306,19 @@ export function SiteHeader() {
   }, [open]);
 
   return (
-    <header
-      style={{
-        position: "relative",
-        zIndex: 5,
-        background: "rgb(var(--white))",
-        borderBottom: "1px solid rgb(var(--line-200))",
-      }}
-    >
-      <div className={styles.headerInner}>
+    <>
+      <header
+        style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          right: 0,
+          zIndex: 50,
+          background: "rgb(var(--white))",
+          borderBottom: "1px solid rgb(var(--line-200))",
+        }}
+      >
+        <div className={styles.headerInner} ref={barRef}>
         <Link
           href="/"
           className={styles.headerBrand}
@@ -412,8 +441,12 @@ export function SiteHeader() {
             </SiteButton>
           </div>
         </nav>
-      )}
-    </header>
+        )}
+      </header>
+
+      {/* Stands in for the fixed bar so the page starts below it */}
+      <div aria-hidden="true" style={{ height: barHeight }} />
+    </>
   );
 }
 

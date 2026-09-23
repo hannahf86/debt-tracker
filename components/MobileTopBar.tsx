@@ -1,11 +1,14 @@
 "use client";
 
-import { Menu, ArrowLeft, Plus } from "lucide-react";
+import { Menu, ArrowLeft } from "lucide-react";
 import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
 
 /**
- * Mobile app bar. 56px, title in the middle, one control each side.
+ * Mobile app bar. Logo and name on the left, menu button on the right.
+ *
+ * Nested screens keep a back arrow on the left, where a back arrow belongs.
+ * Adding a debt lives on the pages themselves, not up here.
  *
  * Deliberately not sticky — the design keeps the sidebar rail as the only
  * fixed element, so nothing follows you down the page.
@@ -14,16 +17,14 @@ import { useSession } from "next-auth/react";
 type BarConfig = {
   /** Nested screens swap the hamburger for a back arrow to this route. */
   back?: string;
-  /** Dashboard and Debts carry a shortcut to add a debt. */
-  addAction?: boolean;
 };
 
 function configFor(pathname: string): BarConfig | null {
   switch (pathname) {
     case "/dashboard":
-      return { addAction: true };
+      return {};
     case "/debts":
-      return { addAction: true };
+      return {};
     case "/tracker":
       return {};
     case "/settings":
@@ -57,16 +58,24 @@ export default function MobileTopBar({
   if (!config) return null;
 
   return (
-    <header className="md:hidden flex items-center gap-1.5 h-[4.5rem] pl-1.5 pr-2.5 bg-white border-b border-mint-200">
-      {config.back ? (
+    <header className="md:hidden flex items-center gap-2 h-[4.5rem] pl-3 pr-2.5 bg-white border-b border-mint-200">
+      {config.back && (
         <button
           onClick={() => router.push(config.back!)}
           aria-label="Back"
-          className="flex items-center justify-center w-12 h-12 shrink-0 rounded-xl text-sage-700 hover:bg-mint-100 active:bg-mint-200 transition-colors duration-base"
+          className="flex items-center justify-center w-12 h-12 shrink-0 -ml-1.5 rounded-xl text-sage-700 hover:bg-mint-100 active:bg-mint-200 transition-colors duration-base"
         >
           <ArrowLeft size={24} />
         </button>
-      ) : (
+      )}
+
+      <img src="/mark.svg" alt="" className="h-8 w-8 shrink-0" />
+
+      <span className="flex-1 min-w-0 font-display text-xl font-bold text-sage-800 truncate">
+        Mirian
+      </span>
+
+      {!config.back && (
         <button
           onClick={onOpen}
           aria-label="Open menu"
@@ -77,21 +86,6 @@ export default function MobileTopBar({
         </button>
       )}
 
-      <img src="/mark.svg" alt="" className="h-8 w-8 shrink-0" />
-
-      <span className="flex-1 min-w-0 font-display text-xl font-bold text-sage-800 truncate">
-        Mirian
-      </span>
-
-      {config.addAction && (
-        <button
-          onClick={() => router.push("/debts/new")}
-          aria-label="Add a debt"
-          className="flex items-center justify-center w-12 h-12 shrink-0 rounded-xl bg-teal-50 text-brand hover:bg-teal-100 active:bg-teal-200 transition-colors duration-base"
-        >
-          <Plus size={22} />
-        </button>
-      )}
     </header>
   );
 }

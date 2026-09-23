@@ -279,7 +279,7 @@ function Section({
       style={{
         background,
         borderBottom: "1px solid rgb(var(--line-200))",
-        scrollMarginTop: 24,
+        scrollMarginTop: 96,
       }}
     >
       {children}
@@ -892,7 +892,11 @@ export default function HomePage() {
         <section
           id="how"
           aria-label="How it works"
-          style={{ background: "rgb(var(--white))", borderBottom: "1px solid rgb(var(--line-200))" }}
+          style={{
+            background: "rgb(var(--white))",
+            borderBottom: "1px solid rgb(var(--line-200))",
+            scrollMarginTop: 96,
+          }}
         >
           <div style={{ maxWidth: 1120, margin: "0 auto", padding: "84px 24px" }}>
             <div style={{ maxWidth: "60ch", marginBottom: 48 }}>

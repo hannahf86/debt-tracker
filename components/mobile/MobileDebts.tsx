@@ -25,11 +25,21 @@ export default function MobileDebts({
 
   return (
     <div className="w-full max-w-full p-4 pb-10 flex flex-col gap-4">
-      <header>
-        <h1 className="font-display text-[1.75rem] leading-tight font-extrabold text-sage-800">
-          Your debts
-        </h1>
-        <p className="text-sm text-sage-500 mt-1">All your debts in one place</p>
+      <header className="flex items-start justify-between gap-3">
+        <div className="min-w-0">
+          <h1 className="font-display text-[1.75rem] leading-tight font-extrabold text-sage-800">
+            Your debts
+          </h1>
+          <p className="text-sm text-sage-500 mt-1">All your debts in one place</p>
+        </div>
+        {/* Adding a debt used to live in the app bar; it belongs next to the
+            thing it adds to. */}
+        <button
+          onClick={() => router.push("/debts/new")}
+          className="flex items-center justify-center gap-1.5 shrink-0 min-h-[44px] px-3.5 rounded-pill bg-teal-50 text-brand hover:bg-teal-100 active:bg-teal-200 transition-colors duration-base text-sm font-semibold"
+        >
+          <Plus size={18} /> Add
+        </button>
       </header>
 
       {/* Two stat tiles */}
