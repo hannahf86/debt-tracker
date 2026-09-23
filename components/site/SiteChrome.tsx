@@ -19,7 +19,7 @@ import styles from "@/components/site/site.module.css";
 export function Logo({ size = 30 }: { size?: number }) {
   return (
     <span style={{ display: "flex", alignItems: "center", gap: 10 }}>
-      <img src="/mark.svg" alt="" width={size} height={size} />
+      <img src="/mark.svg" alt="Mirian logo" width={size} height={size} />
       <span
         style={{
           fontFamily: "var(--font-display)",
@@ -325,7 +325,7 @@ export function SiteHeader() {
           style={{ display: "flex", alignItems: "center", minHeight: 48 }}
         >
           <Logo size={30} />
-          <span className="sr-only">Mirian home</span>
+          <span className="sr-only">home</span>
         </Link>
 
         {/* Phone: one button, and the whole menu underneath it. */}
