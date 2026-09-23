@@ -23,6 +23,7 @@ export default function GetInTouch({
   onSaveDetails,
   creditor = null,
   compact = false,
+  startWith = null,
 }: {
   debt: Debt;
   contacts: ContactLog[];
@@ -35,8 +36,14 @@ export default function GetInTouch({
   creditor?: Creditor | null;
   /** Tighter padding for the phone layout. */
   compact?: boolean;
+  /**
+   * Open the writer straight away on this template. Used when somebody has
+   * just been told their payment won't cover the interest, so the next step
+   * is right there rather than three taps away.
+   */
+  startWith?: string | null;
 }) {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(Boolean(startWith));
   const headingId = useId();
 
   return (
@@ -120,6 +127,7 @@ export default function GetInTouch({
           onLogged={onLogged}
           onSaveDetails={onSaveDetails}
           creditor={creditor}
+          startWith={startWith}
         />
       )}
     </section>

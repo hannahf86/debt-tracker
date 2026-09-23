@@ -18,6 +18,8 @@ const EDITABLE_FIELDS = [
   "account_reference",
   "company_email",
   "creditor_id",
+  "interest_state",
+  "interest_rate",
 ] as const;
 
 export default async function handler(
@@ -70,6 +72,22 @@ export default async function handler(
     const updateData: Record<string, unknown> = {};
     for (const field of EDITABLE_FIELDS) {
       if (req.body[field] !== undefined) updateData[field] = req.body[field];
+    }
+
+    /* Interest has to arrive in a state the sums can trust: only the two
+       words the column allows, and no rate left lying around on a debt that
+       has just been frozen. */
+    if (updateData.interest_state !== undefined) {
+      updateData.interest_state =
+        updateData.interest_state === "charged" ? "charged" : "frozen";
+      if (updateData.interest_state === "frozen") updateData.interest_rate = null;
+    }
+    if (updateData.interest_rate !== undefined && updateData.interest_rate !== null) {
+      const rate = parseFloat(String(updateData.interest_rate));
+      if (!Number.isFinite(rate) || rate < 0 || rate > 200) {
+        return res.status(400).json({ error: "Interest rate must be between 0 and 200." });
+      }
+      updateData.interest_rate = rate;
     }
 
     try {

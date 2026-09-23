@@ -2,13 +2,15 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/router";
+import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { useDebts } from "@/lib/hooks/useDebts";
 import { debtMonthStatus } from "@/lib/hooks/useTracker";
 import LogPaymentModal from "@/components/LogPaymentModal";
 import { Check, Minus, MapPin, Trash2, Pencil, CreditCard, Landmark, Zap, Receipt, Home, MoreHorizontal, CheckCircle, Moon, Clock, AlertTriangle } from "lucide-react";
 import type { Debt, Payment } from "@/lib/types";
-import { clearedDate, formatMonthYear } from "@/lib/projection";
+import { clearedDate, formatMonthYear, isStalled } from "@/lib/projection";
+import { isCharging, monthlyInterest, needsRate } from "@/lib/interest";
 import { arrangementStyle } from "@/lib/arrangement";
 import MobileDebtDetail from "@/components/mobile/MobileDebtDetail";
 import GetInTouch from "@/components/GetInTouch";
@@ -165,6 +167,9 @@ export default function DebtDetailPage() {
       onSaveDetails={(updates) => updateDebt(debt.id, updates)}
       creditor={creditor}
       compact={compact}
+      /* ?ask=freeze_interest arrives from the payment screen, when the
+         payment didn't cover the month's interest. */
+      startWith={typeof router.query.ask === "string" ? router.query.ask : null}
     />
   );
 
@@ -264,10 +269,51 @@ export default function DebtDetailPage() {
                     </p>
                   </div>
                 )}
+                {/* Interest always states where it stands. A debt that is
+                    quietly assumed to be interest-free, and isn't, is how a
+                    balance stops adding up. */}
+                <div className="flex flex-wrap justify-between items-baseline gap-x-4 gap-y-1 py-3 border-b border-mint-200">
+                  <p className="text-sage-500 text-sm">Interest</p>
+                  <p className="text-sage-800 font-medium text-right">
+                    {isCharging(debt)
+                      ? `${debt.interest_rate}% — about £${monthlyInterest(debt).toFixed(2)} a month`
+                      : needsRate(debt)
+                        ? "Being added — rate still needed"
+                        : "None being added"}
+                    <Link
+                      href={`/debts/${debt.id}/edit`}
+                      className="block text-sage-600 hover:text-sage-800 text-xs font-normal underline"
+                    >
+                      {isCharging(debt) ? "Change this" : "Is that right?"}
+                    </Link>
+                  </p>
+                </div>
                 <div className="flex justify-between items-center py-3">
                   <p className="text-sage-500 text-sm">Debt cleared by</p>
-                  <p className="text-sage-800 font-medium">{clearedBy}</p>
+                  <p className="text-sage-800 font-medium">
+                    {isStalled(debt) ? "Not yet — see below" : clearedBy}
+                  </p>
                 </div>
+                {isStalled(debt) && (
+                  <div className="p-4 bg-warn-100 border border-warn-200 rounded-xl">
+                    <p className="text-sage-800 text-sm font-semibold">
+                      This one isn&rsquo;t coming down yet
+                    </p>
+                    <p className="text-sage-700 text-sm mt-1">
+                      The interest each month is about £
+                      {monthlyInterest(debt).toFixed(2)}, and the monthly
+                      payment is £{debt.monthly_amount?.toFixed(2)}. Until that
+                      changes there&rsquo;s no date to give you — which is why
+                      one isn&rsquo;t shown.
+                    </p>
+                    <Link
+                      href={`/debts/${debt.id}?ask=freeze_interest`}
+                      className="inline-flex items-center min-h-[44px] mt-2 text-sm font-semibold text-brand underline"
+                    >
+                      Ask {debt.company} to freeze the interest
+                    </Link>
+                  </div>
+                )}
               </div>
 
               <button

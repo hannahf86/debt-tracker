@@ -1,4 +1,5 @@
 import { getSession } from "@/lib/devAuth";
+import { interestOver, isCharging, splitPayment, daysBetween } from "@/lib/interest";
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
 import type { NextApiRequest, NextApiResponse } from "next";
 
@@ -62,31 +63,14 @@ export default async function handler(
     try {
       const { data: debt } = await supabaseAdmin
         .from("debts")
-        .select("id, amount_owed, monthly_amount, created_at")
+        .select(
+          "id, amount_owed, monthly_amount, created_at, interest_state, interest_rate",
+        )
         .eq("id", debt_id)
         .eq("user_id", session.user.id)
         .single();
 
       if (!debt) return res.status(403).json({ error: "Forbidden" });
-
-      // Create payment
-      const { data: payment, error: paymentError } = await supabaseAdmin
-        .from("payments")
-        .insert([
-          {
-            debt_id,
-            amount: parseFloat(amount),
-            payment_date,
-            payment_type: payment_type || "on-time",
-            expected_amount: expected_amount
-              ? parseFloat(expected_amount)
-              : null,
-          },
-        ])
-        .select()
-        .single();
-
-      if (paymentError) throw paymentError;
 
       // Backfill: a payment dated before the debt was added is already
       // reflected in the balance the user typed in, so recording it must not
@@ -98,9 +82,53 @@ export default async function handler(
         new Date(paidOn.getFullYear(), paidOn.getMonth(), paidOn.getDate()) <
         new Date(addedOn.getFullYear(), addedOn.getMonth(), addedOn.getDate());
 
-      const newAmount = isBackfill
-        ? debt.amount_owed
-        : Math.max(0, debt.amount_owed - parseFloat(amount));
+      const paid = parseFloat(amount);
+
+      /* Interest since the last payment, or since the debt was added if this
+         is the first. Read before the new row is inserted, or it would find
+         itself. Backfilled payments get none of this: we don't know what the
+         balance was back then, and an invented figure is worse than a gap. */
+      let interest = 0;
+      if (!isBackfill && isCharging(debt)) {
+        const { data: previous } = await supabaseAdmin
+          .from("payments")
+          .select("payment_date")
+          .eq("debt_id", debt_id)
+          .order("payment_date", { ascending: false })
+          .limit(1);
+
+        const since = previous?.[0]?.payment_date ?? debt.created_at;
+        interest = interestOver(
+          debt.amount_owed,
+          debt.interest_rate as number,
+          daysBetween(since, payment_date),
+        );
+      }
+
+      const split = splitPayment(debt.amount_owed, paid, interest);
+      const newAmount = isBackfill ? debt.amount_owed : split.balanceAfter;
+
+      // Create payment
+      const { data: payment, error: paymentError } = await supabaseAdmin
+        .from("payments")
+        .insert([
+          {
+            debt_id,
+            amount: paid,
+            payment_date,
+            payment_type: payment_type || "on-time",
+            expected_amount: expected_amount
+              ? parseFloat(expected_amount)
+              : null,
+            interest_applied: isBackfill ? null : split.interest,
+            principal_applied: isBackfill ? null : split.principal,
+            balance_after: isBackfill ? null : split.balanceAfter,
+          },
+        ])
+        .select()
+        .single();
+
+      if (paymentError) throw paymentError;
 
       if (!isBackfill) {
         const { error: updateError } = await supabaseAdmin
@@ -131,7 +159,14 @@ export default async function handler(
         ]);
       }
 
-      return res.status(201).json({ ...payment, affected_balance: !isBackfill, new_amount_owed: newAmount });
+      return res.status(201).json({
+        ...payment,
+        affected_balance: !isBackfill,
+        new_amount_owed: newAmount,
+        interest_applied: isBackfill ? null : split.interest,
+        principal_applied: isBackfill ? null : split.principal,
+        balance_grew: isBackfill ? false : split.balanceGrew,
+      });
     } catch (error) {
       console.error("Error creating payment:", error);
       return res.status(500).json({ error: "Failed to create payment" });

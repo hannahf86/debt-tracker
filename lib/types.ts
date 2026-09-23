@@ -25,6 +25,14 @@ export type Debt = {
   company_email: string | null;
   /** Linked entry in the company directory, if they picked one. */
   creditor_id?: number | null;
+  /**
+   * Whether interest is being added. Frozen by default: most people on a
+   * plan, a DMP or a default have it stopped, and assuming otherwise would
+   * quietly inflate everybody's balance.
+   */
+  interest_state?: "frozen" | "charged" | null;
+  /** APR as a percentage, e.g. 24.9. Only meaningful when charged. */
+  interest_rate?: number | null;
   created_at: string;
   updated_at: string;
 };
@@ -36,6 +44,14 @@ export type Payment = {
   expected_amount: number | null;
   payment_type: "on-time" | "late" | "partial" | "partial-late";
   payment_date: string;
+  /**
+   * Where the money went, worked out when the payment was logged and never
+   * recalculated. Null on payments logged before interest existed, and on
+   * debts with no interest — an honest gap beats an invented figure.
+   */
+  interest_applied?: number | null;
+  principal_applied?: number | null;
+  balance_after?: number | null;
   created_at: string;
 };
 

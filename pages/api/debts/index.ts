@@ -42,6 +42,8 @@ export default async function handler(
       account_reference,
       company_email,
       creditor_id,
+      interest_state,
+      interest_rate,
     } = req.body;
 
     if (!company || !total_amount || !category) {
@@ -66,6 +68,13 @@ export default async function handler(
               : null,
             account_reference: account_reference || null,
             company_email: company_email || null,
+            // Frozen unless they say otherwise; a rate only means anything
+            // once they have.
+            interest_state: interest_state === "charged" ? "charged" : "frozen",
+            interest_rate:
+              interest_state === "charged" && interest_rate
+                ? parseFloat(interest_rate)
+                : null,
             // Only sent when they picked a company from the directory.
             ...(creditor_id ? { creditor_id: Number(creditor_id) } : {}),
           },

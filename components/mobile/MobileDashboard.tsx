@@ -167,7 +167,13 @@ export default function MobileDashboard({
             ? `Add a monthly amount to ${projection.unprojectable.length} ${
                 projection.unprojectable.length === 1 ? "debt" : "debts"
               } to see this`
-            : "Based on your current pay schedule"}
+            : projection.stalled.length > 0
+              ? `${
+                  projection.stalled.length === 1
+                    ? "One debt is"
+                    : `${projection.stalled.length} debts are`
+                } paying less than the interest, so there's no date yet`
+              : "Based on your current pay schedule"}
         </p>
         <div className="flex items-center gap-3">
           <div className="flex-1">

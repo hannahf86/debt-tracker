@@ -6,6 +6,7 @@ import { useDebts } from "@/lib/hooks/useDebts";
 import { CheckCircle, Moon, Clock } from "lucide-react";
 import type { Creditor } from "@/lib/types";
 import CreditorField from "@/components/CreditorField";
+import InterestFields from "@/components/InterestFields";
 import { useCreditor } from "@/lib/hooks/useCreditor";
 
 const categories = [
@@ -51,6 +52,8 @@ export default function EditDebtPage() {
     direct_debit_date: "",
     account_reference: "",
     company_email: "",
+    interest_state: "frozen",
+    interest_rate: "",
   });
 
   const debt = debts.find((d) => d.id === id);
@@ -70,6 +73,8 @@ export default function EditDebtPage() {
         direct_debit_date: debt.direct_debit_date?.toString() || "",
         account_reference: debt.account_reference || "",
         company_email: debt.company_email || "",
+        interest_state: debt.interest_state === "charged" ? "charged" : "frozen",
+        interest_rate: debt.interest_rate?.toString() || "",
       });
     }
   }, [debt]);
@@ -101,6 +106,11 @@ export default function EditDebtPage() {
           : null,
         account_reference: form.account_reference || null,
         company_email: form.company_email || null,
+        interest_state: form.interest_state === "charged" ? "charged" : "frozen",
+        interest_rate:
+          form.interest_state === "charged" && form.interest_rate
+            ? parseFloat(form.interest_rate)
+            : null,
         ...(linked !== undefined ? { creditor_id: linked?.id ?? null } : {}),
       });
 
@@ -300,6 +310,12 @@ export default function EditDebtPage() {
                 />
               </div>
             </div>
+
+            <InterestFields
+              state={form.interest_state}
+              rate={form.interest_rate}
+              onChange={(next) => setForm({ ...form, ...next })}
+            />
           </div>
 
           <div className="bg-white border border-mint-200 rounded-2xl p-6 space-y-4 shadow-sm">

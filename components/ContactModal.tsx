@@ -44,6 +44,8 @@ type Props = {
   onClose: () => void;
   onLogged: (entry: NewContact) => Promise<ContactLog>;
   onSaveDetails: SaveDetails;
+  /** Open straight onto this template instead of the picker. */
+  startWith?: string | null;
 };
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -131,8 +133,11 @@ export default function ContactModal({
   onClose,
   onLogged,
   onSaveDetails,
+  startWith = null,
 }: Props) {
-  const [template, setTemplate] = useState<Template | null>(null);
+  const [template, setTemplate] = useState<Template | null>(
+    startWith ? TEMPLATES.find((t) => t.id === startWith) ?? null : null,
+  );
   const [values, setValues] = useState<FieldValues>({
     your_name: yourName,
     account_reference: debt.account_reference ?? "",

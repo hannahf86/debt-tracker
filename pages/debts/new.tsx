@@ -5,6 +5,7 @@ import { useRouter } from "next/router";
 import { CheckCircle, Moon, Clock } from "lucide-react";
 import type { Creditor } from "@/lib/types";
 import CreditorField from "@/components/CreditorField";
+import InterestFields from "@/components/InterestFields";
 
 const categories = [
   { value: "credit-card", label: "Credit Card" },
@@ -49,6 +50,8 @@ export default function NewDebtPage() {
     direct_debit_date: "",
     account_reference: "",
     company_email: "",
+    interest_state: "frozen",
+    interest_rate: "",
   });
 
   const handleChange = (
@@ -259,6 +262,12 @@ export default function NewDebtPage() {
                 </div>
               </div>
             </div>
+
+            <InterestFields
+              state={form.interest_state}
+              rate={form.interest_rate}
+              onChange={(next) => setForm({ ...form, ...next })}
+            />
           </div>
 
           <div className="bg-white border border-mint-200 rounded-2xl p-5 md:p-6 space-y-4 shadow-sm">

@@ -1,4 +1,5 @@
 import type { Debt } from "@/lib/types";
+import { needsRate } from "@/lib/interest";
 
 /**
  * Which details a debt still needs to be tracked properly.
@@ -11,7 +12,7 @@ import type { Debt } from "@/lib/types";
  */
 
 export type MissingDetail = {
-  key: "direct_debit_date" | "account_reference" | "company_email";
+  key: "direct_debit_date" | "account_reference" | "company_email" | "interest_rate";
   label: string;
   /** Without this the app can't do something it otherwise would. */
   blocksTracking: boolean;
@@ -32,6 +33,15 @@ export function missingDetails(debt: Debt): MissingDetail[] {
       key: "account_reference",
       label: "account reference",
       blocksTracking: false,
+    });
+  }
+  if (needsRate(debt)) {
+    missing.push({
+      key: "interest_rate",
+      label: "interest rate",
+      // Without the rate, the balance and the debt-free date are both wrong,
+      // the same as a missing payment date.
+      blocksTracking: true,
     });
   }
   if (!debt.company_email?.trim()) {

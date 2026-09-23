@@ -133,12 +133,13 @@ export default function PrivacyPage() {
                 </li>
                 <li>
                   <strong>Your debts:</strong> company names, amounts, monthly
-                  payments, due dates, and any account numbers or company email
-                  addresses you add.
+                  payments, due dates, any interest rate you enter, and any
+                  account numbers or company email addresses you add.
                 </li>
                 <li>
                   <strong>Your payments:</strong> amounts and dates, whether a
-                  payment was late or short, and any reason you choose to give.
+                  payment was late or short, how much of each payment went on
+                  interest, and any reason you choose to give.
                 </li>
                 <li>
                   <strong>Your contact history:</strong> messages you tell us

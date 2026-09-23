@@ -1,11 +1,14 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/router";
 import { X, CheckCircle, Check, Info } from "lucide-react";
 import type { Debt } from "@/lib/types";
+import { isCharging, monthlyInterest } from "@/lib/interest";
 
 type Step =
   | "amount"
+  | "interest-warning"
   | "confirm-late"
   | "late-reason"
   | "short-reason"
@@ -35,6 +38,9 @@ export default function LogPaymentModal({
   const [shortReason, setShortReason] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
+  /** What the payment actually did, once the API has worked it out. */
+  const [split, setSplit] = useState<{ interest: number; principal: number } | null>(null);
+  const router = useRouter();
 
   const monthlyAmount = debt.monthly_amount || 0;
   const parsedAmount = parseFloat(amount) || 0;
@@ -51,6 +57,12 @@ export default function LogPaymentModal({
   // the arrangement. Treating it as late would redden a historic month.
   const isLate = !isToday && !isBackfill;
   const isShort = parsedAmount < monthlyAmount && parsedAmount > 0;
+  /* A month's interest, for the "is this payment big enough?" question.
+     Backfilled payments are left out: they happened before today's balance
+     was typed in, so there's nothing to compare them against. */
+  const monthInterest = isBackfill ? 0 : monthlyInterest(debt);
+  const underInterest =
+    isCharging(debt) && !isBackfill && parsedAmount > 0 && parsedAmount < monthInterest;
   const isOver = parsedAmount > monthlyAmount;
   const isCorrect = parsedAmount === monthlyAmount;
 
@@ -63,6 +75,16 @@ export default function LogPaymentModal({
 
   const handleAmountNext = () => {
     if (!amount || parsedAmount <= 0) return;
+    // Said once, before anything is logged, and never again afterwards.
+    if (underInterest) setStep("interest-warning");
+    else if (isOver) setStep("overpaid-confirm");
+    else if (isShort) setStep("short-reason");
+    else if (isLate) setStep("confirm-late");
+    else handleSubmit("on-time");
+  };
+
+  /** What the amount step would have done if there had been no heads-up. */
+  const continueAfterWarning = () => {
     if (isOver) setStep("overpaid-confirm");
     else if (isShort) setStep("short-reason");
     else if (isLate) setStep("confirm-late");
@@ -95,6 +117,13 @@ export default function LogPaymentModal({
       // rather than deducting here — onSuccess writes this value straight
       // back through updateDebt, which was silently undoing that decision.
       const result = await response.json();
+      const interestApplied = Number(result?.interest_applied);
+      if (Number.isFinite(interestApplied) && interestApplied > 0) {
+        setSplit({
+          interest: interestApplied,
+          principal: Number(result?.principal_applied) || 0,
+        });
+      }
       const returned = Number(result?.new_amount_owed);
       const newAmountOwed = Number.isFinite(returned)
         ? returned
@@ -316,6 +345,57 @@ export default function LogPaymentModal({
           </div>
         )}
 
+        {/* Step: the payment won't cover this month's interest.
+            Information, not a gate — the payment still gets logged exactly
+            as entered, because what happened is what gets recorded. */}
+        {step === "interest-warning" && (
+          <div className="space-y-4">
+            <div className="p-4 bg-warn-100 border border-warn-200 rounded-xl">
+              <p className="text-sage-800 text-sm font-semibold">
+                Worth knowing before you log this
+              </p>
+              <p className="text-sage-700 text-sm mt-2">
+                At £{parsedAmount.toFixed(2)}, this month&rsquo;s interest of
+                about £{monthInterest.toFixed(2)} is more than the payment, so
+                the balance won&rsquo;t come down yet. That&rsquo;s not a
+                failure of yours — it&rsquo;s what the rate is doing.
+              </p>
+              <p className="text-sage-700 text-sm mt-2">
+                Lots of people ask their creditor to freeze the interest, and
+                plenty say yes.
+              </p>
+            </div>
+
+            <div className="space-y-2">
+              <button
+                onClick={() =>
+                  router.push(`/debts/${debt.id}?ask=freeze_interest`)
+                }
+                className="w-full min-h-[56px] p-4 bg-white border border-mint-200 hover:border-brand active:bg-mint-100 rounded-xl text-left transition-all"
+              >
+                <p className="text-sage-800 text-sm font-medium">
+                  Help me ask {debt.company}
+                </p>
+                <p className="text-sage-500 text-xs mt-0.5">
+                  We&rsquo;ll write the message for you
+                </p>
+              </button>
+              <button
+                onClick={continueAfterWarning}
+                disabled={isLoading}
+                className="w-full min-h-[56px] p-4 bg-white border border-mint-200 hover:border-sage-300 active:bg-mint-100 rounded-xl text-left transition-all"
+              >
+                <p className="text-sage-800 text-sm font-medium">
+                  Log the payment anyway
+                </p>
+                <p className="text-sage-500 text-xs mt-0.5">
+                  Paying what you can still counts
+                </p>
+              </button>
+            </div>
+          </div>
+        )}
+
         {/* Step: Confirm late */}
         {step === "confirm-late" && (
           <div className="space-y-4">
@@ -471,6 +551,34 @@ export default function LogPaymentModal({
               <CheckCircle size={48} className="text-sage-600" />
             </div>
             <p className="text-sage-700 text-sm">{successMessage}</p>
+
+            {/* Where the money went. Shown only when interest took a slice,
+                because that's the bit no statement explains plainly. */}
+            {split && (
+              <div className="mt-4 p-4 bg-mint-50 border border-mint-200 rounded-xl text-left">
+                <p className="text-xs text-sage-500 uppercase tracking-wider font-semibold">
+                  Where it went
+                </p>
+                <dl className="mt-2 space-y-1 text-sm">
+                  <div className="flex justify-between gap-4">
+                    <dt className="text-sage-600">Interest</dt>
+                    <dd className="text-sage-800 font-medium">
+                      £{split.interest.toFixed(2)}
+                    </dd>
+                  </div>
+                  <div className="flex justify-between gap-4">
+                    <dt className="text-sage-600">Came off what you owe</dt>
+                    <dd className="text-sage-800 font-medium">
+                      £{split.principal.toFixed(2)}
+                    </dd>
+                  </div>
+                </dl>
+                <p className="text-xs text-sage-500 mt-2">
+                  An estimate from the rate you entered, not
+                  {" "}{debt.company}&rsquo;s own figure.
+                </p>
+              </div>
+            )}
           </div>
         )}
       </div>

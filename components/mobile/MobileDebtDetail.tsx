@@ -3,7 +3,8 @@
 import { useRouter } from "next/router";
 import { Plus, Pencil, Trash2 } from "lucide-react";
 import type { Debt, Payment } from "@/lib/types";
-import { clearedDate, formatMonthYear } from "@/lib/projection";
+import { clearedDate, formatMonthYear, isStalled } from "@/lib/projection";
+import { isCharging, monthlyInterest, needsRate } from "@/lib/interest";
 import { arrangementStyle } from "@/lib/arrangement";
 import { ordinal } from "@/lib/format";
 import { debtMonthStatus, type MonthStatus } from "@/lib/hooks/useTracker";
@@ -157,8 +158,40 @@ export default function MobileDebtDetail({
             )
           }
         />
-        <Row label="Cleared by" value={formatMonthYear(clearedDate(debt), "long")} />
+        <Row
+          label="Interest"
+          value={
+            isCharging(debt)
+              ? `${debt.interest_rate}% — about £${monthlyInterest(debt).toFixed(2)} a month`
+              : needsRate(debt)
+                ? "Being added — rate still needed"
+                : "None being added"
+          }
+        />
+        <Row
+          label="Cleared by"
+          value={
+            isStalled(debt)
+              ? "Not yet — see below"
+              : formatMonthYear(clearedDate(debt), "long")
+          }
+        />
       </div>
+
+      {/* A payment smaller than the interest means there is no date to give.
+          Say why, and hand over the next step rather than a verdict. */}
+      {isStalled(debt) && (
+        <div className="p-4 bg-warn-100 border border-warn-200 rounded-xl">
+          <p className="text-sage-800 text-sm font-semibold">
+            This one isn&rsquo;t coming down yet
+          </p>
+          <p className="text-sage-700 text-sm mt-1">
+            The interest is about £{monthlyInterest(debt).toFixed(2)} a month
+            and the payment is £{debt.monthly_amount?.toFixed(2)}. Until that
+            changes there&rsquo;s no date to give you.
+          </p>
+        </div>
+      )}
 
       {/* This year */}
       <div>

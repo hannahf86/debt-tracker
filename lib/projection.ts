@@ -1,4 +1,5 @@
 import type { Debt } from "@/lib/types";
+import { isCharging, monthlyInterest, monthlyRate } from "@/lib/interest";
 
 /**
  * Payoff projection.
@@ -19,9 +20,40 @@ export function monthsRemaining(
   return Math.ceil(amountOwed / monthlyAmount);
 }
 
+/**
+ * Months to clear once interest is in the picture.
+ *
+ * Returns null when the payment never clears it — when the monthly payment is
+ * no bigger than the monthly interest, the balance stands still or grows and
+ * there is no date to give. Saying nothing is right here; a date that never
+ * arrives would be the cruellest thing the app could print.
+ */
+export function monthsRemainingWithInterest(debt: Debt): number | null {
+  const payment = debt.monthly_amount;
+  if (!payment || payment <= 0) return null;
+  if (debt.amount_owed <= 0) return 0;
+  if (!isCharging(debt)) return monthsRemaining(debt.amount_owed, payment);
+
+  const r = monthlyRate(debt.interest_rate as number);
+  const interest = debt.amount_owed * r;
+  if (payment <= interest) return null;
+
+  // Standard amortisation: n = -ln(1 - Br/P) / ln(1 + r)
+  const months = -Math.log(1 - (debt.amount_owed * r) / payment) / Math.log(1 + r);
+  return Math.ceil(months);
+}
+
+/** A debt whose payment doesn't cover its own interest, so it never clears. */
+export function isStalled(debt: Debt): boolean {
+  if (!isCharging(debt)) return false;
+  if (debt.amount_owed <= 0) return false;
+  if (!debt.monthly_amount || debt.monthly_amount <= 0) return false;
+  return debt.monthly_amount <= monthlyInterest(debt);
+}
+
 /** The date a single debt clears, landing on its direct debit day. */
 export function clearedDate(debt: Debt, from: Date = new Date()): Date | null {
-  const months = monthsRemaining(debt.amount_owed, debt.monthly_amount);
+  const months = monthsRemainingWithInterest(debt);
   if (months === null) return null;
 
   const d = new Date(from.getFullYear(), from.getMonth() + months, 1);
@@ -61,6 +93,12 @@ export type DebtFreeProjection = {
   date: Date | null;
   /** Debts with no monthly amount set — these make the date unknowable. */
   unprojectable: Debt[];
+  /**
+   * Debts where the monthly payment doesn't cover the interest. Kept apart
+   * from `unprojectable` because the answer is different: one needs a number
+   * typing in, the other needs a conversation with the creditor.
+   */
+  stalled: Debt[];
   /** The debt that clears last, i.e. what's actually holding the date back. */
   longestPole: Debt | null;
   totalOwed: number;
@@ -89,11 +127,12 @@ export function projectDebtFree(
   const unprojectable = outstanding.filter(
     (d) => !d.monthly_amount || d.monthly_amount <= 0,
   );
+  const stalled = outstanding.filter(isStalled);
 
   let date: Date | null = null;
   let longestPole: Debt | null = null;
 
-  if (outstanding.length > 0 && unprojectable.length === 0) {
+  if (outstanding.length > 0 && unprojectable.length === 0 && stalled.length === 0) {
     for (const debt of outstanding) {
       const d = clearedDate(debt, from);
       if (d && (!date || d > date)) {
@@ -106,6 +145,7 @@ export function projectDebtFree(
   return {
     date,
     unprojectable,
+    stalled,
     longestPole,
     totalOwed,
     totalOriginal,

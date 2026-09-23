@@ -242,6 +242,14 @@ export async function buildDataPdf(data: ExportFile) {
       "Direct debit date",
       debt.direct_debit_date ? `${ordinal(Number(debt.direct_debit_date))} of the month` : "—",
     );
+    field(
+      "Interest",
+      debt.interest_state === "charged"
+        ? debt.interest_rate
+          ? `${debt.interest_rate}% APR`
+          : "Being added, no rate recorded"
+        : "None being added",
+    );
     field("Category", CATEGORIES[str(debt.category)] ?? debt.category);
     field("Arrangement", ARRANGEMENTS[str(debt.arrangement)] ?? debt.arrangement);
     field("Account reference", debt.account_reference);
@@ -261,6 +269,16 @@ export async function buildDataPdf(data: ExportFile) {
         doc.text(money(p.amount), MARGIN + 62, y, { align: "right" });
         style(10, "normal", MUTED);
         doc.text(PAYMENT_TYPES[str(p.payment_type)] ?? str(p.payment_type), MARGIN + 70, y);
+        // Where the payment went, when interest took a slice of it.
+        if (p.interest_applied != null && Number(p.interest_applied) > 0) {
+          doc.text(
+            `${money(Number(p.interest_applied))} interest, ${money(
+              Number(p.principal_applied ?? 0),
+            )} off the balance`,
+            MARGIN + 110,
+            y,
+          );
+        }
         y += lineHeight(10) + 0.6;
       }
     }

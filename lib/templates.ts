@@ -123,6 +123,22 @@ I'd be grateful if you could contact me in writing only, by email or post, rathe
 ${SIGN_OFF}`,
   },
   {
+    id: "freeze_interest",
+    title: "Please freeze the interest",
+    about: "asking them to freeze the interest",
+    fields: ["your_name", "account_reference"],
+    subject: "Request to freeze interest and charges",
+    body: `${OPENING}
+
+At the moment the interest being added each month is more than I'm able to pay, so the balance isn't going down.
+
+Please could you freeze the interest and any charges on this account, so that the payments I make go towards clearing what I owe?
+
+I want to keep paying what I can, and this would help me do that.
+
+${SIGN_OFF}`,
+  },
+  {
     id: "getting_advice",
     title: "I'm getting free debt advice",
     about: "getting free debt advice",
