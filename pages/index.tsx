@@ -131,26 +131,36 @@ const NEXT_UP: { icon: LucideIcon; title: string; body: string }[] = [
   },
 ];
 
+/* Each step shows the screen it describes. Words alone leave out the people
+   who need to see the thing before they will believe it. */
 const STEPS = [
   {
     n: "1",
     title: "Add your debts",
     body: "Company and amount is enough. The rest can wait, or stay blank forever.",
+    shot: "/how/step-1.png",
+    alt: "The new debt form: company, a link reading find how to contact them, and a category to pick.",
   },
   {
     n: "2",
     title: "Set up arrangements",
     body: "Mark each one as in place, needs setting up, or awaiting response. Honest status, no pressure.",
+    shot: "/how/step-2.png",
+    alt: "Three arrangement choices: payment plan in place, more details can be added, awaiting response.",
   },
   {
     n: "3",
     title: "Log payments your way",
     body: "On time, late, part paid, overpaid — with a note if you want one.",
+    shot: "/how/step-3.png",
+    alt: "Logging a payment to Eon Next: an amount box, shortcuts for the agreed amount, what I can and a bit extra, and a date.",
   },
   {
     n: "4",
     title: "Watch the date come closer",
     body: "Every payment you log moves your debt-free date. That's the whole reward.",
+    shot: "/how/step-4.png",
+    alt: "A card reading your debt free day, 30th Nov 2028, based on your current pay schedule.",
   },
 ];
 
@@ -942,7 +952,37 @@ export default function HomePage() {
                   >
                     {s.title}
                   </h3>
-                  <p style={{ fontSize: 16, color: "rgb(var(--ink-500))", margin: 0 }}>{s.body}</p>
+                  <p style={{ fontSize: 16, color: "rgb(var(--ink-500))", margin: "0 0 18px" }}>
+                    {s.body}
+                  </p>
+
+                  {/* The screen itself. Fixed frame height so the four line up
+                      despite the shots being different shapes. */}
+                  <div
+                    style={{
+                      background: "rgb(var(--paper-sunk))",
+                      border: "1px solid rgb(var(--line-200))",
+                      borderRadius: "var(--radius-lg)",
+                      padding: 10,
+                      height: 190,
+                      display: "grid",
+                      placeItems: "center",
+                      overflow: "hidden",
+                    }}
+                  >
+                    <img
+                      src={s.shot}
+                      alt={s.alt}
+                      loading="lazy"
+                      style={{
+                        maxWidth: "100%",
+                        maxHeight: "100%",
+                        width: "auto",
+                        height: "auto",
+                        borderRadius: "var(--radius-sm)",
+                      }}
+                    />
+                  </div>
                 </div>
               ))}
             </div>
