@@ -94,8 +94,7 @@ export default function OnboardingPage() {
       <>
         <Seo
           bareTitle
-          bareTitle
-        title="Welcome to Mirian"
+          title="Welcome to Mirian"
           description="Let's get your first debt tracked."
           noindex
         />
@@ -152,6 +151,7 @@ export default function OnboardingPage() {
   return (
     <>
       <Seo
+        bareTitle
         title="Welcome to Mirian"
         description="Let's get your first debt tracked."
         noindex
