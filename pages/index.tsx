@@ -1,5 +1,4 @@
 import { useState, type ReactNode } from "react";
-import Head from "next/head";
 import {
   Sprout,
   TrendingDown,
@@ -32,6 +31,7 @@ import {
   StatusChip,
 } from "@/components/site/SiteChrome";
 import styles from "@/components/site/site.module.css";
+import Seo from "@/components/Seo";
 
 /**
  * The public front page, translated from Mirian Website.dc.html.
@@ -297,6 +297,32 @@ function Section({
   );
 }
 
+/* Structured data. Only what the page actually says: what Mirian is, who it's
+   for, and the answers already written out in the FAQ below. */
+const STRUCTURED_DATA = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "SoftwareApplication",
+      name: "Mirian",
+      applicationCategory: "FinanceApplication",
+      operatingSystem: "Web",
+      description:
+        "A debt tracker for ADHD and PDA brains. A debt-free date instead of a running total, four honest payment states, and nothing on screen that tells you off.",
+      url: "https://mirian-debt-tracker.app",
+      inLanguage: "en-GB",
+    },
+    {
+      "@type": "FAQPage",
+      mainEntity: FAQS.map((faq) => ({
+        "@type": "Question",
+        name: faq.q,
+        acceptedAnswer: { "@type": "Answer", text: faq.a },
+      })),
+    },
+  ],
+};
+
 /* ---------- Page ---------- */
 
 export default function HomePage() {
@@ -304,13 +330,19 @@ export default function HomePage() {
 
   return (
     <>
-      <Head>
-        <title>Mirian — a debt tracker that doesn&rsquo;t tell you off</title>
-        <meta
-          name="description"
-          content="Mirian is a debt tracker for ADHD and PDA brains. A debt-free date instead of a running total, four honest payment states, and nothing on screen that tells you off."
+      <Seo
+        bareTitle
+        title="Mirian — a debt tracker that doesn't tell you off"
+        description="A debt tracker built for ADHD and PDA brains. See a debt-free date instead of a running total, log part payments honestly, and never get told off."
+        path="/"
+      >
+        {/* What the app is, and the questions this page answers. Both
+            describe what's actually on the page — nothing invented. */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(STRUCTURED_DATA) }}
         />
-      </Head>
+      </Seo>
 
       <SiteLayout>
         {/* ---------- Hero ---------- */}

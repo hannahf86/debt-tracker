@@ -18,6 +18,7 @@ import { clearedDate, formatMonthYear } from "@/lib/projection";
 import { missingDetails, incompleteDebts } from "@/lib/completeness";
 import DueChip from "@/components/DueChip";
 import MobileDebts from "@/components/mobile/MobileDebts";
+import Seo from "@/components/Seo";
 
 const categoryIcon = (category: string) => {
   const cls = "w-5 h-5 text-sage-600";
@@ -57,6 +58,11 @@ export default function DebtsPage() {
 
   return (
     <>
+      <Seo
+        title="Your debts"
+        description="Every debt in one place, with what's left on each and when it clears."
+        noindex
+      />
       <div className="md:hidden">
         <MobileDebts debts={debts} isLoading={isLoading} />
       </div>

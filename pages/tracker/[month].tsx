@@ -8,6 +8,7 @@ import LogPaymentModal from "@/components/LogPaymentModal";
 import MobileMonth from "@/components/mobile/MobileMonth";
 import { paymentTypeStyle, formatDayMonth } from "@/lib/paymentType";
 import type { Debt } from "@/lib/types";
+import Seo from "@/components/Seo";
 
 const monthNames = [
   "January",
@@ -112,6 +113,11 @@ export default function MonthTrackerPage() {
 
   return (
     <>
+      <Seo
+        title={`${monthNames[monthIndex]} ${year}`}
+        description="One month of payments, and anything still to log."
+        noindex
+      />
       <div className="md:hidden">
         <MobileMonth
           monthName={monthNames[monthIndex]}

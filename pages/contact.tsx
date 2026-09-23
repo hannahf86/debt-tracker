@@ -1,7 +1,7 @@
 import { useRef, useState, type FormEvent } from "react";
-import Head from "next/head";
 import { Check } from "lucide-react";
 import { SiteLayout, Field } from "@/components/site/SiteChrome";
+import Seo from "@/components/Seo";
 import { LEGAL } from "@/lib/legal";
 
 /**
@@ -91,13 +91,11 @@ export default function ContactPage() {
 
   return (
     <>
-      <Head>
-        <title>Get in touch · Mirian</title>
-        <meta
-          name="description"
-          content="Questions, worries, or something that isn't working — send it over. A real person reads these."
-        />
-      </Head>
+      <Seo
+        title="Get in touch"
+        description="Questions, worries, or something that isn't working in Mirian — send it over. A real person reads these, and there's no wrong way to word it."
+        path="/contact"
+      />
 
       <SiteLayout>
         <section

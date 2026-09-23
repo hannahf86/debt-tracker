@@ -1,7 +1,7 @@
 import { useRef, useState, type FormEvent } from "react";
-import Head from "next/head";
 import { Info, Check } from "lucide-react";
 import { SiteLayout, Field } from "@/components/site/SiteChrome";
+import Seo from "@/components/Seo";
 
 /**
  * Feedback page, from Mirian Website.dc.html.
@@ -98,13 +98,12 @@ export default function FeedbackPage() {
 
   return (
     <>
-      <Head>
-        <title>Help shape Mirian · Feedback</title>
-        <meta
-          name="description"
-          content="If something is confusing, broken, or missing, we want to hear it. Feedback is how the next version gets less annoying."
-        />
-      </Head>
+      <Seo
+        bareTitle
+        title="Help shape Mirian — feedback"
+        description="If something in Mirian is confusing, broken or missing, tell us. Feedback is the point — it's how the next version gets less annoying."
+        path="/feedback"
+      />
 
       <SiteLayout>
         <section

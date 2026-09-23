@@ -1,5 +1,5 @@
-import Head from "next/head";
 import Link from "next/link";
+import Seo from "@/components/Seo";
 import { LEGAL } from "@/lib/legal";
 
 /* One section of the notice */
@@ -45,9 +45,11 @@ function List({ children }: { children: React.ReactNode }) {
 export default function PrivacyPage() {
   return (
     <>
-      <Head>
-        <title>Privacy notice · {LEGAL.service}</title>
-      </Head>
+      <Seo
+        title="Privacy notice"
+        description="What Mirian holds, why, where it's kept, and how to get a copy or have it all deleted. Your debts are yours — nothing is shared with creditors or credit reference agencies."
+        path="/privacy"
+      />
 
       <div className="p-4 md:p-6">
         <div className="max-w-2xl mx-auto">

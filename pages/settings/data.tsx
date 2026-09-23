@@ -1,12 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useSession, signOut } from "next-auth/react";
 import { Download, AlertTriangle } from "lucide-react";
 import { downloadDataPdf } from "@/lib/dataExportPdf";
+import Seo from "@/components/Seo";
 
 const CONFIRM_PHRASE = "delete my account";
 
@@ -82,9 +82,11 @@ export default function YourDataPage() {
 
   return (
     <>
-      <Head>
-        <title>Your data · Mirian</title>
-      </Head>
+      <Seo
+        title="Your data"
+        description="Download everything Mirian holds about you, or delete your account and all of it."
+        noindex
+      />
 
       <div className="p-4 md:p-6">
         <div className="max-w-2xl mx-auto">

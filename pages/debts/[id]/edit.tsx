@@ -8,6 +8,7 @@ import type { Creditor } from "@/lib/types";
 import CreditorField from "@/components/CreditorField";
 import InterestFields from "@/components/InterestFields";
 import { useCreditor } from "@/lib/hooks/useCreditor";
+import Seo from "@/components/Seo";
 
 const categories = [
   { value: "credit-card", label: "Credit Card" },
@@ -130,134 +131,185 @@ export default function EditDebtPage() {
   }
 
   return (
-    <div className="p-4 md:p-6">
-      <div className="max-w-lg mx-auto">
-        <button
-          onClick={() => router.push(`/debts/${id}`)}
-          className="hidden md:flex text-sage-500 hover:text-sage-700 transition-colors items-center gap-1 text-sm font-medium mb-8"
-        >
-          ← Back
-        </button>
+    <>
+      <Seo
+        title="Edit debt"
+        description="Change the amounts, the arrangement, the interest or the contact details."
+        noindex
+      />
+      <div className="p-4 md:p-6">
+        <div className="max-w-lg mx-auto">
+          <button
+            onClick={() => router.push(`/debts/${id}`)}
+            className="hidden md:flex text-sage-500 hover:text-sage-700 transition-colors items-center gap-1 text-sm font-medium mb-8"
+          >
+            ← Back
+          </button>
 
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-sage-800 mb-2">Edit debt</h1>
-          <p className="text-sage-500 text-sm">{debt.company}</p>
-        </div>
-
-        {error && (
-          <div className="mb-6 p-4 bg-alert-100 border border-alert-200 rounded-lg">
-            <p className="text-sm text-alert-600">{error}</p>
+          <div className="mb-8">
+            <h1 className="text-3xl font-bold text-sage-800 mb-2">Edit debt</h1>
+            <p className="text-sage-500 text-sm">{debt.company}</p>
           </div>
-        )}
 
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="bg-white border border-mint-200 rounded-2xl p-6 space-y-4 shadow-sm">
-            <h2 className="text-sm font-semibold text-sage-500 uppercase tracking-wider">
-              The basics
-            </h2>
-
-            <div>
-              <label htmlFor="company" className="text-xs text-sage-500 uppercase tracking-wider font-semibold block mb-2">
-                Company *
-              </label>
-              <input
-                type="text"
-                id="company"
-                name="company"
-                value={form.company}
-                onChange={handleChange}
-                className="w-full bg-white border border-mint-200 min-h-[48px] rounded-lg px-4 py-2 text-sage-800 placeholder-sage-500 focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand"
-                required
-              />
-              {/* Find how to contact them */}
-              <CreditorField
-                creditor={linked === undefined ? savedCreditor : linked}
-                onChange={(picked) => {
-                  setLinked(picked);
-                  if (picked) {
-                    setForm((f) => ({
-                      ...f,
-                      // Council tax links GOV.UK guidance, not a company name.
-                      company:
-                        picked.category === "council_tax" ? f.company : picked.name,
-                      company_email: picked.email ?? f.company_email,
-                    }));
-                  }
-                }}
-              />
+          {error && (
+            <div className="mb-6 p-4 bg-alert-100 border border-alert-200 rounded-lg">
+              <p className="text-sm text-alert-600">{error}</p>
             </div>
+          )}
 
-            <div>
-              <label htmlFor="category" className="text-xs text-sage-500 uppercase tracking-wider font-semibold block mb-2">
-                Category *
-              </label>
-              <select
-                id="category"
-                name="category"
-                value={form.category}
-                onChange={handleChange}
-                className="w-full bg-white border border-mint-200 min-h-[48px] rounded-lg px-4 py-2 text-sage-800 focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand"
-                required
-              >
-                <option value="" disabled>
-                  Select a category
-                </option>
-                {categories.map((cat) => (
-                  <option key={cat.value} value={cat.value}>
-                    {cat.label}
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div className="bg-white border border-mint-200 rounded-2xl p-6 space-y-4 shadow-sm">
+              <h2 className="text-sm font-semibold text-sage-500 uppercase tracking-wider">
+                The basics
+              </h2>
+
+              <div>
+                <label htmlFor="company" className="text-xs text-sage-500 uppercase tracking-wider font-semibold block mb-2">
+                  Company *
+                </label>
+                <input
+                  type="text"
+                  id="company"
+                  name="company"
+                  value={form.company}
+                  onChange={handleChange}
+                  className="w-full bg-white border border-mint-200 min-h-[48px] rounded-lg px-4 py-2 text-sage-800 placeholder-sage-500 focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand"
+                  required
+                />
+                {/* Find how to contact them */}
+                <CreditorField
+                  creditor={linked === undefined ? savedCreditor : linked}
+                  onChange={(picked) => {
+                    setLinked(picked);
+                    if (picked) {
+                      setForm((f) => ({
+                        ...f,
+                        // Council tax links GOV.UK guidance, not a company name.
+                        company:
+                          picked.category === "council_tax" ? f.company : picked.name,
+                        company_email: picked.email ?? f.company_email,
+                      }));
+                    }
+                  }}
+                />
+              </div>
+
+              <div>
+                <label htmlFor="category" className="text-xs text-sage-500 uppercase tracking-wider font-semibold block mb-2">
+                  Category *
+                </label>
+                <select
+                  id="category"
+                  name="category"
+                  value={form.category}
+                  onChange={handleChange}
+                  className="w-full bg-white border border-mint-200 min-h-[48px] rounded-lg px-4 py-2 text-sage-800 focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand"
+                  required
+                >
+                  <option value="" disabled>
+                    Select a category
                   </option>
-                ))}
-              </select>
-            </div>
+                  {categories.map((cat) => (
+                    <option key={cat.value} value={cat.value}>
+                      {cat.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
 
-            <div>
-              <p className="text-xs text-sage-500 uppercase tracking-wider font-semibold mb-2">
-                Arrangement *
-              </p>
-              <div className="space-y-2">
-                {arrangements.map((arr) => (
-                  <label
-                    key={arr.value}
-                    className={`flex items-center gap-3 min-h-[48px] px-3 py-2.5 rounded-lg border cursor-pointer transition-all focus-within:border-brand focus-within:ring-2 focus-within:ring-brand ${
-                      form.arrangement === arr.value
-                        ? "border-sage-400 bg-sage-50"
-                        : "border-mint-200 bg-white hover:border-sage-300"
-                    }`}
-                  >
-                    <input
-                      type="radio"
-                      name="arrangement"
-                      value={arr.value}
-                      checked={form.arrangement === arr.value}
-                      onChange={handleChange}
-                      className="sr-only"
-                    />
-                    <span>{arr.icon}</span>
-                    <span
-                      className={`text-sm font-medium ${form.arrangement === arr.value ? "text-sage-800" : "text-sage-600"}`}
+              <div>
+                <p className="text-xs text-sage-500 uppercase tracking-wider font-semibold mb-2">
+                  Arrangement *
+                </p>
+                <div className="space-y-2">
+                  {arrangements.map((arr) => (
+                    <label
+                      key={arr.value}
+                      className={`flex items-center gap-3 min-h-[48px] px-3 py-2.5 rounded-lg border cursor-pointer transition-all focus-within:border-brand focus-within:ring-2 focus-within:ring-brand ${
+                        form.arrangement === arr.value
+                          ? "border-sage-400 bg-sage-50"
+                          : "border-mint-200 bg-white hover:border-sage-300"
+                      }`}
                     >
-                      {arr.label}
-                    </span>
+                      <input
+                        type="radio"
+                        name="arrangement"
+                        value={arr.value}
+                        checked={form.arrangement === arr.value}
+                        onChange={handleChange}
+                        className="sr-only"
+                      />
+                      <span>{arr.icon}</span>
+                      <span
+                        className={`text-sm font-medium ${form.arrangement === arr.value ? "text-sage-800" : "text-sage-600"}`}
+                      >
+                        {arr.label}
+                      </span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label
+                    htmlFor="total_amount"
+                    className="text-xs text-sage-500 uppercase tracking-wider font-semibold block mb-2"
+                  >
+                    Total amount *
                   </label>
-                ))}
-              </div>
-            </div>
+                  <div className="flex items-center min-h-[48px] bg-white border border-mint-200 rounded-lg px-4 py-2 focus-within:border-brand focus-within:ring-2 focus-within:ring-brand">
+                    <span className="text-sage-500 mr-2">£</span>
+                    <input
+                      type="number"
+                      id="total_amount"
+                      name="total_amount"
+                      value={form.total_amount}
+                      onChange={handleChange}
+                      placeholder="0.00"
+                      className="w-full self-stretch min-h-[44px] bg-transparent text-sage-800 placeholder-sage-500 focus:outline-none"
+                      required
+                    />
+                  </div>
+                </div>
 
-            <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label
+                    htmlFor="amount_owed"
+                    className="text-xs text-sage-500 uppercase tracking-wider font-semibold block mb-2"
+                  >
+                    Amount remaining *
+                  </label>
+                  <div className="flex items-center min-h-[48px] bg-white border border-mint-200 rounded-lg px-4 py-2 focus-within:border-brand focus-within:ring-2 focus-within:ring-brand">
+                    <span className="text-sage-500 mr-2">£</span>
+                    <input
+                      type="number"
+                      id="amount_owed"
+                      name="amount_owed"
+                      value={form.amount_owed}
+                      onChange={handleChange}
+                      placeholder="0.00"
+                      className="w-full self-stretch min-h-[44px] bg-transparent text-sage-800 placeholder-sage-500 focus:outline-none"
+                      required
+                    />
+                  </div>
+                </div>
+              </div>
+
               <div>
                 <label
-                  htmlFor="total_amount"
+                  htmlFor="monthly_amount"
                   className="text-xs text-sage-500 uppercase tracking-wider font-semibold block mb-2"
                 >
-                  Total amount *
+                  Monthly amount due *
                 </label>
                 <div className="flex items-center min-h-[48px] bg-white border border-mint-200 rounded-lg px-4 py-2 focus-within:border-brand focus-within:ring-2 focus-within:ring-brand">
                   <span className="text-sage-500 mr-2">£</span>
                   <input
                     type="number"
-                    id="total_amount"
-                    name="total_amount"
-                    value={form.total_amount}
+                    id="monthly_amount"
+                      name="monthly_amount"
+                    value={form.monthly_amount}
                     onChange={handleChange}
                     placeholder="0.00"
                     className="w-full self-stretch min-h-[44px] bg-transparent text-sage-800 placeholder-sage-500 focus:outline-none"
@@ -266,127 +318,83 @@ export default function EditDebtPage() {
                 </div>
               </div>
 
-              <div>
-                <label
-                  htmlFor="amount_owed"
-                  className="text-xs text-sage-500 uppercase tracking-wider font-semibold block mb-2"
-                >
-                  Amount remaining *
-                </label>
-                <div className="flex items-center min-h-[48px] bg-white border border-mint-200 rounded-lg px-4 py-2 focus-within:border-brand focus-within:ring-2 focus-within:ring-brand">
-                  <span className="text-sage-500 mr-2">£</span>
-                  <input
-                    type="number"
-                    id="amount_owed"
-                    name="amount_owed"
-                    value={form.amount_owed}
-                    onChange={handleChange}
-                    placeholder="0.00"
-                    className="w-full self-stretch min-h-[44px] bg-transparent text-sage-800 placeholder-sage-500 focus:outline-none"
-                    required
-                  />
-                </div>
-              </div>
+              <InterestFields
+                state={form.interest_state}
+                rate={form.interest_rate}
+                onChange={(next) => setForm({ ...form, ...next })}
+              />
             </div>
 
-            <div>
-              <label
-                htmlFor="monthly_amount"
-                className="text-xs text-sage-500 uppercase tracking-wider font-semibold block mb-2"
-              >
-                Monthly amount due *
-              </label>
-              <div className="flex items-center min-h-[48px] bg-white border border-mint-200 rounded-lg px-4 py-2 focus-within:border-brand focus-within:ring-2 focus-within:ring-brand">
-                <span className="text-sage-500 mr-2">£</span>
+            <div className="bg-white border border-mint-200 rounded-2xl p-6 space-y-4 shadow-sm">
+              <div>
+                <h2 className="text-sm font-semibold text-sage-500 uppercase tracking-wider">
+                  Payment details
+                </h2>
+                <p className="text-sm text-sage-600 mt-2">
+                  Mirian needs these to track this debt properly. Fill in what
+                  you have now — you can come back for the rest, and we&rsquo;ll
+                  remind you what&rsquo;s still missing.
+                </p>
+              </div>
+
+              <div>
+                <label htmlFor="direct_debit_date" className="text-xs text-sage-500 uppercase tracking-wider font-semibold block mb-2">
+                  Direct debit date
+                </label>
                 <input
                   type="number"
-                  id="monthly_amount"
-                    name="monthly_amount"
-                  value={form.monthly_amount}
+                  id="direct_debit_date"
+                  name="direct_debit_date"
+                  value={form.direct_debit_date}
                   onChange={handleChange}
-                  placeholder="0.00"
-                  className="w-full self-stretch min-h-[44px] bg-transparent text-sage-800 placeholder-sage-500 focus:outline-none"
-                  required
+                  placeholder="e.g. 15 (for the 15th of the month)"
+                  min="1"
+                  max="31"
+                  className="w-full bg-white border border-mint-200 min-h-[48px] rounded-lg px-4 py-2 text-sage-800 placeholder-sage-500 focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand"
+                />
+              </div>
+
+              <div>
+                <label htmlFor="account_reference" className="text-xs text-sage-500 uppercase tracking-wider font-semibold block mb-2">
+                  Account reference
+                </label>
+                <input
+                  type="text"
+                  id="account_reference"
+                  name="account_reference"
+                  value={form.account_reference}
+                  onChange={handleChange}
+                  placeholder="e.g. 1234 5678"
+                  className="w-full bg-white border border-mint-200 min-h-[48px] rounded-lg px-4 py-2 text-sage-800 placeholder-sage-500 focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand"
+                />
+              </div>
+
+              <div>
+                <label htmlFor="company_email" className="text-xs text-sage-500 uppercase tracking-wider font-semibold block mb-2">
+                  Company email
+                </label>
+                <input
+                  type="email"
+                  id="company_email"
+                  name="company_email"
+                  value={form.company_email}
+                  onChange={handleChange}
+                  placeholder="Only if they give you one"
+                  className="w-full bg-white border border-mint-200 min-h-[48px] rounded-lg px-4 py-2 text-sage-800 placeholder-sage-500 focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand"
                 />
               </div>
             </div>
 
-            <InterestFields
-              state={form.interest_state}
-              rate={form.interest_rate}
-              onChange={(next) => setForm({ ...form, ...next })}
-            />
-          </div>
-
-          <div className="bg-white border border-mint-200 rounded-2xl p-6 space-y-4 shadow-sm">
-            <div>
-              <h2 className="text-sm font-semibold text-sage-500 uppercase tracking-wider">
-                Payment details
-              </h2>
-              <p className="text-sm text-sage-600 mt-2">
-                Mirian needs these to track this debt properly. Fill in what
-                you have now — you can come back for the rest, and we&rsquo;ll
-                remind you what&rsquo;s still missing.
-              </p>
-            </div>
-
-            <div>
-              <label htmlFor="direct_debit_date" className="text-xs text-sage-500 uppercase tracking-wider font-semibold block mb-2">
-                Direct debit date
-              </label>
-              <input
-                type="number"
-                id="direct_debit_date"
-                name="direct_debit_date"
-                value={form.direct_debit_date}
-                onChange={handleChange}
-                placeholder="e.g. 15 (for the 15th of the month)"
-                min="1"
-                max="31"
-                className="w-full bg-white border border-mint-200 min-h-[48px] rounded-lg px-4 py-2 text-sage-800 placeholder-sage-500 focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand"
-              />
-            </div>
-
-            <div>
-              <label htmlFor="account_reference" className="text-xs text-sage-500 uppercase tracking-wider font-semibold block mb-2">
-                Account reference
-              </label>
-              <input
-                type="text"
-                id="account_reference"
-                name="account_reference"
-                value={form.account_reference}
-                onChange={handleChange}
-                placeholder="e.g. 1234 5678"
-                className="w-full bg-white border border-mint-200 min-h-[48px] rounded-lg px-4 py-2 text-sage-800 placeholder-sage-500 focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand"
-              />
-            </div>
-
-            <div>
-              <label htmlFor="company_email" className="text-xs text-sage-500 uppercase tracking-wider font-semibold block mb-2">
-                Company email
-              </label>
-              <input
-                type="email"
-                id="company_email"
-                name="company_email"
-                value={form.company_email}
-                onChange={handleChange}
-                placeholder="Only if they give you one"
-                className="w-full bg-white border border-mint-200 min-h-[48px] rounded-lg px-4 py-2 text-sage-800 placeholder-sage-500 focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand"
-              />
-            </div>
-          </div>
-
-          <button
-            type="submit"
-            disabled={isLoading}
-            className="w-full min-h-[52px] bg-sage-600 hover:bg-sage-700 text-white font-semibold rounded-pill transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {isLoading ? "Saving..." : "Save changes"}
-          </button>
-        </form>
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="w-full min-h-[52px] bg-sage-600 hover:bg-sage-700 text-white font-semibold rounded-pill transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {isLoading ? "Saving..." : "Save changes"}
+            </button>
+          </form>
+        </div>
       </div>
-    </div>
+    </>
   );
 }

@@ -6,6 +6,7 @@ import { useState } from "react";
 import { useRouter } from "next/router";
 import { useTracker, debtMonthStatus } from "@/lib/hooks/useTracker";
 import { Check, Minus, MapPin, Loader } from "lucide-react";
+import Seo from "@/components/Seo";
 
 const months = [
   "Jan",
@@ -71,6 +72,11 @@ export default function YearlyTrackerPage() {
 
   return (
     <>
+      <Seo
+        title="Your tracker"
+        description="A year of payments at a glance, month by month."
+        noindex
+      />
       <div className="md:hidden">
         <MobileTracker data={data} isLoading={isLoading} />
       </div>

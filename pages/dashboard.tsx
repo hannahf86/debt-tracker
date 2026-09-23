@@ -22,6 +22,7 @@ import {
 import LogPaymentModal from "@/components/LogPaymentModal";
 import DueChip from "@/components/DueChip";
 import MobileDashboard from "@/components/mobile/MobileDashboard";
+import Seo from "@/components/Seo";
 
 const categoryIcon = (category: string) => {
   const cls = "w-5 h-5 text-sage-600";
@@ -120,6 +121,11 @@ export default function DashboardPage() {
 
   return (
     <>
+      <Seo
+        title="Your dashboard"
+        description="Your debt-free date, what you've cleared so far, and this year's payments."
+        noindex
+      />
       <div className="md:hidden">
         <MobileDashboard
           debts={debts}

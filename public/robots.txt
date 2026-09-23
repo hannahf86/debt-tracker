@@ -1,0 +1,21 @@
+# Mirian
+#
+# The public site is open to search engines. Everything behind the sign-in is
+# somebody's debt, so none of it is offered up — the pages also carry
+# noindex, which is what actually enforces this.
+
+User-agent: *
+Allow: /$
+Allow: /contact
+Allow: /feedback
+Allow: /privacy
+
+Disallow: /api/
+Disallow: /auth/
+Disallow: /dashboard
+Disallow: /debts
+Disallow: /tracker
+Disallow: /settings
+Disallow: /onboarding
+
+Sitemap: https://mirian-debt-tracker.app/sitemap.xml

@@ -17,6 +17,7 @@ import GetInTouch from "@/components/GetInTouch";
 import { useContacts } from "@/lib/hooks/useContacts";
 import { useProfile } from "@/lib/hooks/useProfile";
 import { useCreditor } from "@/lib/hooks/useCreditor";
+import Seo from "@/components/Seo";
 
 const months = [
   "Jan",
@@ -175,6 +176,11 @@ export default function DebtDetailPage() {
 
   return (
     <>
+      <Seo
+        title={debt.company}
+        description="One debt: what's left, this year's payments, and the messages you've sent."
+        noindex
+      />
       <div className="md:hidden">
         <MobileDebtDetail
           debt={debt}

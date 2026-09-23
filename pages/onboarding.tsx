@@ -5,6 +5,7 @@ import { useProfile } from "@/lib/hooks/useProfile";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import { CheckCircle, Moon, Clock, Sprout, Check, MapPin, LogOut } from "lucide-react";
+import Seo from "@/components/Seo";
 
 const steps = [
   { id: 1, label: "Welcome" },
@@ -87,10 +88,21 @@ export default function OnboardingPage() {
   }, [status, router]);
 
   if (status === "loading") {
+    // The tab still needs a name while the session is being checked, and
+    // this branch is what a crawler would see if one ever came knocking.
     return (
-      <div className="min-h-screen bg-page-accent flex items-center justify-center">
-        <p className="text-sage-500">Loading...</p>
-      </div>
+      <>
+        <Seo
+          bareTitle
+          bareTitle
+        title="Welcome to Mirian"
+          description="Let's get your first debt tracked."
+          noindex
+        />
+        <div className="min-h-screen bg-page-accent flex items-center justify-center">
+          <p className="text-sage-500">Loading...</p>
+        </div>
+      </>
     );
   }
 
@@ -138,399 +150,406 @@ export default function OnboardingPage() {
   };
 
   return (
-    <div className="min-h-screen bg-page-accent flex items-center justify-center p-4">
-      {escapeHatch}
-      <div className="w-full max-w-lg">
-        {/* Progress indicator */}
-        {step < 5 && (
-          <div className="flex items-center justify-center gap-2 mb-8">
-            {steps.slice(0, -1).map((s) => (
-              <div key={s.id} className="flex items-center gap-2">
-                <div
-                  className={`w-2 h-2 rounded-full transition-all ${
-                    s.id === step
-                      ? "bg-sage-600 w-6"
-                      : s.id < step
-                        ? "bg-sage-400"
-                        : "bg-peach-300"
-                  }`}
-                />
-              </div>
-            ))}
-            <span className="text-sage-500 text-xs ml-2">{step} of {steps.length - 1}</span>
-          </div>
-        )}
-
-        {/* Step 1 — Welcome */}
-        {step === 1 && (
-          <div className="text-center">
-            <img src="/mark.svg" alt="" className="h-20 w-20 mx-auto mb-8" />
-            <h1 className="text-4xl font-bold text-sage-800 mb-4">
-              Welcome to Mirian.
-            </h1>
-            <p className="text-sage-600 text-lg mb-4 max-w-sm mx-auto leading-relaxed">
-              Your finances, your pace.
-            </p>
-            <p className="text-sage-500 mb-12 max-w-sm mx-auto leading-relaxed">
-              No spreadsheets. No shame. No judgment. Just a calm, clear place
-              to track what you owe and celebrate what you've paid.
-            </p>
-            <button
-              onClick={() => setStep(2)}
-              className="w-full max-w-sm mx-auto block bg-sage-600 hover:bg-sage-700 text-white font-semibold py-4 rounded-xl transition-all text-lg"
-            >
-              Let's go →
-            </button>
-          </div>
-        )}
-
-        {/* Step 2 — What to expect */}
-        {step === 2 && (
-          <div className="bg-white border border-mint-200 rounded-2xl p-8 shadow-sm">
-            <h2 className="text-2xl font-bold text-sage-800 mb-2">
-              Here's what Mirian does.
-            </h2>
-            <p className="text-sage-500 text-sm mb-8">
-              Three things, nothing more.
-            </p>
-
-            <div className="space-y-6 mb-10">
-              <div className="flex items-start gap-4">
-                <div className="w-10 h-10 rounded-xl bg-teal-50 text-brand flex items-center justify-center flex-shrink-0">
-                  <Sprout size={20} />
-                </div>
-                <div>
-                  <p className="text-sage-800 font-semibold">
-                    Tracks what you owe
-                  </p>
-                  <p className="text-sage-500 text-sm mt-0.5">
-                    All your debts in one place. No more guessing.
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex items-start gap-4">
-                <div className="w-10 h-10 rounded-xl bg-teal-50 text-brand flex items-center justify-center flex-shrink-0">
-                  <Check size={20} />
-                </div>
-                <div>
-                  <p className="text-sage-800 font-semibold">
-                    Logs payments without guilt
-                  </p>
-                  <p className="text-sage-500 text-sm mt-0.5">
-                    Paid late? Paid short? That's okay. We just log it.
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex items-start gap-4">
-                <div className="w-10 h-10 rounded-xl bg-teal-50 text-brand flex items-center justify-center flex-shrink-0">
-                  <MapPin size={20} />
-                </div>
-                <div>
-                  <p className="text-sage-800 font-semibold">
-                    Shows your progress
-                  </p>
-                  <p className="text-sage-500 text-sm mt-0.5">
-                    Every payment moves the needle. Mirian shows you how far
-                    you've come.
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <button
-              onClick={() => setStep(3)}
-              className="w-full bg-sage-600 hover:bg-sage-700 text-white font-semibold py-3 rounded-xl transition-all"
-            >
-              Add my first debt →
-            </button>
-          </div>
-        )}
-
-        {/* Step 3 — Your details */}
-        {step === 3 && (
-          <div className="bg-white border border-mint-200 rounded-2xl p-8 shadow-sm">
-            <h2 className="text-2xl font-bold text-sage-800 mb-2">
-              A bit about you.
-            </h2>
-            <p className="text-sage-600 mb-8">
-              Just so Mirian knows what to call you. You can change any of this
-              later.
-            </p>
-
-            <div className="space-y-5">
-              <div>
-                <label
-                  htmlFor="ob-name"
-                  className="text-xs text-sage-500 uppercase tracking-wider font-semibold block mb-2"
-                >
-                  Name
-                </label>
-                <input
-                  id="ob-name"
-                  type="text"
-                  value={obName}
-                  onChange={(e) => setObName(e.target.value)}
-                  placeholder="Your full name"
-                  className="w-full bg-white border border-mint-200 rounded-lg px-4 py-3 text-sage-800 placeholder-sage-500 focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand"
-                />
-              </div>
-
-              <div>
-                <label
-                  htmlFor="ob-display"
-                  className="text-xs text-sage-500 uppercase tracking-wider font-semibold block mb-2"
-                >
-                  Display name{" "}
-                  <span className="normal-case tracking-normal font-normal text-sage-500">
-                    — optional
-                  </span>
-                </label>
-                <input
-                  id="ob-display"
-                  type="text"
-                  value={obDisplayName}
-                  onChange={(e) => setObDisplayName(e.target.value)}
-                  placeholder="What we should call you"
-                  className="w-full bg-white border border-mint-200 rounded-lg px-4 py-3 text-sage-800 placeholder-sage-500 focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand"
-                />
-                <p className="text-xs text-sage-500 mt-2">
-                  Used in your greeting. Leave it blank and we&rsquo;ll use your
-                  first name.
-                </p>
-              </div>
-
-              <div>
-                <label
-                  htmlFor="ob-budget"
-                  className="text-xs text-sage-500 uppercase tracking-wider font-semibold block mb-2"
-                >
-                  Monthly budget{" "}
-                  <span className="normal-case tracking-normal font-normal text-sage-500">
-                    — optional
-                  </span>
-                </label>
-                <div className="relative">
-                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-sage-500">
-                    £
-                  </span>
-                  <input
-                    id="ob-budget"
-                    type="number"
-                    inputMode="decimal"
-                    value={obBudget}
-                    onChange={(e) => setObBudget(e.target.value)}
-                    placeholder="0"
-                    className="w-full bg-white border border-mint-200 rounded-lg pl-8 pr-4 py-3 text-sage-800 placeholder-sage-500 focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand"
+    <>
+      <Seo
+        title="Welcome to Mirian"
+        description="Let's get your first debt tracked."
+        noindex
+      />
+      <div className="min-h-screen bg-page-accent flex items-center justify-center p-4">
+        {escapeHatch}
+        <div className="w-full max-w-lg">
+          {/* Progress indicator */}
+          {step < 5 && (
+            <div className="flex items-center justify-center gap-2 mb-8">
+              {steps.slice(0, -1).map((s) => (
+                <div key={s.id} className="flex items-center gap-2">
+                  <div
+                    className={`w-2 h-2 rounded-full transition-all ${
+                      s.id === step
+                        ? "bg-sage-600 w-6"
+                        : s.id < step
+                          ? "bg-sage-400"
+                          : "bg-peach-300"
+                    }`}
                   />
                 </div>
-                <p className="text-xs text-sage-500 mt-2">
-                  What you can put towards debt each month. A rough number is
-                  fine.
-                </p>
-              </div>
+              ))}
+              <span className="text-sage-500 text-xs ml-2">{step} of {steps.length - 1}</span>
             </div>
+          )}
 
-            <button
-              onClick={handleSaveDetails}
-              disabled={isSavingDetails}
-              className="w-full mt-8 bg-sage-600 hover:bg-sage-700 text-white font-semibold py-3 rounded-xl transition-all disabled:opacity-50"
-            >
-              {isSavingDetails ? "Saving…" : "Continue"}
-            </button>
+          {/* Step 1 — Welcome */}
+          {step === 1 && (
+            <div className="text-center">
+              <img src="/mark.svg" alt="" className="h-20 w-20 mx-auto mb-8" />
+              <h1 className="text-4xl font-bold text-sage-800 mb-4">
+                Welcome to Mirian.
+              </h1>
+              <p className="text-sage-600 text-lg mb-4 max-w-sm mx-auto leading-relaxed">
+                Your finances, your pace.
+              </p>
+              <p className="text-sage-500 mb-12 max-w-sm mx-auto leading-relaxed">
+                No spreadsheets. No shame. No judgment. Just a calm, clear place
+                to track what you owe and celebrate what you've paid.
+              </p>
+              <button
+                onClick={() => setStep(2)}
+                className="w-full max-w-sm mx-auto block bg-sage-600 hover:bg-sage-700 text-white font-semibold py-4 rounded-xl transition-all text-lg"
+              >
+                Let's go →
+              </button>
+            </div>
+          )}
 
-            {/* Skip details — the only skip left in onboarding. It moves on to
-                adding a debt rather than leaving, because the dashboard sends
-                anyone with no debts straight back here. */}
-            <button
-              onClick={() => setStep(4)}
-              className="w-full mt-3 text-sage-500 hover:text-sage-800 text-sm transition-colors min-h-[44px]"
-            >
-              Skip for now
-            </button>
-          </div>
-        )}
+          {/* Step 2 — What to expect */}
+          {step === 2 && (
+            <div className="bg-white border border-mint-200 rounded-2xl p-8 shadow-sm">
+              <h2 className="text-2xl font-bold text-sage-800 mb-2">
+                Here's what Mirian does.
+              </h2>
+              <p className="text-sage-500 text-sm mb-8">
+                Three things, nothing more.
+              </p>
 
-        {/* Step 3 — Add first debt */}
-        {step === 4 && (
-          <div className="bg-white border border-mint-200 rounded-2xl p-8 shadow-sm">
-            <h2 className="text-2xl font-bold text-sage-800 mb-2">
-              Let's start with one debt.
-            </h2>
-            <p className="text-sage-500 text-sm mb-8">
-              Just one. You can add the rest whenever you're ready.
-            </p>
+              <div className="space-y-6 mb-10">
+                <div className="flex items-start gap-4">
+                  <div className="w-10 h-10 rounded-xl bg-teal-50 text-brand flex items-center justify-center flex-shrink-0">
+                    <Sprout size={20} />
+                  </div>
+                  <div>
+                    <p className="text-sage-800 font-semibold">
+                      Tracks what you owe
+                    </p>
+                    <p className="text-sage-500 text-sm mt-0.5">
+                      All your debts in one place. No more guessing.
+                    </p>
+                  </div>
+                </div>
 
-            {error && (
-              <div className="mb-6 p-4 bg-alert-100 border border-alert-200 rounded-lg">
-                <p className="text-sm text-alert-600">{error}</p>
+                <div className="flex items-start gap-4">
+                  <div className="w-10 h-10 rounded-xl bg-teal-50 text-brand flex items-center justify-center flex-shrink-0">
+                    <Check size={20} />
+                  </div>
+                  <div>
+                    <p className="text-sage-800 font-semibold">
+                      Logs payments without guilt
+                    </p>
+                    <p className="text-sage-500 text-sm mt-0.5">
+                      Paid late? Paid short? That's okay. We just log it.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-4">
+                  <div className="w-10 h-10 rounded-xl bg-teal-50 text-brand flex items-center justify-center flex-shrink-0">
+                    <MapPin size={20} />
+                  </div>
+                  <div>
+                    <p className="text-sage-800 font-semibold">
+                      Shows your progress
+                    </p>
+                    <p className="text-sage-500 text-sm mt-0.5">
+                      Every payment moves the needle. Mirian shows you how far
+                      you've come.
+                    </p>
+                  </div>
+                </div>
               </div>
-            )}
 
-            <div className="space-y-4">
-              <div>
-                <label
-                  htmlFor="company"
-                  className="text-xs text-sage-500 uppercase tracking-wider font-semibold block mb-2"
-                >
-                  Who do you owe? *
-                </label>
-                <input
-                  type="text"
-                  id="company"
-                  name="company"
-                  value={form.company}
-                  onChange={handleChange}
-                  placeholder="e.g. Barclays, HMRC, EON"
-                  className="w-full bg-white border border-mint-200 min-h-[48px] rounded-lg px-4 py-2 text-sage-800 placeholder-sage-500 focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand"
-                />
+              <button
+                onClick={() => setStep(3)}
+                className="w-full bg-sage-600 hover:bg-sage-700 text-white font-semibold py-3 rounded-xl transition-all"
+              >
+                Add my first debt →
+              </button>
+            </div>
+          )}
+
+          {/* Step 3 — Your details */}
+          {step === 3 && (
+            <div className="bg-white border border-mint-200 rounded-2xl p-8 shadow-sm">
+              <h2 className="text-2xl font-bold text-sage-800 mb-2">
+                A bit about you.
+              </h2>
+              <p className="text-sage-600 mb-8">
+                Just so Mirian knows what to call you. You can change any of this
+                later.
+              </p>
+
+              <div className="space-y-5">
+                <div>
+                  <label
+                    htmlFor="ob-name"
+                    className="text-xs text-sage-500 uppercase tracking-wider font-semibold block mb-2"
+                  >
+                    Name
+                  </label>
+                  <input
+                    id="ob-name"
+                    type="text"
+                    value={obName}
+                    onChange={(e) => setObName(e.target.value)}
+                    placeholder="Your full name"
+                    className="w-full bg-white border border-mint-200 rounded-lg px-4 py-3 text-sage-800 placeholder-sage-500 focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand"
+                  />
+                </div>
+
+                <div>
+                  <label
+                    htmlFor="ob-display"
+                    className="text-xs text-sage-500 uppercase tracking-wider font-semibold block mb-2"
+                  >
+                    Display name{" "}
+                    <span className="normal-case tracking-normal font-normal text-sage-500">
+                      — optional
+                    </span>
+                  </label>
+                  <input
+                    id="ob-display"
+                    type="text"
+                    value={obDisplayName}
+                    onChange={(e) => setObDisplayName(e.target.value)}
+                    placeholder="What we should call you"
+                    className="w-full bg-white border border-mint-200 rounded-lg px-4 py-3 text-sage-800 placeholder-sage-500 focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand"
+                  />
+                  <p className="text-xs text-sage-500 mt-2">
+                    Used in your greeting. Leave it blank and we&rsquo;ll use your
+                    first name.
+                  </p>
+                </div>
+
+                <div>
+                  <label
+                    htmlFor="ob-budget"
+                    className="text-xs text-sage-500 uppercase tracking-wider font-semibold block mb-2"
+                  >
+                    Monthly budget{" "}
+                    <span className="normal-case tracking-normal font-normal text-sage-500">
+                      — optional
+                    </span>
+                  </label>
+                  <div className="relative">
+                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-sage-500">
+                      £
+                    </span>
+                    <input
+                      id="ob-budget"
+                      type="number"
+                      inputMode="decimal"
+                      value={obBudget}
+                      onChange={(e) => setObBudget(e.target.value)}
+                      placeholder="0"
+                      className="w-full bg-white border border-mint-200 rounded-lg pl-8 pr-4 py-3 text-sage-800 placeholder-sage-500 focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand"
+                    />
+                  </div>
+                  <p className="text-xs text-sage-500 mt-2">
+                    What you can put towards debt each month. A rough number is
+                    fine.
+                  </p>
+                </div>
               </div>
 
-              <div>
-                <label
-                  htmlFor="category"
-                  className="text-xs text-sage-500 uppercase tracking-wider font-semibold block mb-2"
-                >
-                  Category *
-                </label>
-                <select
-                  id="category"
-                  name="category"
-                  value={form.category}
-                  onChange={handleChange}
-                  className="w-full bg-white border border-mint-200 min-h-[48px] rounded-lg px-4 py-2 text-sage-800 focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand"
-                >
-                  <option value="" disabled>
-                    Select a category
-                  </option>
-                  {categories.map((cat) => (
-                    <option key={cat.value} value={cat.value}>
-                      {cat.label}
+              <button
+                onClick={handleSaveDetails}
+                disabled={isSavingDetails}
+                className="w-full mt-8 bg-sage-600 hover:bg-sage-700 text-white font-semibold py-3 rounded-xl transition-all disabled:opacity-50"
+              >
+                {isSavingDetails ? "Saving…" : "Continue"}
+              </button>
+
+              {/* Skip details — the only skip left in onboarding. It moves on to
+                  adding a debt rather than leaving, because the dashboard sends
+                  anyone with no debts straight back here. */}
+              <button
+                onClick={() => setStep(4)}
+                className="w-full mt-3 text-sage-500 hover:text-sage-800 text-sm transition-colors min-h-[44px]"
+              >
+                Skip for now
+              </button>
+            </div>
+          )}
+
+          {/* Step 3 — Add first debt */}
+          {step === 4 && (
+            <div className="bg-white border border-mint-200 rounded-2xl p-8 shadow-sm">
+              <h2 className="text-2xl font-bold text-sage-800 mb-2">
+                Let's start with one debt.
+              </h2>
+              <p className="text-sage-500 text-sm mb-8">
+                Just one. You can add the rest whenever you're ready.
+              </p>
+
+              {error && (
+                <div className="mb-6 p-4 bg-alert-100 border border-alert-200 rounded-lg">
+                  <p className="text-sm text-alert-600">{error}</p>
+                </div>
+              )}
+
+              <div className="space-y-4">
+                <div>
+                  <label
+                    htmlFor="company"
+                    className="text-xs text-sage-500 uppercase tracking-wider font-semibold block mb-2"
+                  >
+                    Who do you owe? *
+                  </label>
+                  <input
+                    type="text"
+                    id="company"
+                    name="company"
+                    value={form.company}
+                    onChange={handleChange}
+                    placeholder="e.g. Barclays, HMRC, EON"
+                    className="w-full bg-white border border-mint-200 min-h-[48px] rounded-lg px-4 py-2 text-sage-800 placeholder-sage-500 focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand"
+                  />
+                </div>
+
+                <div>
+                  <label
+                    htmlFor="category"
+                    className="text-xs text-sage-500 uppercase tracking-wider font-semibold block mb-2"
+                  >
+                    Category *
+                  </label>
+                  <select
+                    id="category"
+                    name="category"
+                    value={form.category}
+                    onChange={handleChange}
+                    className="w-full bg-white border border-mint-200 min-h-[48px] rounded-lg px-4 py-2 text-sage-800 focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand"
+                  >
+                    <option value="" disabled>
+                      Select a category
                     </option>
-                  ))}
-                </select>
-              </div>
+                    {categories.map((cat) => (
+                      <option key={cat.value} value={cat.value}>
+                        {cat.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
 
-              <div>
-                <p className="text-xs text-sage-500 uppercase tracking-wider font-semibold mb-2">
-                  What&rsquo;s the situation? *
-                </p>
-                <div className="space-y-2">
-                  {arrangements.map((arr) => (
-                    <label
-                      key={arr.value}
-                      className={`flex items-center gap-3 min-h-[48px] px-3 py-2.5 rounded-lg border cursor-pointer transition-all focus-within:border-brand focus-within:ring-2 focus-within:ring-brand ${
-                        form.arrangement === arr.value
-                          ? "border-sage-400 bg-sage-50"
-                          : "border-mint-200 bg-white hover:border-sage-300"
-                      }`}
-                    >
-                      <input
-                        type="radio"
-                        name="arrangement"
-                        value={arr.value}
-                        checked={form.arrangement === arr.value}
-                        onChange={handleChange}
-                        className="sr-only"
-                      />
-                      <span>{arr.icon}</span>
-                      <span
-                        className={`text-sm font-medium ${form.arrangement === arr.value ? "text-sage-800" : "text-sage-600"}`}
+                <div>
+                  <p className="text-xs text-sage-500 uppercase tracking-wider font-semibold mb-2">
+                    What&rsquo;s the situation? *
+                  </p>
+                  <div className="space-y-2">
+                    {arrangements.map((arr) => (
+                      <label
+                        key={arr.value}
+                        className={`flex items-center gap-3 min-h-[48px] px-3 py-2.5 rounded-lg border cursor-pointer transition-all focus-within:border-brand focus-within:ring-2 focus-within:ring-brand ${
+                          form.arrangement === arr.value
+                            ? "border-sage-400 bg-sage-50"
+                            : "border-mint-200 bg-white hover:border-sage-300"
+                        }`}
                       >
-                        {arr.label}
-                      </span>
+                        <input
+                          type="radio"
+                          name="arrangement"
+                          value={arr.value}
+                          checked={form.arrangement === arr.value}
+                          onChange={handleChange}
+                          className="sr-only"
+                        />
+                        <span>{arr.icon}</span>
+                        <span
+                          className={`text-sm font-medium ${form.arrangement === arr.value ? "text-sage-800" : "text-sage-600"}`}
+                        >
+                          {arr.label}
+                        </span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label
+                      htmlFor="total_amount"
+                      className="text-xs text-sage-500 uppercase tracking-wider font-semibold block mb-2"
+                    >
+                      Total owed *
                     </label>
-                  ))}
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <label
-                    htmlFor="total_amount"
-                    className="text-xs text-sage-500 uppercase tracking-wider font-semibold block mb-2"
-                  >
-                    Total owed *
-                  </label>
-                  <div className="flex items-center min-h-[48px] bg-white border border-mint-200 rounded-lg px-4 py-2 focus-within:border-brand focus-within:ring-2 focus-within:ring-brand">
-                    <span className="text-sage-500 mr-2">£</span>
-                    <input
-                      type="number"
-                      id="total_amount"
-                  name="total_amount"
-                      value={form.total_amount}
-                      onChange={handleChange}
-                      placeholder="0.00"
-                      className="w-full self-stretch min-h-[44px] bg-transparent text-sage-800 placeholder-sage-500 focus:outline-none"
-                    />
+                    <div className="flex items-center min-h-[48px] bg-white border border-mint-200 rounded-lg px-4 py-2 focus-within:border-brand focus-within:ring-2 focus-within:ring-brand">
+                      <span className="text-sage-500 mr-2">£</span>
+                      <input
+                        type="number"
+                        id="total_amount"
+                    name="total_amount"
+                        value={form.total_amount}
+                        onChange={handleChange}
+                        placeholder="0.00"
+                        className="w-full self-stretch min-h-[44px] bg-transparent text-sage-800 placeholder-sage-500 focus:outline-none"
+                      />
+                    </div>
                   </div>
-                </div>
-                <div>
-                  <label
-                    htmlFor="monthly_amount"
-                    className="text-xs text-sage-500 uppercase tracking-wider font-semibold block mb-2"
-                  >
-                    Monthly payment *
-                  </label>
-                  <div className="flex items-center min-h-[48px] bg-white border border-mint-200 rounded-lg px-4 py-2 focus-within:border-brand focus-within:ring-2 focus-within:ring-brand">
-                    <span className="text-sage-500 mr-2">£</span>
-                    <input
-                      type="number"
-                      id="monthly_amount"
-                  name="monthly_amount"
-                      value={form.monthly_amount}
-                      onChange={handleChange}
-                      placeholder="0.00"
-                      className="w-full self-stretch min-h-[44px] bg-transparent text-sage-800 placeholder-sage-500 focus:outline-none"
-                    />
+                  <div>
+                    <label
+                      htmlFor="monthly_amount"
+                      className="text-xs text-sage-500 uppercase tracking-wider font-semibold block mb-2"
+                    >
+                      Monthly payment *
+                    </label>
+                    <div className="flex items-center min-h-[48px] bg-white border border-mint-200 rounded-lg px-4 py-2 focus-within:border-brand focus-within:ring-2 focus-within:ring-brand">
+                      <span className="text-sage-500 mr-2">£</span>
+                      <input
+                        type="number"
+                        id="monthly_amount"
+                    name="monthly_amount"
+                        value={form.monthly_amount}
+                        onChange={handleChange}
+                        placeholder="0.00"
+                        className="w-full self-stretch min-h-[44px] bg-transparent text-sage-800 placeholder-sage-500 focus:outline-none"
+                      />
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
 
-            <button
-              onClick={handleAddDebt}
-              disabled={
-                !form.company ||
-                !form.category ||
-                !form.arrangement ||
-                !form.total_amount ||
-                !form.monthly_amount ||
-                isLoading
-              }
-              className="w-full mt-8 bg-sage-600 hover:bg-sage-700 text-white font-semibold py-3 rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {isLoading ? "Adding..." : "Add debt →"}
-            </button>
-          </div>
-        )}
-
-        {/* Step 4 — You're in */}
-        {step === 5 && (
-          <div className="text-center">
-            <div className="flex items-center justify-center w-20 h-20 mx-auto mb-6 rounded-pill bg-ok-100 border border-ok-200 text-ok-600">
-              <CheckCircle size={40} />
+              <button
+                onClick={handleAddDebt}
+                disabled={
+                  !form.company ||
+                  !form.category ||
+                  !form.arrangement ||
+                  !form.total_amount ||
+                  !form.monthly_amount ||
+                  isLoading
+                }
+                className="w-full mt-8 bg-sage-600 hover:bg-sage-700 text-white font-semibold py-3 rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {isLoading ? "Adding..." : "Add debt →"}
+              </button>
             </div>
-            <h2 className="text-3xl font-bold text-sage-800 mb-4">
-              You're all set.
-            </h2>
-            <p className="text-sage-600 mb-3 max-w-sm mx-auto leading-relaxed">
-              One debt tracked is better than none.
-            </p>
-            <p className="text-sage-500 text-sm mb-12 max-w-sm mx-auto leading-relaxed">
-              You can add more debts anytime, log payments as they happen, and
-              watch your total get smaller. You've got this.
-            </p>
-            <button
-              onClick={() => router.push("/dashboard")}
-              className="w-full max-w-sm mx-auto block bg-sage-600 hover:bg-sage-700 text-white font-semibold py-4 rounded-xl transition-all text-lg"
-            >
-              Go to my dashboard →
-            </button>
-          </div>
-        )}
+          )}
+
+          {/* Step 4 — You're in */}
+          {step === 5 && (
+            <div className="text-center">
+              <div className="flex items-center justify-center w-20 h-20 mx-auto mb-6 rounded-pill bg-ok-100 border border-ok-200 text-ok-600">
+                <CheckCircle size={40} />
+              </div>
+              <h2 className="text-3xl font-bold text-sage-800 mb-4">
+                You're all set.
+              </h2>
+              <p className="text-sage-600 mb-3 max-w-sm mx-auto leading-relaxed">
+                One debt tracked is better than none.
+              </p>
+              <p className="text-sage-500 text-sm mb-12 max-w-sm mx-auto leading-relaxed">
+                You can add more debts anytime, log payments as they happen, and
+                watch your total get smaller. You've got this.
+              </p>
+              <button
+                onClick={() => router.push("/dashboard")}
+                className="w-full max-w-sm mx-auto block bg-sage-600 hover:bg-sage-700 text-white font-semibold py-4 rounded-xl transition-all text-lg"
+              >
+                Go to my dashboard →
+              </button>
+            </div>
+          )}
+        </div>
       </div>
-    </div>
+    </>
   );
 }

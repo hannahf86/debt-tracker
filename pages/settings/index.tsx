@@ -7,6 +7,7 @@ import { useDebts } from "@/lib/hooks/useDebts";
 import { useProfile } from "@/lib/hooks/useProfile";
 import ThemePicker from "@/components/ThemePicker";
 import { Save, AlertTriangle } from "lucide-react";
+import Seo from "@/components/Seo";
 
 export default function SettingsPage() {
   const { data: session } = useSession();
@@ -105,245 +106,252 @@ export default function SettingsPage() {
   };
 
   return (
-    <div className="p-4 md:p-6">
-      <div className="max-w-2xl mx-auto">
-        <div className="mb-8">
-          <h1 className="font-display text-[1.75rem] md:text-4xl leading-tight font-extrabold text-sage-800 mb-2">
-            Settings
-          </h1>
-          <p className="text-sage-500 text-sm">
-            Manage your account and preferences
-          </p>
-        </div>
-
-        {/* Appearance */}
-        <div className="bg-white border border-mint-200 rounded-2xl p-5 md:p-6 mb-6 shadow-sm">
-          <h2 className="text-lg font-semibold text-sage-800 mb-2">
-            Appearance
-          </h2>
-          <p className="text-sage-600 text-sm mb-5">
-            System follows whatever your phone or computer is set to.
-          </p>
-          <ThemePicker />
-        </div>
-
-        {/* Account */}
-        <div className="bg-white border border-mint-200 rounded-2xl p-5 md:p-6 mb-6 shadow-sm">
-          <h2 className="text-lg font-semibold text-sage-800 mb-6">Account</h2>
-
-          <div className="space-y-4">
-            <div>
-              <label
-                htmlFor="name"
-                className="text-xs text-sage-500 uppercase tracking-wider font-semibold block mb-2"
-              >
-                Name
-              </label>
-              <input
-                id="name"
-                type="text"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="Your full name"
-                className="w-full min-h-[48px] bg-white border border-mint-200 rounded-lg px-4 py-2 text-sage-800 placeholder-sage-500 focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand"
-              />
-            </div>
-
-            <div>
-              <label
-                htmlFor="display_name"
-                className="text-xs text-sage-500 uppercase tracking-wider font-semibold block mb-2"
-              >
-                Display name
-              </label>
-              <input
-                id="display_name"
-                type="text"
-                value={displayName}
-                onChange={(e) => setDisplayName(e.target.value)}
-                placeholder="What Mirian should call you"
-                className="w-full min-h-[48px] bg-white border border-mint-200 rounded-lg px-4 py-2 text-sage-800 placeholder-sage-500 focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand"
-              />
-              <p className="text-xs text-sage-500 mt-2">
-                Used in your greeting. Leave it blank to use your first name.
-              </p>
-            </div>
-
-            <div>
-              <button
-                onClick={handleSaveNames}
-                disabled={isSavingNames}
-                className="inline-flex items-center gap-2 px-4 min-h-[44px] rounded-pill bg-brand hover:bg-brand-hover text-white text-sm font-semibold transition-colors duration-base disabled:opacity-50"
-              >
-                <Save size={16} />
-                {isSavingNames ? "Saving…" : namesSaved ? "Saved" : "Save"}
-              </button>
-            </div>
-
-            <div>
-              <label
-                htmlFor="email"
-                className="text-xs text-sage-500 uppercase tracking-wider font-semibold block mb-2"
-              >
-                Email address
-              </label>
-              <input
-                id="email"
-                type="email"
-                value={session?.user?.email || ""}
-                disabled
-                className="w-full min-h-[48px] bg-mint-50 border border-mint-200 rounded-lg px-4 py-2 text-sage-500 cursor-not-allowed"
-              />
-            </div>
-
-            <div>
-              <p className="text-xs text-sage-500 uppercase tracking-wider font-semibold mb-2">
-                Password
-              </p>
-
-              {passwordSaved && (
-                <div className="mb-3 p-3 bg-ok-100 border border-ok-200 rounded-lg">
-                  <p className="text-ok-700 text-sm">
-                    Password updated successfully!
-                  </p>
-                </div>
-              )}
-
-              {!showChangePassword ? (
-                <button
-                  onClick={() => setShowChangePassword(true)}
-                  className="px-4 min-h-[48px] bg-mint-100 hover:bg-mint-200 text-sage-700 rounded-pill text-sm font-semibold transition-colors border border-mint-200"
-                >
-                  Change password
-                </button>
-              ) : (
-                <div className="space-y-3">
-                  {passwordError && (
-                    <div className="p-3 bg-alert-100 border border-alert-200 rounded-lg">
-                      <p className="text-alert-600 text-sm">{passwordError}</p>
-                    </div>
-                  )}
-                  <label htmlFor="new_password" className="sr-only">
-                    New password
-                  </label>
-                  <input
-                    id="new_password"
-                    type="password"
-                    autoComplete="new-password"
-                    value={newPassword}
-                    onChange={(e) => setNewPassword(e.target.value)}
-                    placeholder="New password"
-                    className="w-full min-h-[48px] bg-white border border-mint-200 rounded-lg px-4 py-2 text-sage-800 placeholder-sage-500 focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand"
-                  />
-                  <label htmlFor="confirm_password" className="sr-only">
-                    Confirm new password
-                  </label>
-                  <input
-                    id="confirm_password"
-                    type="password"
-                    autoComplete="new-password"
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    placeholder="Confirm new password"
-                    className="w-full min-h-[48px] bg-white border border-mint-200 rounded-lg px-4 py-2 text-sage-800 placeholder-sage-500 focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand"
-                  />
-                  <div className="flex gap-3">
-                    <button
-                      onClick={() => {
-                        setShowChangePassword(false);
-                        setPasswordError("");
-                        setNewPassword("");
-                        setConfirmPassword("");
-                      }}
-                      className="flex-1 min-h-[48px] px-4 bg-mint-100 hover:bg-mint-200 text-sage-700 font-semibold rounded-pill transition-colors text-sm border border-mint-200"
-                    >
-                      Cancel
-                    </button>
-                    <button
-                      onClick={handleChangePassword}
-                      disabled={
-                        !newPassword || !confirmPassword || isPasswordLoading
-                      }
-                      className="flex-1 min-h-[48px] px-4 bg-sage-600 hover:bg-sage-700 text-white font-semibold rounded-pill transition-all disabled:opacity-50 disabled:cursor-not-allowed text-sm"
-                    >
-                      {isPasswordLoading ? "Saving..." : "Update password"}
-                    </button>
-                  </div>
-                </div>
-              )}
-            </div>
+    <>
+      <Seo
+        title="Settings"
+        description="Your name, your budget, the look of the app, and your account."
+        noindex
+      />
+      <div className="p-4 md:p-6">
+        <div className="max-w-2xl mx-auto">
+          <div className="mb-8">
+            <h1 className="font-display text-[1.75rem] md:text-4xl leading-tight font-extrabold text-sage-800 mb-2">
+              Settings
+            </h1>
+            <p className="text-sage-500 text-sm">
+              Manage your account and preferences
+            </p>
           </div>
-        </div>
 
-        {/* Budget */}
-        <div className="bg-white border border-mint-200 rounded-2xl p-5 md:p-6 mb-6 shadow-sm">
-          <h2 className="text-lg font-semibold text-sage-800 mb-2">
-            Monthly budget
-          </h2>
-          <p className="text-sage-500 text-sm mb-6">
-            How much can you put toward debt each month? Your total monthly DDs
-            are{" "}
-            <span className="text-sage-700 font-medium">
-              £{totalMonthlyDD.toLocaleString()}
-            </span>
-          </p>
+          {/* Appearance */}
+          <div className="bg-white border border-mint-200 rounded-2xl p-5 md:p-6 mb-6 shadow-sm">
+            <h2 className="text-lg font-semibold text-sage-800 mb-2">
+              Appearance
+            </h2>
+            <p className="text-sage-600 text-sm mb-5">
+              System follows whatever your phone or computer is set to.
+            </p>
+            <ThemePicker />
+          </div>
 
-          <div>
-            <label
-              htmlFor="monthly_budget"
-              className="text-xs text-sage-500 uppercase tracking-wider font-semibold block mb-2"
-            >
-              Monthly budget
-            </label>
-            <div className="flex flex-col sm:flex-row sm:items-center gap-3">
-              <div className="flex items-center min-h-[48px] flex-1 bg-white border border-mint-200 rounded-lg px-4 py-2 focus-within:border-brand focus-within:ring-2 focus-within:ring-brand">
-                <span className="text-sage-500 mr-2">£</span>
+          {/* Account */}
+          <div className="bg-white border border-mint-200 rounded-2xl p-5 md:p-6 mb-6 shadow-sm">
+            <h2 className="text-lg font-semibold text-sage-800 mb-6">Account</h2>
+
+            <div className="space-y-4">
+              <div>
+                <label
+                  htmlFor="name"
+                  className="text-xs text-sage-500 uppercase tracking-wider font-semibold block mb-2"
+                >
+                  Name
+                </label>
                 <input
-                  id="monthly_budget"
-                  type="number"
-                  value={monthlyBudget}
-                  onChange={(e) => setMonthlyBudget(e.target.value)}
-                  placeholder="0.00"
-                  className="flex-1 self-stretch min-h-[44px] bg-transparent text-sage-800 placeholder-sage-500 focus:outline-none"
+                  id="name"
+                  type="text"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="Your full name"
+                  className="w-full min-h-[48px] bg-white border border-mint-200 rounded-lg px-4 py-2 text-sage-800 placeholder-sage-500 focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand"
                 />
               </div>
-              <button
-                onClick={handleSaveBudget}
-                disabled={!monthlyBudget}
-                className="flex items-center justify-center gap-2 w-full sm:w-auto px-5 min-h-[48px] shrink-0 bg-sage-600 hover:bg-sage-700 text-white rounded-pill transition-all disabled:opacity-50 disabled:cursor-not-allowed text-sm font-semibold"
-              >
-                <Save size={14} />
-                {budgetSaved ? "Saved!" : "Save"}
-              </button>
+
+              <div>
+                <label
+                  htmlFor="display_name"
+                  className="text-xs text-sage-500 uppercase tracking-wider font-semibold block mb-2"
+                >
+                  Display name
+                </label>
+                <input
+                  id="display_name"
+                  type="text"
+                  value={displayName}
+                  onChange={(e) => setDisplayName(e.target.value)}
+                  placeholder="What Mirian should call you"
+                  className="w-full min-h-[48px] bg-white border border-mint-200 rounded-lg px-4 py-2 text-sage-800 placeholder-sage-500 focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand"
+                />
+                <p className="text-xs text-sage-500 mt-2">
+                  Used in your greeting. Leave it blank to use your first name.
+                </p>
+              </div>
+
+              <div>
+                <button
+                  onClick={handleSaveNames}
+                  disabled={isSavingNames}
+                  className="inline-flex items-center gap-2 px-4 min-h-[44px] rounded-pill bg-brand hover:bg-brand-hover text-white text-sm font-semibold transition-colors duration-base disabled:opacity-50"
+                >
+                  <Save size={16} />
+                  {isSavingNames ? "Saving…" : namesSaved ? "Saved" : "Save"}
+                </button>
+              </div>
+
+              <div>
+                <label
+                  htmlFor="email"
+                  className="text-xs text-sage-500 uppercase tracking-wider font-semibold block mb-2"
+                >
+                  Email address
+                </label>
+                <input
+                  id="email"
+                  type="email"
+                  value={session?.user?.email || ""}
+                  disabled
+                  className="w-full min-h-[48px] bg-mint-50 border border-mint-200 rounded-lg px-4 py-2 text-sage-500 cursor-not-allowed"
+                />
+              </div>
+
+              <div>
+                <p className="text-xs text-sage-500 uppercase tracking-wider font-semibold mb-2">
+                  Password
+                </p>
+
+                {passwordSaved && (
+                  <div className="mb-3 p-3 bg-ok-100 border border-ok-200 rounded-lg">
+                    <p className="text-ok-700 text-sm">
+                      Password updated successfully!
+                    </p>
+                  </div>
+                )}
+
+                {!showChangePassword ? (
+                  <button
+                    onClick={() => setShowChangePassword(true)}
+                    className="px-4 min-h-[48px] bg-mint-100 hover:bg-mint-200 text-sage-700 rounded-pill text-sm font-semibold transition-colors border border-mint-200"
+                  >
+                    Change password
+                  </button>
+                ) : (
+                  <div className="space-y-3">
+                    {passwordError && (
+                      <div className="p-3 bg-alert-100 border border-alert-200 rounded-lg">
+                        <p className="text-alert-600 text-sm">{passwordError}</p>
+                      </div>
+                    )}
+                    <label htmlFor="new_password" className="sr-only">
+                      New password
+                    </label>
+                    <input
+                      id="new_password"
+                      type="password"
+                      autoComplete="new-password"
+                      value={newPassword}
+                      onChange={(e) => setNewPassword(e.target.value)}
+                      placeholder="New password"
+                      className="w-full min-h-[48px] bg-white border border-mint-200 rounded-lg px-4 py-2 text-sage-800 placeholder-sage-500 focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand"
+                    />
+                    <label htmlFor="confirm_password" className="sr-only">
+                      Confirm new password
+                    </label>
+                    <input
+                      id="confirm_password"
+                      type="password"
+                      autoComplete="new-password"
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      placeholder="Confirm new password"
+                      className="w-full min-h-[48px] bg-white border border-mint-200 rounded-lg px-4 py-2 text-sage-800 placeholder-sage-500 focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand"
+                    />
+                    <div className="flex gap-3">
+                      <button
+                        onClick={() => {
+                          setShowChangePassword(false);
+                          setPasswordError("");
+                          setNewPassword("");
+                          setConfirmPassword("");
+                        }}
+                        className="flex-1 min-h-[48px] px-4 bg-mint-100 hover:bg-mint-200 text-sage-700 font-semibold rounded-pill transition-colors text-sm border border-mint-200"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        onClick={handleChangePassword}
+                        disabled={
+                          !newPassword || !confirmPassword || isPasswordLoading
+                        }
+                        className="flex-1 min-h-[48px] px-4 bg-sage-600 hover:bg-sage-700 text-white font-semibold rounded-pill transition-all disabled:opacity-50 disabled:cursor-not-allowed text-sm"
+                      >
+                        {isPasswordLoading ? "Saving..." : "Update password"}
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* Your data — download or delete */}
-        <Link
-          href="/settings/data"
-          className="block bg-white border border-mint-200 rounded-2xl p-5 md:p-6 shadow-sm hover:border-sage-300 transition-colors"
-        >
-          <h2 className="text-lg font-semibold text-sage-800">Your data</h2>
-          <p className="text-sage-500 text-sm mt-1">
-            Download a copy of everything you&rsquo;ve added, or delete your
-            account and all your data.
-          </p>
-          <span className="inline-block mt-3 text-sm font-semibold text-brand">
-            Go to your data →
-          </span>
-        </Link>
+          {/* Budget */}
+          <div className="bg-white border border-mint-200 rounded-2xl p-5 md:p-6 mb-6 shadow-sm">
+            <h2 className="text-lg font-semibold text-sage-800 mb-2">
+              Monthly budget
+            </h2>
+            <p className="text-sage-500 text-sm mb-6">
+              How much can you put toward debt each month? Your total monthly DDs
+              are{" "}
+              <span className="text-sage-700 font-medium">
+                £{totalMonthlyDD.toLocaleString()}
+              </span>
+            </p>
 
-        {/* Privacy notice — a separate link, since the card above is itself a link */}
-        <p className="mt-4 text-center">
+            <div>
+              <label
+                htmlFor="monthly_budget"
+                className="text-xs text-sage-500 uppercase tracking-wider font-semibold block mb-2"
+              >
+                Monthly budget
+              </label>
+              <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+                <div className="flex items-center min-h-[48px] flex-1 bg-white border border-mint-200 rounded-lg px-4 py-2 focus-within:border-brand focus-within:ring-2 focus-within:ring-brand">
+                  <span className="text-sage-500 mr-2">£</span>
+                  <input
+                    id="monthly_budget"
+                    type="number"
+                    value={monthlyBudget}
+                    onChange={(e) => setMonthlyBudget(e.target.value)}
+                    placeholder="0.00"
+                    className="flex-1 self-stretch min-h-[44px] bg-transparent text-sage-800 placeholder-sage-500 focus:outline-none"
+                  />
+                </div>
+                <button
+                  onClick={handleSaveBudget}
+                  disabled={!monthlyBudget}
+                  className="flex items-center justify-center gap-2 w-full sm:w-auto px-5 min-h-[48px] shrink-0 bg-sage-600 hover:bg-sage-700 text-white rounded-pill transition-all disabled:opacity-50 disabled:cursor-not-allowed text-sm font-semibold"
+                >
+                  <Save size={14} />
+                  {budgetSaved ? "Saved!" : "Save"}
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Your data — download or delete */}
           <Link
-            href="/privacy"
-            className="inline-flex items-center justify-center min-h-[44px] px-3 text-sm font-semibold text-brand hover:underline"
+            href="/settings/data"
+            className="block bg-white border border-mint-200 rounded-2xl p-5 md:p-6 shadow-sm hover:border-sage-300 transition-colors"
           >
-            Read our privacy notice
+            <h2 className="text-lg font-semibold text-sage-800">Your data</h2>
+            <p className="text-sage-500 text-sm mt-1">
+              Download a copy of everything you&rsquo;ve added, or delete your
+              account and all your data.
+            </p>
+            <span className="inline-block mt-3 text-sm font-semibold text-brand">
+              Go to your data →
+            </span>
           </Link>
-        </p>
+
+          {/* Privacy notice — a separate link, since the card above is itself a link */}
+          <p className="mt-4 text-center">
+            <Link
+              href="/privacy"
+              className="inline-flex items-center justify-center min-h-[44px] px-3 text-sm font-semibold text-brand hover:underline"
+            >
+              Read our privacy notice
+            </Link>
+          </p>
+        </div>
       </div>
-    </div>
+    </>
   );
 }
