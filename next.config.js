@@ -51,6 +51,22 @@ const nextConfig = {
       { source: "/(.*)", headers: securityHeaders },
       // Personal data must never be kept in a shared or browser cache.
       { source: "/api/(.*)", headers: [{ key: "Cache-Control", value: "no-store" }] },
+      /* Keep the signed-in app out of search results twice over: the pages
+         carry a noindex tag, and these send the same instruction in the
+         response header, which a crawler sees without parsing any HTML.
+         Only these paths — the public pages must stay indexable. */
+      ...[
+        "/dashboard",
+        "/debts/:path*",
+        "/tracker/:path*",
+        "/settings/:path*",
+        "/onboarding",
+        "/auth/:path*",
+        "/api/:path*",
+      ].map((source) => ({
+        source,
+        headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow" }],
+      })),
     ];
   },
 };

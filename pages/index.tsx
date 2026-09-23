@@ -309,7 +309,7 @@ const STRUCTURED_DATA = {
       operatingSystem: "Web",
       description:
         "A debt tracker for ADHD and PDA brains. A debt-free date instead of a running total, four honest payment states, and nothing on screen that tells you off.",
-      url: "https://mirian-debt-tracker.app",
+      url: "https://www.mirian-debt-tracker.app",
       inLanguage: "en-GB",
     },
     {

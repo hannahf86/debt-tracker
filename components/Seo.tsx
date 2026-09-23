@@ -15,10 +15,15 @@ import { useRouter } from "next/router";
  *   still naming the tab properly.
  */
 
-/** Where the site actually lives, for canonical and share URLs. */
+/**
+ * Where the site actually lives, for canonical and share URLs.
+ *
+ * With the www: the bare domain 308-redirects here, so this is the address
+ * that answers with a page, and a canonical has to name the URL that does.
+ */
 export const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") ||
-  "https://mirian-debt-tracker.app";
+  "https://www.mirian-debt-tracker.app";
 
 const SITE_NAME = "Mirian";
 const OG_IMAGE = `${SITE_URL}/og.png`;

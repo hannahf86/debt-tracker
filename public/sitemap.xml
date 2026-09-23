@@ -2,22 +2,22 @@
 <!-- The four public pages. Everything else needs signing in and is noindex. -->
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://mirian-debt-tracker.app/</loc>
+    <loc>https://www.mirian-debt-tracker.app/</loc>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://mirian-debt-tracker.app/feedback</loc>
+    <loc>https://www.mirian-debt-tracker.app/feedback</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://mirian-debt-tracker.app/contact</loc>
+    <loc>https://www.mirian-debt-tracker.app/contact</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://mirian-debt-tracker.app/privacy</loc>
+    <loc>https://www.mirian-debt-tracker.app/privacy</loc>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>

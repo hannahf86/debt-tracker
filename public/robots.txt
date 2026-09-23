@@ -18,4 +18,4 @@ Disallow: /tracker
 Disallow: /settings
 Disallow: /onboarding
 
-Sitemap: https://mirian-debt-tracker.app/sitemap.xml
+Sitemap: https://www.mirian-debt-tracker.app/sitemap.xml
