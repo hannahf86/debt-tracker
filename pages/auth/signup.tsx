@@ -204,6 +204,15 @@ export default function SignupPage() {
                 Sign in
               </Link>
             </p>
+            {/* A way back out: signing in shouldn't be a one-way door */}
+            <p className="mt-3 text-center">
+              <Link
+                href="/"
+                className="inline-flex items-center justify-center min-h-[44px] px-3 text-sm text-sage-600 hover:text-sage-900 font-semibold"
+              >
+                &larr; Back to the Mirian home page
+              </Link>
+            </p>
           </div>
         </div>
         )}

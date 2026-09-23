@@ -1,7 +1,7 @@
-import type { CSSProperties, ReactNode } from "react";
+import { useEffect, useState, type CSSProperties, type ReactNode } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Menu, X } from "lucide-react";
 import styles from "@/components/site/site.module.css";
 
 /**
@@ -240,6 +240,22 @@ const NAV_LINKS = [
 
 export function SiteHeader() {
   const { pathname } = useRouter();
+  const [open, setOpen] = useState(false);
+
+  // Close on arrival: tapping a link shouldn't leave the menu hanging open.
+  useEffect(() => {
+    setOpen(false);
+  }, [pathname]);
+
+  // Escape closes it, the way every other menu on the web does.
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setOpen(false);
+    };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [open]);
 
   return (
     <header
@@ -260,6 +276,19 @@ export function SiteHeader() {
           <span className="sr-only">Mirian home</span>
         </Link>
 
+        {/* Phone: one button, and the whole menu underneath it. */}
+        <button
+          type="button"
+          className={styles.menuButton}
+          aria-expanded={open}
+          aria-controls="site-menu"
+          onClick={() => setOpen((wasOpen) => !wasOpen)}
+        >
+          {open ? <X size={20} aria-hidden="true" /> : <Menu size={20} aria-hidden="true" />}
+          {open ? "Close" : "Menu"}
+        </button>
+
+        {/* Desktop: the centred links from the design. */}
         <nav aria-label="Site" className={styles.headerNav}>
           {NAV_LINKS.map((link) => {
             const current = pathname === link.href;
@@ -289,7 +318,7 @@ export function SiteHeader() {
           })}
         </nav>
 
-        <div style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap" }}>
+        <div className={styles.headerActions}>
           <SiteButton href="/auth/signup" variant="secondary">
             Create an account
           </SiteButton>
@@ -298,6 +327,33 @@ export function SiteHeader() {
           </SiteButton>
         </div>
       </div>
+
+      {open && (
+        <nav id="site-menu" aria-label="Site" className={styles.menuPanel}>
+          {NAV_LINKS.map((link) => {
+            const current = pathname === link.href;
+            return (
+              <Link
+                key={link.href}
+                href={link.href}
+                aria-current={current ? "page" : undefined}
+                className={`${styles.menuLink} ${current ? styles.menuCurrent : ""}`}
+              >
+                {link.label}
+              </Link>
+            );
+          })}
+
+          <div className={styles.menuActions}>
+            <SiteButton href="/auth/signup" size="lg" variant="secondary">
+              Create an account
+            </SiteButton>
+            <SiteButton href="/auth/login" size="lg" iconAfter>
+              Sign in
+            </SiteButton>
+          </div>
+        </nav>
+      )}
     </header>
   );
 }

@@ -164,16 +164,19 @@ const AUDIENCE = [
 const QUOTES = [
   {
     text: "The way the app works gets rid of the drop in my stomach. Somehow it makes it far easier to use than other trackers I've tried.",
+    name: "Jenny",
     nd: "ADHD",
     id: "adhd",
   },
   {
     text: "Being able to log any payment I made and then put a note to remind myself what happened is really helpful.",
+    name: "Steph",
     nd: "ASC",
     id: "asc",
   },
   {
     text: "Knowing EXACTLY when I'll be debt free is a game changer. I'm planning my party already!",
+    name: "Norah",
     nd: "AuDHD",
     id: "audhd",
   },
@@ -622,7 +625,11 @@ export default function HomePage() {
               {RESEARCH.map((stat) => (
                 <div
                   key={stat.figure}
-                  style={{ borderTop: "2px solid rgb(var(--teal-200))", paddingTop: 20 }}
+                  style={{
+                    borderTop: "2px solid rgb(var(--teal-200))",
+                    borderBottom: "1px solid rgb(var(--line-200))",
+                    padding: "20px 0 22px",
+                  }}
                 >
                   <div
                     style={{
@@ -636,7 +643,15 @@ export default function HomePage() {
                   >
                     {stat.figure}
                   </div>
-                  <p style={{ fontSize: 17, color: "rgb(var(--ink-700))", margin: 0 }}>
+                  <p
+                    style={{
+                      fontSize: 19,
+                      fontWeight: 600,
+                      lineHeight: 1.4,
+                      color: "rgb(var(--ink-900))",
+                      margin: 0,
+                    }}
+                  >
                     {stat.body}
                   </p>
                 </div>
@@ -1109,13 +1124,8 @@ export default function HomePage() {
                     {quote.text}
                   </p>
                   <div style={{ marginTop: "auto" }}>
-                    <div>
-                      <div style={{ fontSize: 15, fontWeight: 700, color: "rgb(var(--ink-700))" }}>
-                        Example · {quote.nd}
-                      </div>
-                      <div style={{ fontSize: 13, color: "rgb(var(--ink-400))" }}>
-                        Written to show the kind of thing we hope to hear
-                      </div>
+                    <div style={{ fontSize: 15, fontWeight: 700, color: "rgb(var(--ink-700))" }}>
+                      {quote.name} · {quote.nd} · Mirian tester
                     </div>
                   </div>
                 </div>

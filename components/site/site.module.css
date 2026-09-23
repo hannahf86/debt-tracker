@@ -43,8 +43,9 @@
 }
 
 /* Header layout.
-   On a phone: logo and Sign in share the top row, nav sits centred beneath,
-   so the links don't wrap into a three-line stack that pushes the page down.
+   On a phone: the logo and a menu button, nothing else. Everything else
+   lives in the panel that button opens, which pushes the page down rather
+   than covering it — no overlay to dismiss, nothing sliding about.
    From 768px it becomes the single centred row the design specifies. */
 .headerInner {
   max-width: 1120px;
@@ -53,23 +54,86 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  flex-wrap: wrap;
 }
 
 .headerBrand {
   margin-right: auto;
 }
 
-.headerNav {
-  order: 3;
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  gap: 2px;
-  flex-wrap: wrap;
+.headerNav,
+.headerActions {
+  display: none;
 }
 
-@media (min-width: 768px) {
+.menuButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 48px;
+  padding: 0 16px;
+  border-radius: var(--radius-pill);
+  border: 1px solid rgb(var(--line-200));
+  background: rgb(var(--white));
+  color: rgb(var(--ink-900));
+  font-family: var(--font-body);
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.menuButton:hover {
+  background: rgb(var(--teal-50));
+}
+
+.menuButton:focus-visible {
+  outline: var(--focus-outline);
+  outline-offset: var(--focus-offset);
+}
+
+.menuPanel {
+  border-top: 1px solid rgb(var(--line-200));
+  padding: 8px 20px 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.menuLink {
+  display: flex;
+  align-items: center;
+  min-height: 56px;
+  padding: 0 4px;
+  font-family: var(--font-body);
+  font-size: 18px;
+  text-decoration: none;
+  color: rgb(var(--ink-700));
+  border-bottom: 1px solid rgb(var(--line-100));
+}
+
+.menuLink:hover {
+  color: rgb(var(--teal-700));
+}
+
+.menuLink:focus-visible {
+  outline: var(--focus-outline);
+  outline-offset: var(--focus-offset);
+}
+
+.menuCurrent {
+  color: rgb(var(--ink-900));
+  font-weight: 700;
+}
+
+.menuActions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+/* 960px, not 768px: between those two the links, the logo and both
+   buttons are too wide for one row, and Contact drops onto a line of
+   its own. The menu button carries that whole range instead. */
+@media (min-width: 960px) {
   .headerInner {
     gap: 24px;
     padding: 14px 24px;
@@ -80,10 +144,22 @@
   }
 
   .headerNav {
-    order: 0;
-    width: auto;
+    display: flex;
     flex: 1;
+    justify-content: center;
     gap: 4px;
+    flex-wrap: wrap;
+  }
+
+  .headerActions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+
+  .menuButton,
+  .menuPanel {
+    display: none;
   }
 }
 
