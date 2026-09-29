@@ -1,12 +1,3 @@
--- Interest: a rate per debt, and where each payment actually went.
---
--- Run this once in the Supabase SQL editor. Safe to run again: every
--- statement checks first.
---
--- Nothing changes for existing debts. They all start as 'frozen', which is
--- true for most people on a payment plan, a DMP, or a defaulted account, and
--- means no balance moves until someone says otherwise.
-
 -- 1. The rate, on the debt ------------------------------------------------
 
 alter table public.debts
@@ -47,3 +38,11 @@ alter table public.payments
 
 -- Existing payments keep null in all three: we genuinely don't know how they
 -- split, and a made-up figure would be worse than an honest gap.
+
+-- 3. Tell PostgREST about the new columns -------------------------------
+--
+-- Supabase's API caches the table shape. Without this the app can keep
+-- reporting "Could not find the 'interest_rate' column" for a while after
+-- the columns genuinely exist.
+
+notify pgrst, 'reload schema';

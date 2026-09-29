@@ -1,16 +1,3 @@
--- Company directory: how to reach common UK creditors about difficulty paying.
---
--- Run once in the Supabase SQL editor. Safe to run again: it updates existing
--- companies rather than duplicating them.
---
--- Every entry was checked on the company's own website on its checked_on
--- date. Support pages move and emails change, so re-check them periodically.
--- Phone numbers are deliberately not stored: calling is the hardest route for
--- many neurodivergent people, so the app only offers written ways in.
---
--- ScottishPower is left out: its site blocked automated checks, so nothing
--- about it could be verified. Add it by hand once someone has looked.
-
 create table if not exists public.creditors (
   id           bigint generated always as identity primary key,
   name         text not null,

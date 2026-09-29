@@ -1,10 +1,4 @@
 -- Orphaned payment rows, and the foreign keys behind them.
---
--- DELETE /api/debts/[id] used to remove the debt and leave its payments and
--- missed_payments behind. That is fixed in the route now, but rows orphaned by
--- earlier deletions are still sitting in the database. Nothing reads them —
--- every query joins from a debt the caller owns — so this is tidying, not a
--- leak. Run it in the Supabase SQL editor.
 
 -- 1. How many are there? Read-only.
 select 'payments' as table_name, count(*) as orphaned

@@ -1,5 +1,6 @@
 import { getSession } from "@/lib/devAuth";
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
+import { describeDbError } from "@/lib/dbError";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 /**
@@ -109,7 +110,9 @@ export default async function handler(
       return res.status(200).json(updated);
     } catch (error) {
       console.error("Error updating debt:", error);
-      return res.status(500).json({ error: "Failed to update debt" });
+      return res
+        .status(500)
+        .json({ error: describeDbError(error, "Failed to update debt") });
     }
   }
 

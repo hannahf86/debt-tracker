@@ -1,15 +1,3 @@
--- Contact history: messages someone has sent a creditor from the app.
---
--- Run this once in the Supabase SQL editor BEFORE deploying the code that
--- uses it. Until the table exists, the "Your contact history" list on each
--- debt shows a gentle "couldn't load" message, but nothing else breaks.
---
--- debt_id cascades, so deleting a debt (or an account, which deletes its
--- debts) removes its contact history with it. No route has to remember to.
---
--- The column types are read from public.debts rather than assumed, because
--- the id type there was set up in the dashboard and isn't in the repo.
-
 do $$
 declare
   debt_id_type text;

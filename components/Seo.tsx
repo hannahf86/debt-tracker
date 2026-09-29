@@ -7,12 +7,6 @@ import { useRouter } from "next/router";
  *
  * Two kinds of page live in this app and they want opposite things:
  *
- * - The public site (/, /contact, /feedback, /privacy) wants to be found.
- * - Everything behind the sign-in — dashboards, debts, the tracker, settings,
- *   the auth screens themselves — must never be indexed. It is somebody's
- *   debt, and none of it belongs in a search result. Those pages pass
- *   `noindex`, which also keeps their titles out of search listings while
- *   still naming the tab properly.
  */
 
 /**
