@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import Seo from "@/components/Seo";
@@ -14,6 +14,10 @@ export default function SignupPage() {
   const [isLoading, setIsLoading] = useState(false);
   // Set once the account is created; replaces the form with the inbox prompt.
   const [sentTo, setSentTo] = useState<string | null>(null);
+  // Spam defences a person never sees: a field only a bot fills in, and how
+  // long the form has been open.
+  const [website, setWebsite] = useState("");
+  const openedAt = useRef(Date.now());
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -36,7 +40,12 @@ export default function SignupPage() {
       const response = await fetch("/api/auth/signup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({
+          email,
+          password,
+          website,
+          startedAt: openedAt.current,
+        }),
       });
 
       const data = await response.json();
@@ -180,6 +189,19 @@ export default function SignupPage() {
                 />
               </div>
 
+
+              {/* Hidden from people, irresistible to bots */}
+              <div aria-hidden="true" className="absolute -left-[9999px]">
+                <label htmlFor="s-website">Leave this empty</label>
+                <input
+                  id="s-website"
+                  name="website"
+                  tabIndex={-1}
+                  autoComplete="off"
+                  value={website}
+                  onChange={(e) => setWebsite(e.target.value)}
+                />
+              </div>
               <button
                 type="submit"
                 disabled={isLoading}

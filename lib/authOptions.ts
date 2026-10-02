@@ -1,6 +1,7 @@
 import type { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { createClient } from "@supabase/supabase-js";
+import { overLimit } from "@/lib/rateLimit";
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -13,6 +14,19 @@ export const authOptions: NextAuthOptions = {
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) {
           throw new Error("Email and password required");
+        }
+
+        /* Guessing passwords: the logs on 2026-10-02 showed three attempts a
+           few seconds apart, repeatedly. Counting per address rather than per
+           IP, because NextAuth doesn't hand the request to this function —
+           which does mean someone could lock an account's sign-in attempts
+           for a quarter of an hour. The message says to wait, not that the
+           account exists. */
+        const address = credentials.email.toLowerCase().trim();
+        if (overLimit(`signin:${address}`, 8, 15 * 60 * 1000)) {
+          throw new Error(
+            "Too many sign-in attempts just now. Please wait a few minutes and try again.",
+          );
         }
 
         const supabase = createClient(

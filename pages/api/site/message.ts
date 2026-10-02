@@ -1,5 +1,6 @@
 import { sendSiteEmail, MailNotConfigured } from "@/lib/siteMail";
 import type { NextApiRequest, NextApiResponse } from "next";
+import { overLimit } from "@/lib/rateLimit";
 
 /**
  * The website's contact and feedback forms.
@@ -33,23 +34,8 @@ const FEEDBACK_TYPES: Record<string, string> = {
   general: "General thoughts",
 };
 
-const recent = new Map<string, number[]>();
-
-function rateLimited(ip: string): boolean {
-  const now = Date.now();
-  const hits = (recent.get(ip) ?? []).filter((t) => now - t < WINDOW_MS);
-  hits.push(now);
-  recent.set(ip, hits);
-
-  // Don't let the map grow without bound on a long-lived instance.
-  if (recent.size > 500) {
-    for (const [key, times] of recent) {
-      if (times.every((t) => now - t >= WINDOW_MS)) recent.delete(key);
-    }
-  }
-
-  return hits.length > LIMIT;
-}
+// One copy of the limit logic, shared with the auth routes.
+const rateLimited = (ip: string) => overLimit(`site:${ip}`, LIMIT, WINDOW_MS);
 
 const str = (v: unknown) => (typeof v === "string" ? v.trim() : "");
 const looksLikeEmail = (v: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);

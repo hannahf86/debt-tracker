@@ -30,6 +30,7 @@ import type { NewContact } from "@/lib/hooks/useContacts";
 import { downloadLetter } from "@/lib/letter";
 import AdviceLinks from "@/components/AdviceLinks";
 
+/** Callback that saves debt details from contact form */
 export type SaveDetails = (updates: {
   account_reference?: string;
   company_email?: string;
@@ -82,16 +83,14 @@ function FieldLabel({
           onClick={onToggle}
           aria-expanded={open}
           aria-controls={tipId}
-          className="shrink-0 min-h-[32px] text-xs font-semibold text-brand hover:underline"
-        >
+          className="shrink-0 min-h-[32px] text-xs font-semibold text-brand hover:underline">
           {tipLabel}
         </button>
       </div>
       {open && (
         <p
           id={tipId}
-          className="mb-2 text-xs text-info-700 bg-info-100 border border-info-200 rounded-lg px-3 py-2.5"
-        >
+          className="mb-2 text-xs text-info-700 bg-info-100 border border-info-200 rounded-lg px-3 py-2.5">
           {tip}
         </p>
       )}
@@ -113,8 +112,7 @@ function ActionButton({
     <button
       type="button"
       onClick={onClick}
-      className="flex items-center justify-center gap-2 min-h-[52px] px-3 rounded-xl border border-mint-200 bg-white hover:border-sage-300 active:bg-mint-100 text-sage-800 text-sm font-semibold transition-colors"
-    >
+      className="flex items-center justify-center gap-2 min-h-[52px] px-3 rounded-xl border border-mint-200 bg-white hover:border-sage-300 active:bg-mint-100 text-sage-800 text-sm font-semibold transition-colors">
       <Icon size={18} aria-hidden="true" />
       {label}
     </button>
@@ -136,14 +134,16 @@ export default function ContactModal({
   startWith = null,
 }: Props) {
   const [template, setTemplate] = useState<Template | null>(
-    startWith ? TEMPLATES.find((t) => t.id === startWith) ?? null : null,
+    startWith ? (TEMPLATES.find((t) => t.id === startWith) ?? null) : null,
   );
   const [values, setValues] = useState<FieldValues>({
     your_name: yourName,
     account_reference: debt.account_reference ?? "",
     offer_amount: "",
   });
-  const [email, setEmail] = useState(debt.company_email || creditor?.email || "");
+  const [email, setEmail] = useState(
+    debt.company_email || creditor?.email || "",
+  );
   const [subject, setSubject] = useState("");
   const [body, setBody] = useState("");
   const [bodyEdited, setBodyEdited] = useState(false);
@@ -214,7 +214,11 @@ export default function ContactModal({
     if (ref && ref !== (debt.account_reference ?? "")) {
       updates.account_reference = ref;
     }
-    if (mail && EMAIL_PATTERN.test(mail) && mail !== (debt.company_email ?? "")) {
+    if (
+      mail &&
+      EMAIL_PATTERN.test(mail) &&
+      mail !== (debt.company_email ?? "")
+    ) {
       updates.company_email = mail;
     }
     return updates;
@@ -324,14 +328,12 @@ export default function ContactModal({
       aria-modal="true"
       aria-label={`Get in touch with ${debt.company}`}
       className="fixed inset-0 z-50 md:bg-sage-900/40 md:backdrop-blur-sm flex md:items-center md:justify-center md:p-4"
-      onClick={onClose}
-    >
+      onClick={onClose}>
       <div
         /* Full-screen sheet on a phone, like the log-payment modal: there's a
            keyboard and a long textarea, which a centred dialog handles badly. */
         className="w-full min-w-0 max-w-full h-[100dvh] md:h-auto flex flex-col md:block md:max-w-lg md:max-h-[calc(100dvh-2rem)] overflow-x-hidden overflow-y-auto bg-white md:border md:border-mint-200 md:rounded-2xl p-5 md:p-6 md:shadow-modal pb-[max(1.25rem,env(safe-area-inset-bottom))]"
-        onClick={(e) => e.stopPropagation()}
-      >
+        onClick={(e) => e.stopPropagation()}>
         {/* Header */}
         <div className="flex items-start justify-between gap-3 mb-5 shrink-0">
           <div className="min-w-0 flex items-start gap-1">
@@ -344,8 +346,7 @@ export default function ContactModal({
                   setError("");
                 }}
                 aria-label="Back to choosing what to say"
-                className="flex items-center justify-center w-11 h-11 -ml-3 rounded-xl text-sage-500 hover:bg-mint-100 transition-colors shrink-0"
-              >
+                className="flex items-center justify-center w-11 h-11 -ml-3 rounded-xl text-sage-500 hover:bg-mint-100 transition-colors shrink-0">
                 <ChevronLeft size={22} />
               </button>
             )}
@@ -365,8 +366,7 @@ export default function ContactModal({
           <button
             onClick={onClose}
             aria-label="Close"
-            className="flex items-center justify-center w-11 h-11 -mr-2 rounded-xl text-sage-500 hover:bg-mint-100 transition-colors shrink-0"
-          >
+            className="flex items-center justify-center w-11 h-11 -mr-2 rounded-xl text-sage-500 hover:bg-mint-100 transition-colors shrink-0">
             <X size={22} />
           </button>
         </div>
@@ -388,8 +388,7 @@ export default function ContactModal({
             <p className="text-sm text-sage-800 mt-1">{saved}</p>
             <button
               onClick={onClose}
-              className="mt-6 w-full min-h-[48px] bg-sage-600 hover:bg-sage-700 text-white font-semibold rounded-pill transition-colors"
-            >
+              className="mt-6 w-full min-h-[48px] bg-sage-600 hover:bg-sage-700 text-white font-semibold rounded-pill transition-colors">
               Done
             </button>
           </div>
@@ -400,8 +399,7 @@ export default function ContactModal({
               <button
                 key={t.id}
                 onClick={() => choose(t)}
-                className="w-full min-h-[56px] px-4 py-3 bg-white border border-mint-200 hover:border-sage-300 active:bg-mint-100 rounded-xl text-left text-sage-800 text-sm font-medium transition-colors"
-              >
+                className="w-full min-h-[56px] px-4 py-3 bg-white border border-mint-200 hover:border-sage-300 active:bg-mint-100 rounded-xl text-left text-sage-800 text-sm font-medium transition-colors">
                 {t.title}
               </button>
             ))}
@@ -444,8 +442,7 @@ export default function ContactModal({
             <div>
               <label
                 htmlFor="contact-subject"
-                className={`${LABEL} block mb-1.5`}
-              >
+                className={`${LABEL} block mb-1.5`}>
                 Subject
               </label>
               <input
@@ -481,8 +478,7 @@ export default function ContactModal({
                   <button
                     type="button"
                     onClick={rebuild}
-                    className="font-semibold text-brand hover:underline"
-                  >
+                    className="font-semibold text-brand hover:underline">
                     Start it again
                   </button>
                 </p>
@@ -530,9 +526,21 @@ export default function ContactModal({
 
             {/* Ways to send it */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
-              <ActionButton icon={Copy} label="Copy message" onClick={copyMessage} />
-              <ActionButton icon={Mail} label="Open in email" onClick={openEmail} />
-              <ActionButton icon={FileDown} label="Download letter" onClick={letter} />
+              <ActionButton
+                icon={Copy}
+                label="Copy message"
+                onClick={copyMessage}
+              />
+              <ActionButton
+                icon={Mail}
+                label="Open in email"
+                onClick={openEmail}
+              />
+              <ActionButton
+                icon={FileDown}
+                label="Download letter"
+                onClick={letter}
+              />
             </div>
 
             {/* The company's own help page, where the web form or chat lives */}
@@ -541,22 +549,22 @@ export default function ContactModal({
                 href={creditor.support_url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center justify-center gap-2 min-h-[48px] text-sm font-semibold text-brand hover:underline"
-              >
+                className="flex items-center justify-center gap-2 min-h-[48px] text-sm font-semibold text-brand hover:underline">
                 {helpPageLabel(creditor)}
                 <ExternalLink size={15} aria-hidden="true" />
                 <span className="sr-only">(opens in a new tab)</span>
               </a>
             )}
 
-            <p aria-live="polite" className="text-sm text-sage-600 empty:hidden">
+            <p
+              aria-live="polite"
+              className="text-sm text-sage-600 empty:hidden">
               {notice}
             </p>
             {error && (
               <p
                 role="alert"
-                className="text-sm text-warn-700 bg-warn-100 border border-warn-200 rounded-lg px-3 py-2.5"
-              >
+                className="text-sm text-warn-700 bg-warn-100 border border-warn-200 rounded-lg px-3 py-2.5">
                 {error}
               </p>
             )}
@@ -575,8 +583,7 @@ export default function ContactModal({
                   <button
                     onClick={confirmSent}
                     disabled={isSaving}
-                    className="flex-1 min-h-[48px] bg-sage-600 hover:bg-sage-700 text-white font-semibold rounded-pill disabled:opacity-50 text-sm transition-colors"
-                  >
+                    className="flex-1 min-h-[48px] bg-sage-600 hover:bg-sage-700 text-white font-semibold rounded-pill disabled:opacity-50 text-sm transition-colors">
                     {isSaving ? "Saving…" : "Yes, I sent it"}
                   </button>
                   <button
@@ -586,8 +593,7 @@ export default function ContactModal({
                         "No problem. Your message is still here when you're ready.",
                       );
                     }}
-                    className="flex-1 min-h-[48px] bg-mint-100 hover:bg-mint-200 text-sage-700 font-medium rounded-pill border border-mint-200 text-sm transition-colors"
-                  >
+                    className="flex-1 min-h-[48px] bg-mint-100 hover:bg-mint-200 text-sage-700 font-medium rounded-pill border border-mint-200 text-sm transition-colors">
                     Not yet
                   </button>
                 </div>
