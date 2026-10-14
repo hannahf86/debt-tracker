@@ -54,6 +54,42 @@ Holding somebody's debt history forever, for a service they've stopped using, ha
 Proposed: **keep it for 12 months after the free period ends, email before deleting, then delete.**
 This needs to go in the privacy notice and the ROPA.
 
+## Beta closes Monday 1 March 2027
+
+Decided 14 October 2026. A Monday rather than Sunday 28 February, so that if
+flipping public signups goes wrong there is somebody awake to deal with it.
+
+**The date is not when money starts arriving.** Everyone who joins after launch
+gets 90 days, so the earliest possible first payment is around **29 May 2027**.
+Closing beta starts the clock; it doesn't start the income.
+
+### What has to be true that morning
+
+- [ ] **Terms of Use published** at `/terms`. Drafts exist in
+      `Mirian_GDPR_Policy_Drafts.docx` and have never been on the site. Money
+      cannot be taken without them, and a solicitor's turnaround isn't under
+      our control, so **start this in January**, not February.
+- [ ] **Stripe live**: account, a payment link, and something that sets
+      `paid_until` when money lands. Until that exists the "start adding
+      payments again" button has nowhere to go.
+- [ ] **FAQ reworded.** "Free while it's being tested" stops being true that
+      day, on the homepage and in the FAQ schema.
+- [ ] **Testers told**, a week or so beforehand. They keep it free for life;
+      nobody should learn their status changed by reading a web page.
+- [ ] **Public signups reopened** in Supabase, with Turnstile already on and
+      the invite-only message removed from `/api/auth/signup`.
+- [ ] **Privacy notice** carries the retention answer for people who never pay
+      (12 months, then deleted, with an email first).
+
+### Roughly how the months go
+
+| When | What |
+| --- | --- |
+| Nov–Dec 2026 | Testers using it. Collect what breaks and what confuses. |
+| Jan 2027 | Act on the feedback. Start the solicitor conversation on Terms. |
+| Feb 2027 | Stripe, Terms published, a full run-through of paying as a stranger would. |
+| Mon 1 Mar 2027 | Signups open. Beta over. |
+
 ## Money
 
 At £5/month, roughly **£4.70–£4.75** arrives, depending on the route:
