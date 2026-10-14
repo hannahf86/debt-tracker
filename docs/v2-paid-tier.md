@@ -85,17 +85,72 @@ asked for money.
 
 "Not now" must be a real option that leaves them somewhere useful, not a dead end.
 
+## Decided (Hannah, 2026-10-14)
+
+### Testers get it free, permanently
+
+A `tester` role with free access for life. Twenty places, plus Hannah's own account
+(`hannahmfeehan@gmail.com`) — 21 in total. Nobody should pay to use their own app, and the people who
+put up with the rough edges shouldn't either.
+
+**One thing to settle before this is built: how the role is granted.**
+
+"The first 20 sign-ups" is the obvious reading, but September is the argument against it — a script
+made dozens of accounts in a weekend. If the first twenty rows win the prize, the first twenty rows
+could be bots, and the real testers arrive to find the places gone.
+
+Two safer versions, either fine:
+
+1. **Granted by hand.** Hannah sets the role in Supabase for each tester. At twenty people that is
+   twenty clicks, once, and it cannot be gamed.
+2. **Automatic, but only for invited accounts.** The role is granted on first sign-in if the account
+   came from a Supabase invite and fewer than 20 exist. Bot-proof, because a public signup can never
+   qualify — and it matches the invite-only round being run anyway.
+
+Recommendation: (2) if the round stays invite-only, (1) if signups reopen first. Not (0) — a count
+of rows in `auth.users`.
+
+### Payment: Stripe Checkout
+
+Hosted by Stripe, so no card details ever reach Mirian and the PCI surface stays theirs. One-off
+payments rather than a Stripe subscription — a subscription object exists to renew itself, which is
+the thing being avoided.
+
+### Where entitlement lives
+
+On the profile row in `public.users`, which already exists:
+
+```
+role        text not null default 'user'   -- 'user' | 'tester'
+paid_until  date                           -- null until they first pay
+trial_ends  date                           -- set at signup, 90 days out
+```
+
+Three rules, all applied **server-side in `pages/api`**, never in the browser:
+
+```
+free       = role = 'tester'
+in trial   = today <= trial_ends
+paid       = paid_until is not null and today <= paid_until
+can write  = free or in trial or paid
+```
+
+A check in the browser is a suggestion; the browser is the attacker's computer. The gate belongs in
+the handlers that write — `/api/payments` and `/api/debts` — and nowhere else, because reads,
+exports and deletion stay open to everyone (see above, that part is law).
+
+The UI should of course *also* know, so it can show the right thing rather than letting someone fill
+in a form that gets refused. But the UI knowing is a courtesy; the API knowing is the limit.
+
+### Paying late
+
+The paid period runs from the day the payment is made, never from when the last one lapsed. Nobody
+is billed for a gap in which they got nothing. `paid_until = max(today, paid_until) + 1 month`.
+
 ## Still to decide
 
-- **Existing testers.** The FAQ promises "free while it's in development". Recommendation: free
-  permanently for anyone who joined during testing. It costs almost nothing and buys the kind of
-  goodwill people talk about.
-- **How a payment is taken** — Stripe Checkout is the least work and holds no card details on our
-  side. Needs deciding before any of this is built.
-- **How "paid until" is stored.** Probably a date on the user, checked server-side. It must be
-  checked in `pages/api`, not in the browser, or it's a suggestion rather than a limit.
-- **What happens to someone mid-month who pays late.** Simplest honest answer: the paid period runs
-  from the day they pay, not from when the last one lapsed. Never bill for the gap.
+- **Existing testers' promise.** The FAQ currently says "free while it's in development" — that
+  wording should be made to match the tester role before anyone reads it as a promise about price.
 
 ## Not this
 
