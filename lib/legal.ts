@@ -19,8 +19,8 @@ export const LEGAL = {
    * CONFIRM: the solicitor drafts leave this blank.
    */
   contactEmail: "hello@mirian-debt-tracker.app",
-  /** ICO data protection fee registration number, once registered. */
-  icoRegistration: null as string | null,
+  /** ICO data protection fee registration number. Registered 14 October 2026. */
+  icoRegistration: "C2059405" as string | null,
   /** Where the Supabase project is hosted (eu-central-1). */
   databaseRegion: "Frankfurt, Germany" as string | null,
   lastUpdated: "14 October 2026",
