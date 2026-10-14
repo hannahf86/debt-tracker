@@ -203,6 +203,12 @@ export default function DashboardPage() {
             </button>
           </div>
 
+          {/* People don't try clicking a month unless told they can, and
+              backfilling is the thing that makes the year feel like theirs. */}
+          <p className="text-sm text-sage-600 -mt-4 mb-5">
+            Already paid some of these? Tap any month to add what you paid — it fills in your year without changing what you owe now.
+          </p>
+
           <div className="grid grid-cols-6 sm:grid-cols-12 gap-2 sm:gap-3">
             {months.map((month, idx) => {
               const monthStatus = isTrackerLoading
@@ -224,18 +230,17 @@ export default function DashboardPage() {
                   </div>
                   <button
                     onClick={() => {
-                      const isCurrentMonth = idx === new Date().getMonth();
-                      if (
-                        isCurrentMonth ||
-                        (monthStatus !== "future" &&
-                          monthStatus !== "before-signup")
-                      ) {
+                      /* Any month that has already happened opens, including
+                         the ones before you joined — logging what you paid
+                         back then is exactly what people want to do here. Only
+                         months that haven't arrived yet stay shut. */
+                      if (monthStatus !== "future") {
                         router.push(`/tracker/${idx + 1}`);
                       }
                     }}
                     className={`w-full aspect-square max-w-12 rounded-lg border flex items-center justify-center transition-all focus:outline-none hover:-translate-y-0.5 hover:shadow-md ${
                       monthStatus === "before-signup"
-                        ? "bg-peach-100/30 border-peach-200/50 text-peach-300 cursor-default"
+                        ? "bg-peach-100/30 border-peach-200/50 text-peach-300 cursor-pointer hover:bg-peach-100/60"
                         : monthStatus === "current"
                           ? "bg-now-100 border-now-200 text-now-600 cursor-pointer hover:bg-now-200 shadow-sm"
                           : monthStatus === "paid"

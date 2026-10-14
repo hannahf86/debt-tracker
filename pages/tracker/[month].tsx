@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
-import { useTracker, getDebtMonthStatus } from "@/lib/hooks/useTracker";
+import { useTracker, debtMonthStatus } from "@/lib/hooks/useTracker";
 import { Check, Minus, ChevronRight, CheckCircle } from "lucide-react";
 import LogPaymentModal from "@/components/LogPaymentModal";
 import MobileMonth from "@/components/mobile/MobileMonth";
@@ -106,8 +106,18 @@ export default function MonthTrackerPage() {
     );
   }
 
+  /* A month before any of these debts existed: nothing was due, so neither
+     the celebration nor the question marks belong. */
+  const beforeAnyDebt =
+    data.debts.length > 0 &&
+    data.debts.every(
+      (debt) =>
+        debtMonthStatus(debt, data.payments, monthIndex, year, "before-signup") ===
+        "before-signup",
+    );
+
   const allGood = data.debts.every((debt) => {
-    const status = getDebtMonthStatus(debt, data.payments, monthIndex, year);
+    const status = debtMonthStatus(debt, data.payments, monthIndex, year);
     return status === "paid";
   });
 
@@ -125,6 +135,7 @@ export default function MonthTrackerPage() {
           debts={data.debts}
           details={debtDetails}
           onLogPayment={setLogPaymentDebt}
+          beforeAnyDebt={beforeAnyDebt}
         />
       </div>
 
@@ -142,11 +153,13 @@ export default function MonthTrackerPage() {
             {monthNames[monthIndex]} {year}
           </h1>
           <p className="text-sage-500 text-sm">
-            Here's the full picture for this month
+            {beforeAnyDebt
+              ? "This is before you started tracking. Nothing was missed — but if you paid something, you can add it."
+              : "Here's the full picture for this month"}
           </p>
         </div>
 
-        {allGood && (
+        {allGood && !beforeAnyDebt && (
           <div className="bg-ok-100 border border-ok-200 rounded-2xl p-6 text-center mb-6">
             <div className="flex items-center justify-center w-16 h-16 mx-auto mb-3 rounded-pill bg-ok-100 border border-ok-200 text-ok-600">
               <CheckCircle size={32} />
@@ -169,11 +182,24 @@ export default function MonthTrackerPage() {
                 ? details.payments.reduce((sum, p) => sum + p.amount, 0) <
                   debt.monthly_amount
                 : false;
-            const displayStatus = !hasPayments
-              ? "missed"
-              : isPartial
-                ? "partial"
-                : "paid";
+            /* The shared rule, so a month from before this debt existed reads
+               as "nothing was expected" rather than "you missed it". Logging a
+               payment here is backfilling, not catching up. */
+            const monthStatus = debtMonthStatus(
+              debt,
+              data.payments,
+              monthIndex,
+              year,
+              "before-signup",
+            );
+            const displayStatus =
+              monthStatus === "before-signup"
+                ? "before-signup"
+                : !hasPayments
+                  ? "missed"
+                  : isPartial
+                    ? "partial"
+                    : "paid";
 
             return (
               <div
@@ -193,8 +219,8 @@ export default function MonthTrackerPage() {
                     className={`w-8 h-8 rounded-lg border flex items-center justify-center ${
                       displayStatus === "paid"
                         ? "bg-ok-100 border-ok-200 text-ok-600"
-                        : displayStatus === "partial"
-                          ? "bg-warn-100 border-warn-200 text-warn-600"
+                        : displayStatus === "before-signup"
+                          ? "bg-peach-100/50 border-peach-200 text-peach-300"
                           : "bg-warn-100 border-warn-200 text-warn-600"
                     }`}
                   >
@@ -202,6 +228,9 @@ export default function MonthTrackerPage() {
                     {displayStatus === "partial" && <Minus size={14} />}
                     {displayStatus === "missed" && (
                       <span className="text-sm font-bold">?</span>
+                    )}
+                    {displayStatus === "before-signup" && (
+                      <span className="text-xs">&mdash;</span>
                     )}
                   </div>
                 </div>

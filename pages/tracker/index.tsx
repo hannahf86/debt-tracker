@@ -162,8 +162,9 @@ export default function YearlyTrackerPage() {
                         "before-signup",
                       );
 
-                      const isClickable =
-                        status !== "future" && status !== "before-signup";
+                      // Months before signup open too: that's where a
+                      // backfilled payment goes.
+                      const isClickable = status !== "future";
 
                       return (
                         <td
@@ -176,7 +177,7 @@ export default function YearlyTrackerPage() {
                             }
                             className={`w-10 h-10 rounded-lg border flex items-center justify-center mx-auto transition-all ${
                               status === "before-signup"
-                                ? "bg-peach-100/50 border-peach-200 text-peach-300 cursor-default"
+                                ? "bg-peach-100/50 border-peach-200 text-peach-300 cursor-pointer hover:bg-peach-100"
                                 : status === "current"
                                   ? "bg-now-100 border-now-200 text-now-600 hover:bg-now-200 cursor-pointer"
                                   : status === "paid"

@@ -50,12 +50,15 @@ export default function MobileMonth({
   debts,
   details,
   onLogPayment,
+  beforeAnyDebt = false,
 }: {
   monthName: string;
   year: number;
   debts: Debt[];
   details: MonthDetails;
   onLogPayment: (debt: Debt) => void;
+  /** This month predates every debt: nothing was due, nothing was missed. */
+  beforeAnyDebt?: boolean;
 }) {
   const allGood =
     debts.length > 0 &&
@@ -71,11 +74,13 @@ export default function MobileMonth({
           {monthName} {year}
         </h1>
         <p className="text-sm text-sage-500 mt-1">
-          The full picture for this month
+          {beforeAnyDebt
+            ? "This is before you started tracking. Nothing was missed — but if you paid something, you can add it."
+            : "The full picture for this month"}
         </p>
       </header>
 
-      {allGood && (
+      {allGood && !beforeAnyDebt && (
         <div className="bg-ok-100 border border-ok-200 rounded-2xl px-5 py-6 text-center">
           <span
             className="flex items-center justify-center w-14 h-14 mx-auto mb-3 rounded-pill border border-ok-200 text-ok-600"

@@ -264,6 +264,9 @@ export default function MobileDashboard({
             Tracker →
           </button>
         </div>
+        <p className="px-4 pb-3 text-sm text-sage-600">
+          Already paid some of these? Tap any month to add what you paid — it fills in your year without changing what you owe now.
+        </p>
         <div className="flex gap-2 px-4 pb-1 overflow-x-auto no-scrollbar">
           {MONTHS.map((month, idx) => {
             const status: MonthStatus = isLoading
