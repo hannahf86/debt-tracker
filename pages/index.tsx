@@ -1101,6 +1101,108 @@ export default function HomePage() {
           </div>
         </Section>
 
+        {/* ---------- What it costs ---------- */}
+        <Section background="rgb(var(--white))" label="What it costs">
+          <div style={{ maxWidth: 1120, margin: "0 auto", padding: "84px 24px" }}>
+            <div style={{ maxWidth: "60ch", marginBottom: 44 }}>
+              <Eyebrow>What it costs</Eyebrow>
+              <h2 style={{ ...SECTION_HEADING, margin: "0 0 14px" }}>
+                Nothing yet, and never without you saying so
+              </h2>
+              <p style={{ fontSize: 18, color: "rgb(var(--ink-700))", margin: 0 }}>
+                Plenty of people reading this have been caught by something that
+                quietly renewed. Mirian can&rsquo;t do that to you, because it
+                never holds your card.
+              </p>
+            </div>
+
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fit,minmax(290px,1fr))",
+                gap: 20,
+                marginBottom: 36,
+              }}
+            >
+              {PRICING.map((item, i) => (
+                <div
+                  key={item.title}
+                  style={{
+                    background: "rgb(var(--paper))",
+                    border: "1px solid rgb(var(--line-200))",
+                    borderRadius: "var(--radius-xl)",
+                    padding: 24,
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: 10,
+                  }}
+                >
+                  <div
+                    style={{
+                      fontSize: 13,
+                      fontWeight: 700,
+                      letterSpacing: ".08em",
+                      textTransform: "uppercase",
+                      color: "rgb(var(--teal-700))",
+                    }}
+                  >
+                    {i === 0 ? "Now" : i === 1 ? "Then" : "After that"}
+                  </div>
+                  <h3
+                    style={{
+                      fontFamily: "var(--font-display)",
+                      fontSize: 19,
+                      fontWeight: 700,
+                      color: "rgb(var(--ink-900))",
+                      margin: 0,
+                      lineHeight: 1.3,
+                    }}
+                  >
+                    {item.title}
+                  </h3>
+                  <p style={{ fontSize: 16, color: "rgb(var(--ink-500))", margin: 0 }}>
+                    {item.body}
+                  </p>
+                </div>
+              ))}
+            </div>
+
+            {/* The part most services don't say out loud. */}
+            <div
+              style={{
+                background: "rgb(var(--ice-100))",
+                border: "1px solid rgb(var(--line-200))",
+                borderRadius: "var(--radius-xl)",
+                padding: "24px 26px",
+                maxWidth: "70ch",
+              }}
+            >
+              <h3
+                style={{
+                  fontFamily: "var(--font-display)",
+                  fontSize: 19,
+                  fontWeight: 700,
+                  color: "rgb(var(--ink-900))",
+                  margin: "0 0 10px",
+                }}
+              >
+                And if you don&rsquo;t pay
+              </h3>
+              <p style={{ fontSize: 17, color: "rgb(var(--ink-700))", margin: "0 0 10px" }}>
+                Your record stays yours. You can still sign in, read every
+                payment you&rsquo;ve logged, download the lot as a PDF, and
+                delete your account whenever you like. You just can&rsquo;t add
+                new payments until you pay &mdash; and you can come back and do
+                that any time, with nothing owed for the months in between.
+              </p>
+              <p style={{ fontSize: 17, color: "rgb(var(--ink-700))", margin: 0 }}>
+                Nobody gets locked out of their own history for being short this
+                month. That would be a strange thing for a debt tracker to do.
+              </p>
+            </div>
+          </div>
+        </Section>
+
         {/* ---------- Testimonials (clearly labelled as samples) ---------- */}
         <Section background="rgb(var(--white))" label="What people say">
           <div style={{ maxWidth: 1120, margin: "0 auto", padding: "84px 24px" }}>
@@ -1260,108 +1362,6 @@ export default function HomePage() {
               <span style={{ fontSize: 16, color: "rgb(var(--ink-500))" }}>
                 A sentence is plenty.
               </span>
-            </div>
-          </div>
-        </Section>
-
-        {/* ---------- What it costs ---------- */}
-        <Section background="rgb(var(--white))" label="What it costs">
-          <div style={{ maxWidth: 1120, margin: "0 auto", padding: "84px 24px" }}>
-            <div style={{ maxWidth: "60ch", marginBottom: 44 }}>
-              <Eyebrow>What it costs</Eyebrow>
-              <h2 style={{ ...SECTION_HEADING, margin: "0 0 14px" }}>
-                Nothing yet, and never without you saying so
-              </h2>
-              <p style={{ fontSize: 18, color: "rgb(var(--ink-700))", margin: 0 }}>
-                Plenty of people reading this have been caught by something that
-                quietly renewed. Mirian can&rsquo;t do that to you, because it
-                never holds your card.
-              </p>
-            </div>
-
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: "repeat(auto-fit,minmax(290px,1fr))",
-                gap: 20,
-                marginBottom: 36,
-              }}
-            >
-              {PRICING.map((item, i) => (
-                <div
-                  key={item.title}
-                  style={{
-                    background: "rgb(var(--paper))",
-                    border: "1px solid rgb(var(--line-200))",
-                    borderRadius: "var(--radius-xl)",
-                    padding: 24,
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: 10,
-                  }}
-                >
-                  <div
-                    style={{
-                      fontSize: 13,
-                      fontWeight: 700,
-                      letterSpacing: ".08em",
-                      textTransform: "uppercase",
-                      color: "rgb(var(--teal-700))",
-                    }}
-                  >
-                    {i === 0 ? "Now" : i === 1 ? "Then" : "After that"}
-                  </div>
-                  <h3
-                    style={{
-                      fontFamily: "var(--font-display)",
-                      fontSize: 19,
-                      fontWeight: 700,
-                      color: "rgb(var(--ink-900))",
-                      margin: 0,
-                      lineHeight: 1.3,
-                    }}
-                  >
-                    {item.title}
-                  </h3>
-                  <p style={{ fontSize: 16, color: "rgb(var(--ink-500))", margin: 0 }}>
-                    {item.body}
-                  </p>
-                </div>
-              ))}
-            </div>
-
-            {/* The part most services don't say out loud. */}
-            <div
-              style={{
-                background: "rgb(var(--ice-100))",
-                border: "1px solid rgb(var(--line-200))",
-                borderRadius: "var(--radius-xl)",
-                padding: "24px 26px",
-                maxWidth: "70ch",
-              }}
-            >
-              <h3
-                style={{
-                  fontFamily: "var(--font-display)",
-                  fontSize: 19,
-                  fontWeight: 700,
-                  color: "rgb(var(--ink-900))",
-                  margin: "0 0 10px",
-                }}
-              >
-                And if you don&rsquo;t pay
-              </h3>
-              <p style={{ fontSize: 17, color: "rgb(var(--ink-700))", margin: "0 0 10px" }}>
-                Your record stays yours. You can still sign in, read every
-                payment you&rsquo;ve logged, download the lot as a PDF, and
-                delete your account whenever you like. You just can&rsquo;t add
-                new payments until you pay &mdash; and you can come back and do
-                that any time, with nothing owed for the months in between.
-              </p>
-              <p style={{ fontSize: 17, color: "rgb(var(--ink-700))", margin: 0 }}>
-                Nobody gets locked out of their own history for being short this
-                month. That would be a strange thing for a debt tracker to do.
-              </p>
             </div>
           </div>
         </Section>
