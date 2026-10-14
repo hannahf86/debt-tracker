@@ -27,3 +27,20 @@ export function describeDbError(error: unknown, fallback: string): string {
       return fallback;
   }
 }
+
+/**
+ * Supabase refuses passwords found in known breaches ("Prevent use of leaked
+ * passwords"). Its own message calls the password weak, which reads as a telling
+ * off for choosing badly — when the real meaning is that this password is
+ * already on a list criminals use. Say that instead, and say what to do.
+ */
+export function describePasswordError(message: string | undefined): string | null {
+  if (!message) return null;
+  if (/pwned|leaked|known to be weak|easy to guess/i.test(message)) {
+    return "That password has turned up in a past data breach somewhere online, so it isn't safe to use here. Three random words you'll remember make a good one.";
+  }
+  if (/at least|too short|length/i.test(message)) {
+    return "Please use at least 8 characters.";
+  }
+  return null;
+}

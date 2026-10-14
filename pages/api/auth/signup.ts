@@ -1,6 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { createClient } from "@supabase/supabase-js";
 import { originFrom } from "@/lib/appOrigin";
+import { describePasswordError } from "@/lib/dbError";
 import {
   clientIp,
   isDisposableEmail,
@@ -101,6 +102,9 @@ export default async function handler(
   if (error) {
     /* Signups being closed in the dashboard is a setting, not a fault. Say so
        in plain words rather than passing Supabase's wording through. */
+    const kinder = describePasswordError(error.message);
+    if (kinder) return res.status(400).json({ error: kinder });
+
     if (/captcha/i.test(error.message)) {
       return res.status(400).json({
         error:

@@ -6,6 +6,7 @@ import Link from "next/link";
 import { supabase } from "@/lib/supabase";
 import { AlertCircle } from "lucide-react";
 import Seo from "@/components/Seo";
+import { describePasswordError } from "@/lib/dbError";
 
 type Status = "checking" | "ready" | "invalid";
 
@@ -54,7 +55,7 @@ export default function ResetPasswordPage() {
     const { error: updateError } = await supabase.auth.updateUser({ password });
 
     if (updateError) {
-      setError(updateError.message);
+      setError(describePasswordError(updateError.message) ?? updateError.message);
       setIsSaving(false);
       return;
     }
