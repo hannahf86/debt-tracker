@@ -17,6 +17,13 @@ export default function SignupPage() {
   const [isLoading, setIsLoading] = useState(false);
   // Set once the account is created; replaces the form with the inbox prompt.
   const [sentTo, setSentTo] = useState<string | null>(null);
+  /**
+   * False when Supabase has confirmed the account itself, which it does when
+   * "Confirm email" is switched off in the dashboard. Telling someone to check
+   * an inbox then is a lie, and it leaves them stuck waiting for a link that
+   * was never sent.
+   */
+  const [needsConfirming, setNeedsConfirming] = useState(true);
   // Spam defences a person never sees: a field only a bot fills in, and how
   // long the form has been open.
   const [website, setWebsite] = useState("");
@@ -69,6 +76,7 @@ export default function SignupPage() {
       // Stay on this page rather than sending them to a sign-in form they
       // can't use yet. The email link lands on /auth/callback, which is the
       // route to sign in once confirmed.
+      setNeedsConfirming(data.confirmationRequired !== false);
       setSentTo(email);
       setIsLoading(false);
     } catch (err) {
@@ -99,20 +107,40 @@ export default function SignupPage() {
           {sentTo ? (
             <div className="bg-white border border-mint-200 rounded-2xl p-8 shadow-sm text-center">
               <h1 className="text-xl font-semibold text-sage-800 mb-2">
-                Check your inbox
+                {needsConfirming ? "Check your inbox" : "Your account is ready"}
               </h1>
-              <p className="text-sage-600 text-sm mb-4">
-                We&rsquo;ve sent a link to{" "}
-                <span className="font-semibold text-sage-800 break-all">
-                  {sentTo}
-                </span>
-                . Click it to confirm your email, and you&rsquo;ll be taken
-                straight to sign in.
-              </p>
-              <p className="text-sage-500 text-xs mb-6">
-                Nothing there after a few minutes? Check your spam or junk
-                folder.
-              </p>
+              {needsConfirming ? (
+                <>
+                  <p className="text-sage-600 text-sm mb-4">
+                    We&rsquo;ve sent a link to{" "}
+                    <span className="font-semibold text-sage-800 break-all">
+                      {sentTo}
+                    </span>
+                    . Click it to confirm your email, and you&rsquo;ll be taken
+                    straight to sign in.
+                  </p>
+                  <p className="text-sage-500 text-xs mb-6">
+                    Nothing there after a few minutes? Check your spam or junk
+                    folder.
+                  </p>
+                </>
+              ) : (
+                <>
+                  <p className="text-sage-600 text-sm mb-4">
+                    No email needed — you can sign in now with{" "}
+                    <span className="font-semibold text-sage-800 break-all">
+                      {sentTo}
+                    </span>
+                    .
+                  </p>
+                  <Link
+                    href="/auth/login"
+                    className="inline-flex items-center justify-center min-h-[48px] px-6 mb-6 bg-sage-600 hover:bg-sage-700 text-white font-semibold rounded-pill transition-all"
+                  >
+                    Sign in
+                  </Link>
+                </>
+              )}
               <button
                 type="button"
                 onClick={() => {
