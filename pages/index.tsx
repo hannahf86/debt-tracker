@@ -1296,35 +1296,83 @@ export default function HomePage() {
               ))}
             </div>
 
-            {/* The part most services don't say out loud. */}
+            {/* The part most services don't say out loud. Full width and
+                broken into a list: it's the paragraph people most need to
+                believe, so it shouldn't be the hardest one to read. */}
             <div
               style={{
                 background: "rgb(var(--ice-100))",
                 border: "1px solid rgb(var(--line-200))",
                 borderRadius: "var(--radius-xl)",
-                padding: "24px 26px",
-                maxWidth: "70ch",
+                padding: "clamp(24px,3vw,34px)",
               }}
             >
               <h3
                 style={{
                   fontFamily: "var(--font-display)",
-                  fontSize: 19,
+                  fontSize: 22,
                   fontWeight: 700,
                   color: "rgb(var(--ink-900))",
-                  margin: "0 0 10px",
+                  margin: "0 0 14px",
                 }}
               >
                 And if you don&rsquo;t pay
               </h3>
-              <p style={{ fontSize: 17, color: "rgb(var(--ink-700))", margin: "0 0 10px" }}>
-                Your record stays yours. You can still sign in, read every
-                payment you&rsquo;ve logged, download the lot as a PDF, and
-                delete your account whenever you like. You just can&rsquo;t add
-                new payments until you pay, and you can come back and do
-                that any time, with nothing owed for the months in between.
+
+              <p
+                style={{
+                  fontSize: 19,
+                  lineHeight: 1.6,
+                  color: "rgb(var(--ink-900))",
+                  margin: "0 0 14px",
+                  fontWeight: 600,
+                }}
+              >
+                Your record stays yours.
               </p>
-              <p style={{ fontSize: 17, color: "rgb(var(--ink-700))", margin: 0 }}>
+
+              <ul
+                style={{
+                  margin: "0 0 18px",
+                  paddingLeft: 22,
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: 8,
+                  fontSize: 18,
+                  lineHeight: 1.6,
+                  color: "rgb(var(--ink-700))",
+                }}
+              >
+                <li>Sign in whenever you like.</li>
+                <li>Read every payment you have ever logged.</li>
+                <li>Download the lot as a PDF.</li>
+                <li>Delete your account, and everything in it, at any time.</li>
+              </ul>
+
+              <p
+                style={{
+                  fontSize: 18,
+                  lineHeight: 1.6,
+                  color: "rgb(var(--ink-700))",
+                  margin: "0 0 12px",
+                  maxWidth: "62ch",
+                }}
+              >
+                The only thing that stops is adding new payments. Come back and
+                pay whenever you are ready, and nothing is owed for the months
+                in between.
+              </p>
+
+              <p
+                style={{
+                  fontSize: 18,
+                  lineHeight: 1.6,
+                  color: "rgb(var(--ink-900))",
+                  margin: 0,
+                  maxWidth: "62ch",
+                  fontWeight: 600,
+                }}
+              >
                 Nobody gets locked out of their own history for being short this
                 month. That would be a strange thing for a debt tracker to do.
               </p>
