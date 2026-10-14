@@ -11,6 +11,7 @@ export default function ForgotPasswordPage() {
   // How long the form has been open; a script answers instantly.
   const openedAt = useRef(Date.now());
   const [captchaToken, setCaptchaToken] = useState("");
+  const [captchaRound, setCaptchaRound] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [sent, setSent] = useState(false);
 
@@ -25,6 +26,8 @@ export default function ForgotPasswordPage() {
       body: JSON.stringify({ email, startedAt: openedAt.current, captchaToken }),
     }).catch(() => {});
 
+    setCaptchaToken("");
+    setCaptchaRound((n) => n + 1);
     setIsLoading(false);
     setSent(true);
   };
@@ -93,7 +96,7 @@ export default function ForgotPasswordPage() {
                     />
                   </div>
 
-                  <Turnstile onToken={setCaptchaToken} />
+                  <Turnstile onToken={setCaptchaToken} resetKey={captchaRound} />
 
                   <button
                     type="submit"

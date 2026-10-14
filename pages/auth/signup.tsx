@@ -19,6 +19,7 @@ export default function SignupPage() {
   // long the form has been open.
   const [website, setWebsite] = useState("");
   const [captchaToken, setCaptchaToken] = useState("");
+  const [captchaRound, setCaptchaRound] = useState(0);
   const openedAt = useRef(Date.now());
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -55,6 +56,9 @@ export default function SignupPage() {
 
       if (!response.ok) {
         setError(data.error || "Something went wrong");
+        // Spent token: without a new one the button never comes back.
+        setCaptchaToken("");
+        setCaptchaRound((n) => n + 1);
         setIsLoading(false);
         return;
       }
@@ -193,7 +197,7 @@ export default function SignupPage() {
               </div>
 
 
-              <Turnstile onToken={setCaptchaToken} />
+              <Turnstile onToken={setCaptchaToken} resetKey={captchaRound} />
 
               {/* Hidden from people, irresistible to bots */}
               <div aria-hidden="true" className="absolute -left-[9999px]">

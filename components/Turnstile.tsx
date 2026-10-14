@@ -61,9 +61,16 @@ function loadScript(): Promise<void> {
 
 export default function Turnstile({
   onToken,
+  resetKey = 0,
 }: {
   /** Called with a token when the check passes, and "" when it expires. */
   onToken: (token: string) => void;
+  /**
+   * Bump this to make the widget run again. A token is good for exactly one
+   * attempt, so after any failed submission the page needs a fresh one —
+   * without this the form sits there waiting for a token that never comes.
+   */
+  resetKey?: number;
 }) {
   const holder = useRef<HTMLDivElement | null>(null);
   const widgetId = useRef<string | null>(null);
@@ -100,6 +107,14 @@ export default function Turnstile({
     // tear the widget down mid-check.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    if (!resetKey || !widgetId.current || !window.turnstile) return;
+    onToken("");
+    window.turnstile.reset(widgetId.current);
+    // onToken is a setter; including it would reset on every render.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [resetKey]);
 
   if (!turnstileEnabled()) return null;
 

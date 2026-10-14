@@ -14,6 +14,8 @@ export default function LoginPage() {
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [captchaToken, setCaptchaToken] = useState("");
+  // Bumped after a failed attempt, so the widget issues a new token.
+  const [captchaRound, setCaptchaRound] = useState(0);
 
   const message = router.query.message as string;
 
@@ -43,6 +45,7 @@ export default function LoginPage() {
       );
       // A token is good for one attempt; a second try needs a fresh one.
       setCaptchaToken("");
+      setCaptchaRound((n) => n + 1);
       setIsLoading(false);
       return;
     }
@@ -122,7 +125,7 @@ export default function LoginPage() {
                 />
               </div>
 
-              <Turnstile onToken={setCaptchaToken} />
+              <Turnstile onToken={setCaptchaToken} resetKey={captchaRound} />
 
               <button
                 type="submit"
