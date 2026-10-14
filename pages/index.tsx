@@ -82,8 +82,8 @@ const RESEARCH = [
 const FEATURES: { icon: LucideIcon; title: string; body: string }[] = [
   {
     icon: CheckCircle,
-    title: "Four honest payment states",
-    body: "Paid on time, late, part paid, or part paid and late. Not a tick box that calls half a payment a failure.",
+    title: "Four honest payment states, not a tick box",
+    body: "Paid on time, late, part paid, or part paid and late. Each one has a word and a glyph, so you can read a year at a glance without decoding colours. Overpayments are recorded too, and they move your date forward.",
   },
   {
     icon: Pencil,
@@ -93,22 +93,22 @@ const FEATURES: { icon: LucideIcon; title: string; body: string }[] = [
   {
     icon: Coins,
     title: "Partial and overpayments",
-    body: "Pay £20 or pay double. Both get recorded properly, and overpayments pull your date closer.",
+    body: "Pay £20 or pay double. Both get recorded properly, and overpayments pull your debt-free date closer.",
   },
   {
     icon: CalendarRange,
-    title: "Due dates per debt",
-    body: "Each debt keeps its own direct debit date, so you can see the month ahead without opening a bank app.",
+    title: "Track multiple debts, each with its own due date",
+    body: "Credit cards, overdrafts, loans, catalogues, energy and council tax arrears. Each debt keeps its own direct debit date, so you can see the month ahead without opening a bank app.",
   },
   {
     icon: Clock,
-    title: "A debt-free date, front and centre",
-    body: "The one number that actually motivates: when this ends. It updates as you log.",
+    title: "Your debt-free date, front and centre",
+    body: "The one number that actually motivates: when will I be debt free? Mirian answers that, and the date updates every time you log a payment.",
   },
   {
     icon: Landmark,
-    title: "Arrangements and contacts",
-    body: "Plan in place, needs setting up, awaiting response — plus the creditor's number, kept with the debt.",
+    title: "Payment arrangements and creditor contacts",
+    body: "Plan in place, needs setting up, awaiting response, plus the creditor's number, kept with the debt.",
   },
 ];
 
@@ -127,12 +127,10 @@ const NEXT_UP: { icon: LucideIcon; title: string; body: string }[] = [
   {
     icon: FileText,
     title: "A record you can hand over",
-    body: "Every payment and every message, as one file you can print or send. For the times someone asks you to prove it.",
+    body: "Every payment and every message, as one file you can print or send to a creditor, debt adviser or DMP provider. For the times someone asks you to prove it.",
   },
 ];
 
-/* Each step shows the screen it describes. Words alone leave out the people
-   who need to see the thing before they will believe it. */
 const STEPS = [
   {
     n: "1",
@@ -155,7 +153,7 @@ const STEPS = [
   {
     n: "3",
     title: "Log payments your way",
-    body: "On time, late, part paid, overpaid — with a note if you want one.",
+    body: "On time, late, part paid or overpaid, with a note if you want one.",
     shot: "/how/step-3.png",
     w: 120,
     h: 160,
@@ -163,8 +161,8 @@ const STEPS = [
   },
   {
     n: "4",
-    title: "Watch the date come closer",
-    body: "Every payment you log moves your debt-free date. That's the whole reward.",
+    title: "Watch your debt-free date come closer",
+    body: "Every payment you log moves the date. That's the whole reward.",
     shot: "/how/step-4.png",
     w: 240,
     h: 129,
@@ -175,7 +173,7 @@ const STEPS = [
 const AUDIENCE = [
   "ADHD brains that need the number to be one number",
   "PDA brains that shut down when an app starts instructing",
-  "Anyone who's abandoned a budgeting app out of dread",
+  "Autistic brains that want a clear, predictable record with no surprises",
   "Anyone mid-way through a debt plan who wants a calmer record",
 ];
 
@@ -203,23 +201,55 @@ const QUOTES = [
 const FAQS = [
   {
     q: "Is my data private?",
-    a: "Yes. Your debts are yours — nothing is shared with creditors, credit reference agencies or anyone else, and Mirian never contacts anyone on your behalf.",
+    a: "Yes. Your debts are yours. Nothing is shared with creditors, credit reference agencies or anyone else, and Mirian never contacts anyone on your behalf.",
   },
   {
-    q: "Does using this affect my credit score?",
-    a: "No. Mirian is a private record of what you've paid. It doesn't touch your credit file and it can't report anything about you.",
+    q: "Does using a debt tracker affect my credit score?",
+    a: "No. Mirian doesn't run credit checks and never reports anything to credit reference agencies. What you log stays between you and the app.",
   },
   {
     q: "Can I track more than one debt?",
-    a: "As many as you have. Each one keeps its own monthly amount, due date, arrangement status and creditor contact details.",
+    a: "Yes, as many as you have. Credit cards, loans, overdrafts, catalogues, bills in arrears. Each keeps its own amount, due date and arrangement, and it costs the same however many debts you track.",
   },
   {
     q: "What if I miss a month?",
-    a: "Nothing happens. There's no streak to lose and no reminder that shames you. You can log it later, or log it as nothing paid — both are just facts.",
+    a: "Nothing happens. No alert, no red, no broken streak. When you're ready, log what you paid, even if it was less than usual, or late, and your debt-free date updates to match.",
+  },
+  {
+    q: "When will I be debt free?",
+    a: "Add your debts and what you pay each month, and Mirian works out your debt-free date for you. It moves every time you log a payment, so overpayments bring it closer and you always see an honest answer.",
+  },
+  {
+    q: "Can I track a debt management plan or IVA?",
+    a: "Yes. Add the plan as a debt, set the monthly amount and due date, and log payments as you make them. Mirian doesn't manage the plan or contact your provider. It's simply your own calm record of it.",
+  },
+  {
+    q: "Is Mirian an ADHD money app or a budgeting app?",
+    a: "It's a debt tracker built for ADHD and PDA brains, rather than a full budgeting app. It does one job, keeping track of what you owe and when it ends, so there's less to manage.",
   },
   {
     q: "Is it free?",
-    a: "Free while it's being tested. After that it's 90 days free and then £5 a month — and it never charges you automatically, because there's no card on file to charge. People who help test it keep it free.",
+    a: "It's free while Mirian is being tested, with no card needed. After that everyone gets 90 days free, then it's £5 a month for every feature. If you stop paying, you keep access to your record. You just can't log new payments until you come back.",
+  },
+  {
+    q: "Does Mirian give debt advice?",
+    a: "No. Mirian is a tracker, not an advice service. For free, confidential debt advice in the UK, contact StepChange, National Debtline or MoneyHelper.",
+  },
+];
+
+/* Already on a plan: the people who arrive part-way through. */
+const PLANS = [
+  {
+    title: "Debt management plan tracker",
+    body: "One monthly payment to your provider. Log it each month and watch the date move.",
+  },
+  {
+    title: "IVA payment tracker",
+    body: "Keep every payment and note in one place, for the years the IVA runs.",
+  },
+  {
+    title: "Payment arrangement tracker",
+    body: "In place, needs setting up, awaiting response. Know which is which at a glance.",
   },
 ];
 
@@ -314,7 +344,7 @@ const PRICING = [
   },
   {
     title: "Then 90 days free for everyone",
-    body: "Long enough to see a few months of payments land and watch the date move — which is the bit worth paying for.",
+    body: "Long enough to see a few months of payments land and watch the date move, which is the bit worth paying for.",
   },
   {
     title: "After that, £5 a month",
@@ -357,12 +387,14 @@ export default function HomePage() {
     <>
       <Seo
         bareTitle
-        title="Mirian — a debt tracker that doesn't tell you off"
-        description="A debt tracker built for ADHD and PDA brains. See a debt-free date instead of a running total, log part payments honestly, and never get told off."
+        title="Mirian: ADHD Debt Tracker App (UK) | Shame-Free Repayment"
+        description="A UK debt tracker built for ADHD and PDA brains. See your debt-free date, track multiple debts, log part and late payments, and never get told off."
+        ogTitle="Mirian: the ADHD debt tracker that doesn't tell you off"
+        ogDescription="A debt-free date instead of a running total. Built for ADHD and PDA brains, with honest payment states, no red and no streaks. Free while in testing."
         path="/"
       >
         {/* What the app is, and the questions this page answers. Both
-            describe what's actually on the page — nothing invented. */}
+            describe what's actually on the page, nothing invented. */}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(STRUCTURED_DATA) }}
@@ -388,7 +420,10 @@ export default function HomePage() {
               textAlign: "center",
             }}
           >
-            <div
+            {/* The H1 is this small line, not the big one: it names what the
+                thing is, which is what a search result wants. The headline
+                below is the sentence that makes someone stay. */}
+            <h1
               style={{
                 display: "inline-flex",
                 alignItems: "center",
@@ -400,14 +435,14 @@ export default function HomePage() {
                 fontSize: 13,
                 fontWeight: 600,
                 color: "rgb(var(--teal-700))",
-                marginBottom: 22,
+                margin: "0 0 22px",
               }}
             >
               <Sprout size={16} aria-hidden="true" />
-              Built for ADHD and PDA brains
-            </div>
+              The debt tracker for ADHD and PDA brains
+            </h1>
 
-            <h1
+            <p
               style={{
                 fontFamily: "var(--font-display)",
                 fontSize: "clamp(36px,5.4vw,60px)",
@@ -420,7 +455,7 @@ export default function HomePage() {
               }}
             >
               A debt-free date, not a running total of everything you owe
-            </h1>
+            </p>
 
             <p
               style={{
@@ -432,9 +467,10 @@ export default function HomePage() {
                 textWrap: "pretty",
               }}
             >
-              Mirian is a debt tracker for ADHD and PDA brains. Flexible,
-              non-punishing, judgment-free &mdash; and nothing on screen tells you
-              off.
+              Mirian is a UK debt tracker app for ADHD, PDA and autistic brains.
+              Track multiple debts, log part payments and late payments honestly,
+              and see exactly when you&rsquo;ll be debt free. Flexible,
+              non-punishing, judgment-free, and nothing on screen tells you off.
             </p>
 
             <div
@@ -452,6 +488,16 @@ export default function HomePage() {
                 See how it works
               </SiteButton>
             </div>
+
+            <p
+              style={{
+                fontSize: 15,
+                color: "rgb(var(--ink-500))",
+                margin: "16px 0 0",
+              }}
+            >
+              Free while in testing. No card needed.
+            </p>
           </div>
 
           {/* Three cards beneath, the date in the middle */}
@@ -658,7 +704,8 @@ export default function HomePage() {
                 double one month because a payday landed well.
               </p>
               <p style={{ fontSize: 18, color: "rgb(var(--ink-700))", margin: 0, maxWidth: "54ch" }}>
-                Mirian records what actually happened, and then gets out of your way.
+                Mirian is a debt repayment tracker that records what actually
+                happened, and then gets out of your way.
               </p>
             </div>
 
@@ -700,7 +747,7 @@ export default function HomePage() {
         <Section id="research" background="rgb(var(--paper-sunk))" label="The research">
           <div style={{ maxWidth: 1120, margin: "0 auto", padding: "84px 24px" }}>
             <div style={{ maxWidth: "60ch", marginBottom: 44 }}>
-              <Eyebrow>The research</Eyebrow>
+              <Eyebrow>ADHD, autism and debt: the research</Eyebrow>
               <h2 style={{ ...SECTION_HEADING, margin: 0 }}>
                 Almost everyone finds this harder. Almost nobody says so.
               </h2>
@@ -752,10 +799,22 @@ export default function HomePage() {
 
             <div style={{ maxWidth: "62ch" }}>
               <p style={{ fontSize: 18, color: "rgb(var(--ink-700))", margin: "0 0 16px" }}>
-                The gap isn&rsquo;t awareness. It&rsquo;s shame — overwhelm, anxiety and
+                The gap isn&rsquo;t awareness. It&rsquo;s shame. Overwhelm, anxiety and
                 stigma are the top reasons people go quiet at exactly the moment
-                support would help most.
+                support would help most. For a lot of people, that looks like
+                avoiding debt letters rather than opening them.
               </p>
+              <h3
+                style={{
+                  fontFamily: "var(--font-display)",
+                  fontSize: 20,
+                  fontWeight: 700,
+                  color: "rgb(var(--ink-900))",
+                  margin: "0 0 8px",
+                }}
+              >
+                PDA and money
+              </h3>
               <p style={{ fontSize: 18, color: "rgb(var(--ink-700))", margin: "0 0 16px" }}>
                 With a PDA profile it goes further. Demands themselves set off anxiety
                 and avoidance, so the harder an app pushes &ldquo;pay now&rdquo;, the
@@ -784,7 +843,8 @@ export default function HomePage() {
             <div style={{ maxWidth: "60ch", marginBottom: 52 }}>
               <Eyebrow>What&rsquo;s inside</Eyebrow>
               <h2 style={{ ...SECTION_HEADING, margin: 0 }}>
-                Enough detail to be honest, not enough to be a chore
+                A debt payoff tracker with enough detail to be honest, not
+                enough to be a chore
               </h2>
             </div>
 
@@ -904,7 +964,7 @@ export default function HomePage() {
                     margin: "16px 0 0",
                   }}
                 >
-                  Late payments happen &mdash; what matters is you&rsquo;re on it.
+                  Late payments happen. What matters is you&rsquo;re on it.
                 </p>
               </div>
             </div>
@@ -969,7 +1029,8 @@ export default function HomePage() {
             <div style={{ maxWidth: "60ch", marginBottom: 48 }}>
               <Eyebrow>How it works</Eyebrow>
               <h2 style={{ ...SECTION_HEADING, margin: 0 }}>
-                Four steps, and you can stop after any of them
+                How to track your debts in four steps, and you can stop after
+                any of them
               </h2>
             </div>
             <div
@@ -1062,13 +1123,15 @@ export default function HomePage() {
             <div>
               <Eyebrow>Who it&rsquo;s for</Eyebrow>
               <h2 style={{ ...SECTION_HEADING, margin: "0 0 18px" }}>
-                Made for the brains that other finance apps quietly give up on
+                A money app for the ADHD, PDA and autistic brains other finance
+                apps quietly give up on
               </h2>
               <p style={{ fontSize: 18, color: "rgb(var(--ink-700))", margin: "0 0 16px", maxWidth: "52ch" }}>
-                If instructions make you freeze, if the thought of opening a banking
-                app makes your stomach drop, if you&rsquo;ve abandoned three
-                budgeting tools because they started nagging — that&rsquo;s who this
-                is for.
+                If instructions make you freeze, if the thought of opening a
+                banking app makes your stomach drop, if debt anxiety has you
+                leaving letters unopened, or if you&rsquo;ve abandoned three
+                budgeting tools because they started nagging: that&rsquo;s who
+                this is for.
               </p>
               <p style={{ fontSize: 18, color: "rgb(var(--ink-700))", margin: 0, maxWidth: "52ch" }}>
                 You don&rsquo;t need a diagnosis to use it. You just need somewhere to
@@ -1101,11 +1164,77 @@ export default function HomePage() {
           </div>
         </Section>
 
+        {/* ---------- Already on a plan ---------- */}
+        <Section background="rgb(var(--paper))" label="Already on a plan">
+          <div style={{ maxWidth: 1120, margin: "0 auto", padding: "84px 24px" }}>
+            <div style={{ maxWidth: "62ch", marginBottom: 40 }}>
+              <Eyebrow>Already on a plan?</Eyebrow>
+              <h2 style={{ ...SECTION_HEADING, margin: "0 0 16px" }}>
+                Track a debt management plan, IVA or payment arrangement
+              </h2>
+              <p style={{ fontSize: 18, color: "rgb(var(--ink-700))", margin: "0 0 14px" }}>
+                Plenty of people come to Mirian part-way through. You might be on
+                a debt management plan (DMP), paying into an IVA, or have a
+                handful of informal payment arrangements set up with creditors
+                over the phone.
+              </p>
+              <p style={{ fontSize: 18, color: "rgb(var(--ink-700))", margin: "0 0 14px" }}>
+                Mirian works alongside all of them. Add the plan or arrangement
+                as a debt, set the monthly amount and the day it goes out, and
+                log payments as they leave your account. You get one calm record
+                and a debt-free date, without having to log into three portals to
+                see where you are.
+              </p>
+              <p style={{ fontSize: 17, color: "rgb(var(--ink-500))", margin: 0 }}>
+                Mirian doesn&rsquo;t manage your plan or contact your provider.
+                It&rsquo;s your own record, kept for you.
+              </p>
+            </div>
+
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fit,minmax(290px,1fr))",
+                gap: 20,
+              }}
+            >
+              {PLANS.map((plan) => (
+                <div
+                  key={plan.title}
+                  style={{
+                    background: "rgb(var(--white))",
+                    border: "1px solid rgb(var(--line-200))",
+                    borderRadius: "var(--radius-xl)",
+                    boxShadow: "var(--shadow-sm)",
+                    padding: 24,
+                  }}
+                >
+                  <h3
+                    style={{
+                      fontFamily: "var(--font-display)",
+                      fontSize: 19,
+                      fontWeight: 700,
+                      color: "rgb(var(--ink-900))",
+                      margin: "0 0 6px",
+                      lineHeight: 1.3,
+                    }}
+                  >
+                    {plan.title}
+                  </h3>
+                  <p style={{ fontSize: 16, color: "rgb(var(--ink-500))", margin: 0 }}>
+                    {plan.body}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </Section>
+
         {/* ---------- What it costs ---------- */}
         <Section background="rgb(var(--white))" label="What it costs">
           <div style={{ maxWidth: 1120, margin: "0 auto", padding: "84px 24px" }}>
             <div style={{ maxWidth: "60ch", marginBottom: 44 }}>
-              <Eyebrow>What it costs</Eyebrow>
+              <Eyebrow>What the debt tracker costs</Eyebrow>
               <h2 style={{ ...SECTION_HEADING, margin: "0 0 14px" }}>
                 Nothing yet, and never without you saying so
               </h2>
@@ -1192,7 +1321,7 @@ export default function HomePage() {
                 Your record stays yours. You can still sign in, read every
                 payment you&rsquo;ve logged, download the lot as a PDF, and
                 delete your account whenever you like. You just can&rsquo;t add
-                new payments until you pay &mdash; and you can come back and do
+                new payments until you pay, and you can come back and do
                 that any time, with nothing owed for the months in between.
               </p>
               <p style={{ fontSize: 17, color: "rgb(var(--ink-700))", margin: 0 }}>
@@ -1245,7 +1374,7 @@ export default function HomePage() {
                 }}
               >
                 <Info size={16} aria-hidden="true" />
-                Examples for now — real quotes once testing is done
+                Examples for now. Real quotes once testing is done
               </div>
             </div>
 
@@ -1301,7 +1430,7 @@ export default function HomePage() {
                 Three things we&rsquo;re working on
               </h2>
               <p style={{ fontSize: 18, color: "rgb(var(--ink-700))", margin: 0 }}>
-                No dates attached — we&rsquo;d rather show you than promise you. If the
+                No dates attached. We&rsquo;d rather show you than promise you. If the
                 order looks wrong to you, say so and we&rsquo;ll change it.
               </p>
             </div>
@@ -1475,15 +1604,19 @@ export default function HomePage() {
                 </h2>
                 <p style={{ fontSize: 18, color: "rgb(var(--ink-700))", margin: 0, maxWidth: "48ch" }}>
                   Add one debt and see what happens. You can leave the rest blank,
-                  come back in a month, and nothing will have told you off.
+                  come back in a month, and nothing will have told you off. If
+                  debt anxiety has kept you from looking, this is a gentle place
+                  to start.
                 </p>
               </div>
               <div className={styles.ctaStack}>
-                <SiteButton href="/auth/login" size="lg" iconAfter>
-                  Sign in to Mirian
-                </SiteButton>
-                <SiteButton href="/auth/signup" size="lg" variant="secondary">
+                {/* Create an account first: new visitors outnumber returning
+                    ones, and it's the thing this page is for. */}
+                <SiteButton href="/auth/signup" size="lg" iconAfter>
                   Create an account
+                </SiteButton>
+                <SiteButton href="/auth/login" size="lg" variant="secondary">
+                  Sign in
                 </SiteButton>
               </div>
             </div>

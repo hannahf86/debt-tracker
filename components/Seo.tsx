@@ -34,6 +34,12 @@ type Props = {
   noindex?: boolean;
   /** The home page carries its own full title. */
   bareTitle?: boolean;
+  /**
+   * What a shared link says, when that wants different words from the tab.
+   * A search result and a message in a group chat are read differently.
+   */
+  ogTitle?: string;
+  ogDescription?: string;
   children?: React.ReactNode;
 };
 
@@ -43,6 +49,8 @@ export default function Seo({
   path,
   noindex = false,
   bareTitle = false,
+  ogTitle,
+  ogDescription,
   children,
 }: Props) {
   const router = useRouter();
@@ -51,6 +59,8 @@ export default function Seo({
   const canonicalPath = path ?? router.asPath.split(/[?#]/)[0];
   const url = `${SITE_URL}${canonicalPath}`;
   const fullTitle = bareTitle ? title : `${title} · ${SITE_NAME}`;
+  const shareTitle = ogTitle ?? fullTitle;
+  const shareDescription = ogDescription ?? description;
 
   return (
     <Head>
@@ -69,8 +79,8 @@ export default function Seo({
       {/* Shared links */}
       <meta property="og:type" content="website" />
       <meta property="og:site_name" content={SITE_NAME} />
-      <meta property="og:title" content={fullTitle} />
-      <meta property="og:description" content={description} />
+      <meta property="og:title" content={shareTitle} />
+      <meta property="og:description" content={shareDescription} />
       <meta property="og:url" content={url} />
       <meta property="og:image" content={OG_IMAGE} />
       <meta property="og:image:width" content="1200" />
@@ -78,8 +88,8 @@ export default function Seo({
       <meta property="og:image:alt" content={OG_ALT} />
       <meta property="og:locale" content="en_GB" />
       <meta name="twitter:card" content="summary_large_image" />
-      <meta name="twitter:title" content={fullTitle} />
-      <meta name="twitter:description" content={description} />
+      <meta name="twitter:title" content={shareTitle} />
+      <meta name="twitter:description" content={shareDescription} />
       <meta name="twitter:image" content={OG_IMAGE} />
       <meta name="twitter:image:alt" content={OG_ALT} />
 

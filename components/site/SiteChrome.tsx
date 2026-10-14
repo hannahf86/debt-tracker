@@ -471,6 +471,12 @@ export function SiteFooter() {
           <p style={{ fontSize: 16, color: "rgb(var(--ink-500))", margin: "16px 0 0", maxWidth: "34ch" }}>
             Track what you owe. Celebrate what you&rsquo;ve paid. Watch it all get smaller.
           </p>
+          {/* Said plainly, and on every page: this is a record, not advice. */}
+          <p style={{ fontSize: 14, color: "rgb(var(--ink-500))", margin: "14px 0 0", maxWidth: "38ch" }}>
+            Mirian is a debt tracker, not a debt advice service. For free,
+            confidential advice, contact StepChange, National Debtline or
+            MoneyHelper.
+          </p>
         </div>
 
         <nav
@@ -550,7 +556,17 @@ export function SiteFooter() {
           }}
         >
           <span>© {new Date().getFullYear()} Mirian</span>
-          <span>Built by Jorvik Web Dev</span>
+          <span>
+            Built by{" "}
+            <a
+              href="https://jorvikweb.dev"
+              target="_blank"
+              rel="noreferrer"
+              style={{ color: "rgb(var(--teal-700))", fontWeight: 700 }}
+            >
+              Jorvik Web Dev
+            </a>
+          </span>
         </div>
       </div>
     </footer>
