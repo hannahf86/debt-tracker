@@ -14,6 +14,8 @@ import {
   missedMonthCount,
 } from "@/lib/hooks/useTracker";
 import { useProfile } from "@/lib/hooks/useProfile";
+import { useEntitlement } from "@/lib/hooks/useEntitlement";
+import TrialNotice from "@/components/TrialNotice";
 import {
   projectDebtFree,
   formatLongDate,
@@ -75,6 +77,8 @@ export default function DashboardPage() {
     fetchTracker,
   } = useTracker();
   const { profile, greetingName } = useProfile();
+  const { entitlement } = useEntitlement();
+  const readOnly = !entitlement.canWrite;
   const budget = profile.monthly_budget;
   const [logPaymentDebt, setLogPaymentDebt] = useState<Debt | null>(null);
   const [pickingDebt, setPickingDebt] = useState(false);
@@ -281,6 +285,8 @@ export default function DashboardPage() {
         </div>
       </div>
 
+      <TrialNotice entitlement={entitlement} />
+
       {/* Summary Cards */}
       <div className="max-w-6xl mx-auto mb-8 flex flex-col lg:flex-row lg:items-stretch gap-4">
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 flex-1">
@@ -352,14 +358,17 @@ export default function DashboardPage() {
         <div className="flex flex-row lg:flex-col gap-3 lg:justify-center shrink-0">
           <button
             onClick={() => setPickingDebt(true)}
-            disabled={debts.length === 0}
+            disabled={debts.length === 0 || readOnly}
+            title={readOnly ? "Your free three months are up" : undefined}
             className="flex-1 lg:flex-none inline-flex items-center justify-center gap-2 px-5 min-h-[48px] bg-brand hover:bg-brand-hover disabled:opacity-50 text-white rounded-pill text-sm font-semibold transition-colors duration-base"
           >
             <Plus size={16} /> Add payment
           </button>
           <button
             onClick={() => router.push("/debts/new")}
-            className="flex-1 lg:flex-none inline-flex items-center justify-center gap-2 px-5 min-h-[48px] bg-brand hover:bg-brand-hover text-white rounded-pill text-sm font-semibold transition-colors duration-base"
+            disabled={readOnly}
+            title={readOnly ? "Your free three months are up" : undefined}
+            className="flex-1 lg:flex-none inline-flex items-center justify-center gap-2 px-5 min-h-[48px] bg-brand hover:bg-brand-hover disabled:opacity-50 text-white rounded-pill text-sm font-semibold transition-colors duration-base"
           >
             <Plus size={16} /> A new debt
           </button>
@@ -460,7 +469,9 @@ export default function DashboardPage() {
                         e.stopPropagation();
                         setLogPaymentDebt(debt);
                       }}
-                      className="flex items-center gap-2 px-4 py-2 bg-sage-600/10 hover:bg-sage-600/20 border border-sage-500/30 text-sage-700 text-xs font-semibold rounded-lg transition-all"
+                      disabled={readOnly}
+                      title={readOnly ? "Your free three months are up" : undefined}
+                      className="flex items-center gap-2 px-4 py-2 bg-sage-600/10 hover:bg-sage-600/20 disabled:opacity-40 border border-sage-500/30 text-sage-700 text-xs font-semibold rounded-lg transition-all"
                     >
                       + Log payment
                     </button>

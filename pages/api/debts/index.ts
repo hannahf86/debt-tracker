@@ -1,4 +1,5 @@
 import { getSession } from "@/lib/devAuth";
+import { ENDED_MESSAGE, getEntitlement } from "@/lib/entitlement";
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
 import { describeDbError } from "@/lib/dbError";
 import type { NextApiRequest, NextApiResponse } from "next";
@@ -48,6 +49,13 @@ export default async function handler(
 
     if (!company || !total_amount || !category) {
       return res.status(400).json({ error: "Missing required fields" });
+    }
+
+    /* The free period is enforced here, not in the browser. Reading,
+       exporting and deleting stay open whatever this says. */
+    const entitlement = await getEntitlement(session.user.id);
+    if (!entitlement.canWrite) {
+      return res.status(402).json({ error: ENDED_MESSAGE, trialEnded: true });
     }
 
     try {
