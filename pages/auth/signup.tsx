@@ -24,6 +24,8 @@ export default function SignupPage() {
    * was never sent.
    */
   const [needsConfirming, setNeedsConfirming] = useState(true);
+  /** True when the address may already have an account. */
+  const [maybeExisting, setMaybeExisting] = useState(false);
   // Spam defences a person never sees: a field only a bot fills in, and how
   // long the form has been open.
   const [website, setWebsite] = useState("");
@@ -77,6 +79,7 @@ export default function SignupPage() {
       // can't use yet. The email link lands on /auth/callback, which is the
       // route to sign in once confirmed.
       setNeedsConfirming(data.confirmationRequired !== false);
+      setMaybeExisting(data.alreadyRegistered === true);
       setSentTo(email);
       setIsLoading(false);
     } catch (err) {
@@ -119,10 +122,29 @@ export default function SignupPage() {
                     . Click it to confirm your email, and you&rsquo;ll be taken
                     straight to sign in.
                   </p>
-                  <p className="text-sage-500 text-xs mb-6">
+                  <p className="text-sage-500 text-xs mb-4">
                     Nothing there after a few minutes? Check your spam or junk
                     folder.
                   </p>
+                  {maybeExisting && (
+                    /* Said to everyone it applies to, without ever confirming
+                       that an address is registered — that would let anyone
+                       use this form to go fishing. */
+                    <p className="text-sage-600 text-sm mb-6">
+                      If you&rsquo;ve signed up before, no new link is sent.{" "}
+                      <Link href="/auth/login" className="font-semibold underline">
+                        Sign in
+                      </Link>{" "}
+                      or{" "}
+                      <Link
+                        href="/auth/forgot-password"
+                        className="font-semibold underline"
+                      >
+                        reset your password
+                      </Link>
+                      .
+                    </p>
+                  )}
                 </>
               ) : (
                 <>

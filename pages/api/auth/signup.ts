@@ -122,6 +122,14 @@ export default async function handler(
     return res.status(400).json({ error: error.message });
   }
 
+  /* Supabase answers a signup for an address that already has an account the
+     same way as a new one — no error, no email — so that nobody can use this
+     form to find out who is registered. The giveaway is an empty identities
+     array. We keep the secret, but the page shouldn't leave a real person
+     waiting at an inbox for a link that was never sent. */
+  const alreadyRegistered =
+    Array.isArray(data.user?.identities) && data.user!.identities!.length === 0;
+
   // No session back means Supabase is holding the account until the email link
   // is clicked. A session means "Confirm email" is switched off in the
   // dashboard, so the account is already usable — worth shouting about in logs.
@@ -133,5 +141,5 @@ export default async function handler(
   }
 
   // Only what the page needs — the full user object isn't the browser's business.
-  return res.status(200).json({ confirmationRequired });
+  return res.status(200).json({ confirmationRequired, alreadyRegistered });
 }
