@@ -93,22 +93,25 @@ A `tester` role with free access for life. Twenty places, plus Hannah's own acco
 (`hannahmfeehan@gmail.com`) — 21 in total. Nobody should pay to use their own app, and the people who
 put up with the rough edges shouldn't either.
 
-**One thing to settle before this is built: how the role is granted.**
+**How the role is granted — decided: invited accounts only.**
 
-"The first 20 sign-ups" is the obvious reading, but September is the argument against it — a script
-made dozens of accounts in a weekend. If the first twenty rows win the prize, the first twenty rows
-could be bots, and the real testers arrive to find the places gone.
+On first sign-in, an account is given `role = 'tester'` if it arrived from a Supabase invite and
+fewer than 20 testers exist. A public signup can never qualify, which is the point: "the first 20
+sign-ups" would have handed the places to September's bots, who made dozens of accounts in a
+weekend before any real tester arrived.
 
-Two safer versions, either fine:
+Supabase stamps `auth.users.invited_at` on an invited account and leaves it null on a self-signup,
+so that is the test, and it is durable — **this does not have to be built before inviting people**.
+Anyone invited today can be granted the role later with one statement:
 
-1. **Granted by hand.** Hannah sets the role in Supabase for each tester. At twenty people that is
-   twenty clicks, once, and it cannot be gamed.
-2. **Automatic, but only for invited accounts.** The role is granted on first sign-in if the account
-   came from a Supabase invite and fewer than 20 exist. Bot-proof, because a public signup can never
-   qualify — and it matches the invite-only round being run anyway.
+```sql
+update public.users u
+set role = 'tester'
+from auth.users a
+where a.id = u.id and a.invited_at is not null and u.role = 'user';
+```
 
-Recommendation: (2) if the round stays invite-only, (1) if signups reopen first. Not (0) — a count
-of rows in `auth.users`.
+Hannah's own account (`hannahmfeehan@gmail.com`) predates the invites and is set by hand.
 
 ### Payment: Stripe Checkout
 
