@@ -119,6 +119,15 @@ Hosted by Stripe, so no card details ever reach Mirian and the PCI surface stays
 payments rather than a Stripe subscription — a subscription object exists to renew itself, which is
 the thing being avoided.
 
+**Start with a Stripe Payment Link, not code.** A link made in Stripe's dashboard behind a button
+takes the £5 with nothing built. Add the webhook when checking payments by hand starts to grate,
+which with a handful of people it won't for a while.
+
+**Tide was considered and rejected** (October 2026). It offers payment links, invoicing, a card
+reader and Tap to Pay — no payments API and no webhooks. It could take the money, but nothing would
+tell Mirian it had arrived, so `paid_until` would be set by hand forever. Tide still makes sense as
+the business account Stripe pays out into; it just isn't the thing taking the payment.
+
 ### Where entitlement lives
 
 On the profile row in `public.users`, which already exists:
