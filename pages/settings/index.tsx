@@ -8,7 +8,8 @@ import { useProfile } from "@/lib/hooks/useProfile";
 import ThemePicker from "@/components/ThemePicker";
 import { Save, AlertTriangle } from "lucide-react";
 import Seo from "@/components/Seo";
-import { checkPassword, PASSWORD_HINT } from "@/lib/password";
+import { checkPassword } from "@/lib/password";
+import PasswordHint from "@/components/PasswordHint";
 
 export default function SettingsPage() {
   const { data: session } = useSession();
@@ -244,7 +245,7 @@ export default function SettingsPage() {
                       placeholder="New password"
                       className="w-full min-h-[48px] bg-white border border-mint-200 rounded-lg px-4 py-2 text-sage-800 placeholder-sage-500 focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand"
                     />
-                      <p className="text-sm text-sage-600 mt-2">{PASSWORD_HINT}</p>
+                      <PasswordHint />
                     <label htmlFor="confirm_password" className="sr-only">
                       Confirm new password
                     </label>

@@ -22,11 +22,21 @@ const CLASSES: { test: RegExp; label: string }[] = [
   { test: /[^A-Za-z0-9]/, label: "a symbol, like ! or £" },
 ];
 
-/** Said up front, next to the box, so nothing is a surprise. */
-export const PASSWORD_HINT =
-  `At least ${PASSWORD_MIN_LENGTH} characters, with a capital, a small letter, ` +
-  `a number and a symbol. Something like Three!Blue£Hens2 — long and memorable ` +
-  `beats short and clever.`;
+/**
+ * Said up front, next to the box, so nothing is a surprise. A list rather
+ * than a sentence: four requirements buried in prose is four things to hold
+ * in your head at once, and this is a form people already arrive at tired.
+ */
+export const PASSWORD_RULES = [
+  `${PASSWORD_MIN_LENGTH} characters or more`,
+  "a capital letter",
+  "a small letter",
+  "a number",
+  "a symbol, like ! or £",
+];
+
+export const PASSWORD_EXAMPLE =
+  "Something like Three!Blue£Hens2 — long and memorable beats short and clever.";
 
 /**
  * What's still missing, as a sentence, or null when it's fine.
