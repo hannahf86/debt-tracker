@@ -1,6 +1,7 @@
 import type { AppProps } from "next/app";
 import Head from "next/head";
 import { SessionProvider } from "next-auth/react";
+import { Analytics } from "@vercel/analytics/react";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import Sidebar from "@/components/Sidebar";
@@ -67,6 +68,10 @@ export default function App({
           <Component {...pageProps} />
         </main>
       </div>
+      {/* Vercel's page counts. Cookieless, and it records the route pattern
+          (/debts/[id]) rather than the address someone actually visited, so
+          no debt is identifiable from it. Mentioned in the privacy notice. */}
+      <Analytics />
     </SessionProvider>
   );
 }

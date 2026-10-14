@@ -208,7 +208,8 @@ export default function PrivacyPage() {
                   <strong>Supabase</strong> stores your data and handles signing in.
                 </li>
                 <li>
-                  <strong>Vercel</strong> hosts the app.
+                  <strong>Vercel</strong> hosts the app, and counts page visits
+                  for us.
                 </li>
                 <li>
                   <strong>Resend</strong> sends account emails and delivers messages from the contact and feedback forms.
@@ -298,7 +299,14 @@ export default function PrivacyPage() {
                   Your light or dark mode choice, saved on your own device.
                 </li>
               </List>
-              <p>No advertising, analytics or tracking cookies.</p>
+              <p>No advertising or tracking cookies.</p>
+              <p>
+                We do count page visits, through Vercel. It uses no cookies and
+                doesn&rsquo;t follow you between sites or visits. It records
+                which kind of page was opened &mdash; &ldquo;a debt page&rdquo;
+                rather than which debt &mdash; so nothing about what you owe can
+                be worked out from it.
+              </p>
             </Section>
 
             <Section id="security" title="Keeping your data safe">
