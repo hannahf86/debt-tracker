@@ -687,7 +687,7 @@ export default function HomePage() {
               margin: "0 auto",
               padding: "84px 24px",
               display: "grid",
-              gridTemplateColumns: "repeat(auto-fit,minmax(320px,1fr))",
+              gridTemplateColumns: "repeat(auto-fit,minmax(min(320px, 100%), 1fr))",
               gap: 56,
               alignItems: "start",
             }}
@@ -756,7 +756,7 @@ export default function HomePage() {
             <div
               style={{
                 display: "grid",
-                gridTemplateColumns: "repeat(auto-fit,minmax(240px,1fr))",
+                gridTemplateColumns: "repeat(auto-fit,minmax(min(240px, 100%), 1fr))",
                 gap: 24,
                 marginBottom: 40,
               }}
@@ -852,7 +852,7 @@ export default function HomePage() {
             <div
               style={{
                 display: "grid",
-                gridTemplateColumns: "repeat(auto-fit,minmax(320px,1fr))",
+                gridTemplateColumns: "repeat(auto-fit,minmax(min(320px, 100%), 1fr))",
                 gap: 48,
                 alignItems: "center",
                 marginBottom: 64,
@@ -973,7 +973,7 @@ export default function HomePage() {
             <div
               style={{
                 display: "grid",
-                gridTemplateColumns: "repeat(auto-fit,minmax(290px,1fr))",
+                gridTemplateColumns: "repeat(auto-fit,minmax(min(290px, 100%), 1fr))",
                 gap: 20,
               }}
             >
@@ -1036,7 +1036,7 @@ export default function HomePage() {
             <div
               style={{
                 display: "grid",
-                gridTemplateColumns: "repeat(auto-fit,minmax(230px,1fr))",
+                gridTemplateColumns: "repeat(auto-fit,minmax(min(230px, 100%), 1fr))",
                 gap: 24,
               }}
             >
@@ -1194,7 +1194,7 @@ export default function HomePage() {
             <div
               style={{
                 display: "grid",
-                gridTemplateColumns: "repeat(auto-fit,minmax(290px,1fr))",
+                gridTemplateColumns: "repeat(auto-fit,minmax(min(290px, 100%), 1fr))",
                 gap: 20,
               }}
             >
@@ -1248,7 +1248,7 @@ export default function HomePage() {
             <div
               style={{
                 display: "grid",
-                gridTemplateColumns: "repeat(auto-fit,minmax(290px,1fr))",
+                gridTemplateColumns: "repeat(auto-fit,minmax(min(290px, 100%), 1fr))",
                 gap: 20,
                 marginBottom: 36,
               }}
@@ -1428,7 +1428,7 @@ export default function HomePage() {
             <div
               style={{
                 display: "grid",
-                gridTemplateColumns: "repeat(auto-fit,minmax(280px,1fr))",
+                gridTemplateColumns: "repeat(auto-fit,minmax(min(280px, 100%), 1fr))",
                 gap: 20,
               }}
             >
@@ -1486,7 +1486,7 @@ export default function HomePage() {
             <div
               style={{
                 display: "grid",
-                gridTemplateColumns: "repeat(auto-fit,minmax(290px,1fr))",
+                gridTemplateColumns: "repeat(auto-fit,minmax(min(290px, 100%), 1fr))",
                 gap: 20,
               }}
             >
@@ -1630,7 +1630,7 @@ export default function HomePage() {
                 boxShadow: "var(--shadow-md)",
                 padding: "clamp(32px,5vw,56px)",
                 display: "grid",
-                gridTemplateColumns: "repeat(auto-fit,minmax(280px,1fr))",
+                gridTemplateColumns: "repeat(auto-fit,minmax(min(280px, 100%), 1fr))",
                 gap: 36,
                 alignItems: "center",
               }}

@@ -461,7 +461,7 @@ export function SiteFooter() {
           margin: "0 auto",
           padding: "52px 24px 40px",
           display: "grid",
-          gridTemplateColumns: "repeat(auto-fit,minmax(240px,1fr))",
+          gridTemplateColumns: "repeat(auto-fit,minmax(min(240px, 100%), 1fr))",
           gap: 36,
           alignItems: "start",
         }}
