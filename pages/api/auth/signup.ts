@@ -49,7 +49,7 @@ export default async function handler(
     return res.status(405).json({ error: "Method not allowed" });
   }
 
-  const { email, password, website, startedAt } = req.body;
+  const { email, password, website, startedAt, captchaToken } = req.body;
 
   if (!email || !password) {
     return res.status(400).json({ error: "Email and password required" });
@@ -85,14 +85,28 @@ export default async function handler(
   const { data, error } = await supabase.auth.signUp({
     email,
     password,
-    // Without this the link follows Supabase's global Site URL, which is how a
-    // production signup ends up pointing at localhost.
-    options: { emailRedirectTo: `${originFrom(req)}/auth/callback` },
+    options: {
+      // Without this the link follows Supabase's global Site URL, which is how
+      // a production signup ends up pointing at localhost.
+      emailRedirectTo: `${originFrom(req)}/auth/callback`,
+      // Supabase checks this itself when CAPTCHA protection is on. Passing it
+      // when the feature is off is harmless, so there's no flag to keep in
+      // step here.
+      ...(typeof captchaToken === "string" && captchaToken
+        ? { captchaToken }
+        : {}),
+    },
   });
 
   if (error) {
     /* Signups being closed in the dashboard is a setting, not a fault. Say so
        in plain words rather than passing Supabase's wording through. */
+    if (/captcha/i.test(error.message)) {
+      return res.status(400).json({
+        error:
+          "The security check didn't go through. Please reload the page and try again.",
+      });
+    }
     if (/signups? not allowed|signup is disabled/i.test(error.message)) {
       return res.status(403).json({
         error:

@@ -14,21 +14,23 @@ const isProd = process.env.NODE_ENV === "production";
 
 const contentSecurityPolicy = [
   "default-src 'self'",
-  "script-src 'self'",
+  // Turnstile's widget: its script, the frame it draws itself in, and the
+  // call home that checks the visitor. Nothing else from Cloudflare.
+  "script-src 'self' https://challenges.cloudflare.com",
   // React writes style attributes (progress bars, sizes), which count as inline.
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data: blob:",
   // Fonts are self-hosted, so nothing is fetched from Google.
   "font-src 'self'",
   // The reset-password page talks to Supabase auth from the browser.
-  "connect-src 'self' https://*.supabase.co",
+  "connect-src 'self' https://*.supabase.co https://challenges.cloudflare.com",
   "frame-ancestors 'none'",
   "base-uri 'self'",
   "form-action 'self'",
   "object-src 'none'",
   // The data download builds a PDF in the browser and hands it over as a
   // blob; some browsers route that through a frame.
-  "frame-src 'self' blob:",
+  "frame-src 'self' blob: https://challenges.cloudflare.com",
 ].join("; ");
 
 const securityHeaders = [

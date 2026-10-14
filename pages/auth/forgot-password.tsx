@@ -4,11 +4,13 @@ import { useRef, useState } from "react";
 import Link from "next/link";
 import { MailCheck } from "lucide-react";
 import Seo from "@/components/Seo";
+import Turnstile, { turnstileEnabled } from "@/components/Turnstile";
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState("");
   // How long the form has been open; a script answers instantly.
   const openedAt = useRef(Date.now());
+  const [captchaToken, setCaptchaToken] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [sent, setSent] = useState(false);
 
@@ -20,7 +22,7 @@ export default function ForgotPasswordPage() {
     await fetch("/api/auth/forgot-password", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, startedAt: openedAt.current }),
+      body: JSON.stringify({ email, startedAt: openedAt.current, captchaToken }),
     }).catch(() => {});
 
     setIsLoading(false);
@@ -91,12 +93,18 @@ export default function ForgotPasswordPage() {
                     />
                   </div>
 
+                  <Turnstile onToken={setCaptchaToken} />
+
                   <button
                     type="submit"
-                    disabled={isLoading}
+                    disabled={isLoading || (turnstileEnabled() && !captchaToken)}
                     className="w-full bg-sage-600 hover:bg-sage-700 text-white font-medium min-h-[48px] rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed mt-6"
                   >
-                    {isLoading ? "Sending…" : "Send reset link"}
+                    {isLoading
+                      ? "Sending…"
+                      : turnstileEnabled() && !captchaToken
+                        ? "Just a moment…"
+                        : "Send reset link"}
                   </button>
                 </form>
 

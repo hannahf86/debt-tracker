@@ -10,6 +10,8 @@ export const authOptions: NextAuthOptions = {
       credentials: {
         email: { label: "Email", type: "email" },
         password: { label: "Password", type: "password" },
+        // Passed straight through to Supabase, which does the verifying.
+        captchaToken: { label: "Captcha", type: "text" },
       },
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) {
@@ -37,6 +39,9 @@ export const authOptions: NextAuthOptions = {
         const { data, error } = await supabase.auth.signInWithPassword({
           email: credentials.email,
           password: credentials.password,
+          ...(credentials.captchaToken
+            ? { options: { captchaToken: credentials.captchaToken } }
+            : {}),
         });
 
         if (error || !data.user) {

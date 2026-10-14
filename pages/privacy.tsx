@@ -214,6 +214,10 @@ export default function PrivacyPage() {
                 <li>
                   <strong>Resend</strong> sends account emails and delivers messages from the contact and feedback forms.
                 </li>
+                <li>
+                  <strong>Cloudflare</strong> runs the check on the sign-in and
+                  sign-up pages that tells people apart from automated scripts.
+                </li>
               </List>
               {LEGAL.databaseRegion && (
                 <p>
@@ -300,6 +304,14 @@ export default function PrivacyPage() {
                 </li>
               </List>
               <p>No advertising or tracking cookies.</p>
+              <p>
+                The sign-in and sign-up pages run a security check from
+                Cloudflare, which may store something briefly on your device to
+                remember that the check passed. It is there to keep automated
+                scripts out &mdash; in 2026 they were being used to make
+                {" "}{LEGAL.service} send emails to people who never asked for
+                them &mdash; and it isn&rsquo;t used to follow you anywhere.
+              </p>
               <p>
                 We do count page visits, through Vercel. It uses no cookies and
                 doesn&rsquo;t follow you between sites or visits. It records

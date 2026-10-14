@@ -25,7 +25,7 @@ export default async function handler(
     return res.status(405).json({ error: "Method not allowed" });
   }
 
-  const { email, website, startedAt } = req.body;
+  const { email, website, startedAt, captchaToken } = req.body;
 
   if (!email || typeof email !== "string") {
     return res.status(400).json({ error: "Email required" });
@@ -56,6 +56,7 @@ export default async function handler(
 
   const { error } = await supabase.auth.resetPasswordForEmail(email, {
     redirectTo,
+    ...(typeof captchaToken === "string" && captchaToken ? { captchaToken } : {}),
   });
 
   if (error) {

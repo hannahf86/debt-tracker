@@ -5,6 +5,7 @@ import { signIn } from "next-auth/react";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import Seo from "@/components/Seo";
+import Turnstile, { turnstileEnabled } from "@/components/Turnstile";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -12,6 +13,7 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [captchaToken, setCaptchaToken] = useState("");
 
   const message = router.query.message as string;
 
@@ -23,6 +25,7 @@ export default function LoginPage() {
     const result = await signIn("credentials", {
       email,
       password,
+      captchaToken,
       redirect: false,
     });
 
@@ -32,8 +35,14 @@ export default function LoginPage() {
       setError(
         /not confirmed/i.test(result.error)
           ? "Please confirm your email first — check your inbox for the link we sent."
-          : "Invalid email or password",
+          : /captcha/i.test(result.error)
+            ? "The security check didn't go through. Please reload the page and try again."
+            : /too many/i.test(result.error)
+              ? result.error
+              : "Invalid email or password",
       );
+      // A token is good for one attempt; a second try needs a fresh one.
+      setCaptchaToken("");
       setIsLoading(false);
       return;
     }
@@ -113,12 +122,18 @@ export default function LoginPage() {
                 />
               </div>
 
+              <Turnstile onToken={setCaptchaToken} />
+
               <button
                 type="submit"
-                disabled={isLoading}
+                disabled={isLoading || (turnstileEnabled() && !captchaToken)}
                 className="w-full min-h-[52px] bg-sage-600 hover:bg-sage-700 text-white font-semibold rounded-pill transition-all disabled:opacity-50 disabled:cursor-not-allowed mt-6"
               >
-                {isLoading ? "Signing in..." : "Sign in"}
+                {isLoading
+                  ? "Signing in..."
+                  : turnstileEnabled() && !captchaToken
+                    ? "Just a moment…"
+                    : "Sign in"}
               </button>
             </form>
 

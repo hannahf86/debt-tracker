@@ -4,6 +4,7 @@ import { useRef, useState } from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import Seo from "@/components/Seo";
+import Turnstile, { turnstileEnabled } from "@/components/Turnstile";
 
 export default function SignupPage() {
   const router = useRouter();
@@ -17,6 +18,7 @@ export default function SignupPage() {
   // Spam defences a person never sees: a field only a bot fills in, and how
   // long the form has been open.
   const [website, setWebsite] = useState("");
+  const [captchaToken, setCaptchaToken] = useState("");
   const openedAt = useRef(Date.now());
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -45,6 +47,7 @@ export default function SignupPage() {
           password,
           website,
           startedAt: openedAt.current,
+          captchaToken,
         }),
       });
 
@@ -190,6 +193,8 @@ export default function SignupPage() {
               </div>
 
 
+              <Turnstile onToken={setCaptchaToken} />
+
               {/* Hidden from people, irresistible to bots */}
               <div aria-hidden="true" className="absolute -left-[9999px]">
                 <label htmlFor="s-website">Leave this empty</label>
@@ -204,10 +209,14 @@ export default function SignupPage() {
               </div>
               <button
                 type="submit"
-                disabled={isLoading}
+                disabled={isLoading || (turnstileEnabled() && !captchaToken)}
                 className="w-full min-h-[52px] bg-sage-600 hover:bg-sage-700 text-white font-semibold rounded-pill transition-all disabled:opacity-50 disabled:cursor-not-allowed mt-6"
               >
-                {isLoading ? "Creating account..." : "Create account"}
+                {isLoading
+                  ? "Creating account..."
+                  : turnstileEnabled() && !captchaToken
+                    ? "Just a moment…"
+                    : "Create account"}
               </button>
             </form>
 
