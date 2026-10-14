@@ -19,6 +19,13 @@ export const LEGAL = {
    * CONFIRM: the solicitor drafts leave this blank.
    */
   contactEmail: "hello@mirian-debt-tracker.app",
+  /**
+   * Who handles data protection questions. Deliberately NOT called a Data
+   * Protection Officer: that's a formal appointment under UK GDPR with an
+   * independence requirement, and a sole trader who decides how the data is
+   * used can't also be her own officer. This is the honest description.
+   */
+  dataProtectionContact: "Hannah Feehan",
   /** ICO data protection fee registration number. Registered 14 October 2026. */
   icoRegistration: "C2059405" as string | null,
   /** Where the Supabase project is hosted (eu-central-1). */

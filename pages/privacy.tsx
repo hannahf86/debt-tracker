@@ -109,7 +109,12 @@ export default function PrivacyPage() {
                 </p>
               )}
               <p>
-                If you have any questions about your data, email{" "}
+                {LEGAL.dataProtectionContact} is the person responsible for data
+                protection here.
+              </p>
+              <p>
+                If you have any questions about your data, or you want to see or
+                delete it, email{" "}
                 <a
                   href={`mailto:${LEGAL.contactEmail}`}
                   className="font-semibold text-brand underline"
