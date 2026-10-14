@@ -1334,13 +1334,14 @@ export default function HomePage() {
               <ul
                 style={{
                   margin: "0 0 18px",
-                  paddingLeft: 22,
+                  paddingLeft: 24,
+                  listStyleType: "disc",
                   display: "flex",
                   flexDirection: "column",
                   gap: 8,
                   fontSize: 18,
                   lineHeight: 1.6,
-                  color: "rgb(var(--ink-700))",
+                  color: "rgb(var(--ink-900))",
                 }}
               >
                 <li>Sign in whenever you like.</li>
@@ -1353,9 +1354,8 @@ export default function HomePage() {
                 style={{
                   fontSize: 18,
                   lineHeight: 1.6,
-                  color: "rgb(var(--ink-700))",
+                  color: "rgb(var(--ink-900))",
                   margin: "0 0 12px",
-                  maxWidth: "62ch",
                 }}
               >
                 The only thing that stops is adding new payments. Come back and
@@ -1369,7 +1369,6 @@ export default function HomePage() {
                   lineHeight: 1.6,
                   color: "rgb(var(--ink-900))",
                   margin: 0,
-                  maxWidth: "62ch",
                   fontWeight: 600,
                 }}
               >
