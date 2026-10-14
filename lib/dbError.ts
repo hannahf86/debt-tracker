@@ -1,3 +1,5 @@
+import { PASSWORD_MIN_LENGTH } from "@/lib/password";
+
 /**
  * Turns a Postgres error into something worth showing someone.
  *
@@ -40,7 +42,12 @@ export function describePasswordError(message: string | undefined): string | nul
     return "That password has turned up in a past data breach somewhere online, so it isn't safe to use here. Three random words you'll remember make a good one.";
   }
   if (/at least|too short|length/i.test(message)) {
-    return "Please use at least 8 characters.";
+    return `Please use at least ${PASSWORD_MIN_LENGTH} characters.`;
+  }
+  // Supabase's own wording lists the character sets as raw strings,
+  // punctuation and all, which is unreadable.
+  if (/character of each/i.test(message)) {
+    return "This one needs a capital, a small letter, a number and a symbol.";
   }
   return null;
 }

@@ -5,6 +5,7 @@ import { useRouter } from "next/router";
 import Link from "next/link";
 import Seo from "@/components/Seo";
 import Turnstile, { turnstileEnabled } from "@/components/Turnstile";
+import { checkPassword, PASSWORD_HINT } from "@/lib/password";
 
 export default function SignupPage() {
   const router = useRouter();
@@ -33,8 +34,9 @@ export default function SignupPage() {
       return;
     }
 
-    if (password.length < 8) {
-      setError("Password must be at least 8 characters");
+    const tooWeak = checkPassword(password);
+    if (tooWeak) {
+      setError(tooWeak);
       setIsLoading(false);
       return;
     }
@@ -175,6 +177,7 @@ export default function SignupPage() {
                   className="w-full bg-white border border-mint-200 min-h-[48px] rounded-lg px-4 py-2 text-sage-800 placeholder-sage-500 focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand"
                   required
                 />
+                <p className="text-sm text-sage-600 mt-2">{PASSWORD_HINT}</p>
               </div>
 
               <div>

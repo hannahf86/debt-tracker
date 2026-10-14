@@ -7,6 +7,7 @@ import { supabase } from "@/lib/supabase";
 import { AlertCircle } from "lucide-react";
 import Seo from "@/components/Seo";
 import { describePasswordError } from "@/lib/dbError";
+import { checkPassword, PASSWORD_HINT } from "@/lib/password";
 
 type Status = "checking" | "ready" | "invalid";
 
@@ -42,8 +43,9 @@ export default function ResetPasswordPage() {
     e.preventDefault();
     setError("");
 
-    if (password.length < 8) {
-      setError("Please use at least 8 characters.");
+    const tooWeak = checkPassword(password);
+    if (tooWeak) {
+      setError(tooWeak);
       return;
     }
     if (password !== confirm) {
@@ -140,6 +142,7 @@ export default function ResetPasswordPage() {
                       className="w-full bg-white border border-mint-200 min-h-[48px] rounded-lg px-4 py-2 text-sage-800 placeholder-sage-500 focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand"
                       required
                     />
+                      <p className="text-sm text-sage-600 mt-2">{PASSWORD_HINT}</p>
                   </div>
 
                   <div>

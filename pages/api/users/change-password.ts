@@ -2,6 +2,7 @@ import { getSession } from "@/lib/devAuth";
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { describePasswordError } from "@/lib/dbError";
+import { checkPassword } from "@/lib/password";
 
 export default async function handler(
   req: NextApiRequest,
@@ -16,11 +17,11 @@ export default async function handler(
   if (req.method === "POST") {
     const { password } = req.body;
 
-    if (typeof password !== "string" || password.length < 8) {
-      return res
-        .status(400)
-        .json({ error: "Password must be at least 8 characters" });
+    if (typeof password !== "string") {
+      return res.status(400).json({ error: "Password required" });
     }
+    const tooWeak = checkPassword(password);
+    if (tooWeak) return res.status(400).json({ error: tooWeak });
 
     try {
       const { error } = await supabaseAdmin.auth.admin.updateUserById(

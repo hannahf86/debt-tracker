@@ -2,6 +2,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import { createClient } from "@supabase/supabase-js";
 import { originFrom } from "@/lib/appOrigin";
 import { describePasswordError } from "@/lib/dbError";
+import { checkPassword } from "@/lib/password";
 import {
   clientIp,
   isDisposableEmail,
@@ -72,11 +73,11 @@ export default async function handler(
   }
 
   // Checked here too: the page's own check is only a convenience.
-  if (typeof password !== "string" || password.length < 8) {
-    return res
-      .status(400)
-      .json({ error: "Password must be at least 8 characters" });
+  if (typeof password !== "string") {
+    return res.status(400).json({ error: "Password required" });
   }
+  const tooWeak = checkPassword(password);
+  if (tooWeak) return res.status(400).json({ error: tooWeak });
 
   const supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,

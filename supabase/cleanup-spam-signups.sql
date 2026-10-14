@@ -34,15 +34,14 @@ limit 100;
 
 -- 3. Delete them. Only once step 2 shows what you expect.
 --
--- delete from auth.users
--- where email_confirmed_at is null;
+delete from auth.users
+where email_confirmed_at is null;
 
 -- 4. Check nothing was left behind. Read-only; all three should be 0.
 --
--- select
---   (select count(*) from public.debts d
---      where not exists (select 1 from auth.users u where u.id = d.user_id)) as orphan_debts,
---   (select count(*) from public.users p
---      where not exists (select 1 from auth.users u where u.id = p.id)) as orphan_profiles,
---   (select count(*) from public.contact_log c
---      where not exists (select 1 from public.debts d where d.id = c.debt_id)) as orphan_contacts;
+select
+(select count(*) from public.debts d
+ where not exists (select 1 from auth.users u where u.id = d.user_id)) as orphan_debts,
+ (select count(*) from public.users p
+ where not exists (select 1 from auth.users u where u.id = p.id)) as orphan_profiles,(select count(*) from public.contact_log c
+ where not exists (select 1 from public.debts d where d.id = c.debt_id)) as orphan_contacts;
