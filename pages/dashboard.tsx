@@ -23,6 +23,7 @@ import LogPaymentModal from "@/components/LogPaymentModal";
 import DueChip from "@/components/DueChip";
 import MobileDashboard from "@/components/mobile/MobileDashboard";
 import Seo from "@/components/Seo";
+import DismissibleHint from "@/components/DismissibleHint";
 
 const categoryIcon = (category: string) => {
   const cls = "w-5 h-5 text-sage-600";
@@ -204,10 +205,12 @@ export default function DashboardPage() {
           </div>
 
           {/* People don't try clicking a month unless told they can, and
-              backfilling is the thing that makes the year feel like theirs. */}
-          <p className="text-sm text-sage-600 -mt-4 mb-5">
-            Already paid some of these? Tap any month to add what you paid — it fills in your year without changing what you owe now.
-          </p>
+              backfilling is the thing that makes the year feel like theirs.
+              Dismissible, because it's only news once. */}
+          <DismissibleHint id="backfill" className="-mt-4 mb-5">
+            Already paid some of these? Tap any month to add what you paid — it fills in
+            your year without changing what you owe now.
+          </DismissibleHint>
 
           <div className="grid grid-cols-6 sm:grid-cols-12 gap-2 sm:gap-3">
             {months.map((month, idx) => {
