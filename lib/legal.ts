@@ -11,7 +11,7 @@ export const LEGAL = {
    * The data controller. A sole trader, so there's no Companies House number
    * or registered office to show.
    */
-  controller: "Hannah Feehan, trading as Jorvik Web Dev (Sael North)",
+  controller: "Hannah Feehan, trading as Jorvik Web Dev",
   /**
    * Where data protection requests arrive. Mirian's own inbox as of
    * 14 October 2026, forwarded to Hannah — deliberately not the Jorvik Web

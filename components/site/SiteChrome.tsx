@@ -550,7 +550,7 @@ export function SiteFooter() {
           }}
         >
           <span>© {new Date().getFullYear()} Mirian</span>
-          <span>Built by Sael North</span>
+          <span>Built by Jorvik Web Dev</span>
         </div>
       </div>
     </footer>
