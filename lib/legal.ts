@@ -12,11 +12,16 @@ export const LEGAL = {
    * or registered office to show.
    */
   controller: "Hannah Feehan, trading as Jorvik Web Dev (Sael North)",
-  /** CONFIRM: the drafts leave the data protection contact blank. */
-  contactEmail: "hello@jorvikweb.dev",
+  /**
+   * Where data protection requests arrive. Mirian's own inbox as of
+   * 14 October 2026, forwarded to Hannah — deliberately not the Jorvik Web
+   * Dev address, so somebody's debts don't land among client work.
+   * CONFIRM: the solicitor drafts leave this blank.
+   */
+  contactEmail: "hello@mirian-debt-tracker.app",
   /** ICO data protection fee registration number, once registered. */
   icoRegistration: null as string | null,
   /** Where the Supabase project is hosted (eu-central-1). */
   databaseRegion: "Frankfurt, Germany" as string | null,
-  lastUpdated: "14 September 2026",
+  lastUpdated: "14 October 2026",
 };

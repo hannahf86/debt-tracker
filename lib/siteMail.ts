@@ -10,10 +10,10 @@
 const RESEND_ENDPOINT = "https://api.resend.com/emails";
 
 /** Who the site emails land with. */
-export const CONTACT_TO = process.env.CONTACT_TO ?? "hello@jorvikweb.dev";
+export const CONTACT_TO = process.env.CONTACT_TO ?? "hello@mirian-debt-tracker.app";
 
 /** Must be an address on a domain verified in Resend. */
-export const CONTACT_FROM = process.env.CONTACT_FROM ?? "Mirian <hello@jorvikweb.dev>";
+export const CONTACT_FROM = process.env.CONTACT_FROM ?? "Mirian <hello@mirian-debt-tracker.app>";
 
 export class MailNotConfigured extends Error {}
 

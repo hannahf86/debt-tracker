@@ -116,7 +116,7 @@ export default async function handler(
     if (error instanceof MailNotConfigured) {
       console.error("Site form: RESEND_API_KEY is not set, message not sent.");
       return res.status(503).json({
-        error: `Sorry — the form isn't working just now. Please email ${process.env.CONTACT_TO ?? "hello@jorvikweb.dev"} instead.`,
+        error: `Sorry — the form isn't working just now. Please email ${process.env.CONTACT_TO ?? "hello@mirian-debt-tracker.app"} instead.`,
       });
     }
     console.error(
