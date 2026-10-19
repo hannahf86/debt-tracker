@@ -8,6 +8,7 @@ import {
   CalendarRange,
   CreditCard,
   Sparkles,
+  LifeBuoy,
   Settings,
   Plus,
   LogOut,
@@ -22,6 +23,7 @@ const navItems = [
   { href: "/tracker", label: "Tracker", icon: CalendarRange },
   { href: "/debts", label: "Debts", icon: CreditCard },
   { href: "/rewards", label: "Rewards", icon: Sparkles },
+  { href: "/resources", label: "Help", icon: LifeBuoy },
   { href: "/settings", label: "Settings", icon: Settings },
 ];
 

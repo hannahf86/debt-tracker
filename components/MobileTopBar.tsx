@@ -29,6 +29,8 @@ function configFor(pathname: string): BarConfig | null {
       return {};
     case "/rewards":
       return {};
+    case "/resources":
+      return {};
     case "/settings":
       return {};
     case "/tracker/[month]":
