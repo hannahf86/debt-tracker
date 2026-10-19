@@ -75,6 +75,7 @@ export default function MobileDebtDetail({
   onDelete,
   isDeleting,
   getInTouch,
+  certificate,
 }: {
   debt: Debt;
   payments: Payment[];
@@ -83,6 +84,8 @@ export default function MobileDebtDetail({
   isDeleting: boolean;
   /** The get-in-touch section, built by the page so both layouts share its data. */
   getInTouch?: React.ReactNode;
+  /** Shown first when the debt is cleared. Built by the page, like getInTouch. */
+  certificate?: React.ReactNode;
 }) {
   const router = useRouter();
   const percent = percentPaid(debt.total_amount, debt.amount_owed);
@@ -92,6 +95,8 @@ export default function MobileDebtDetail({
   return (
     /* Bottom padding clears the pinned bar. */
     <div className="w-full max-w-full px-4 pt-2 pb-32 flex flex-col gap-4">
+      {certificate}
+
       <div className="flex gap-2">
         <button
           onClick={() => router.push(`/debts/${debt.id}/edit`)}

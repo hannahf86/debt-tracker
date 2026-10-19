@@ -27,7 +27,7 @@ export default async function handler(
         supabaseAdmin.auth.admin.getUserById(userId),
         supabaseAdmin
           .from("users")
-          .select("monthly_budget")
+          .select("monthly_budget, certificate_show_details")
           .eq("id", userId)
           .maybeSingle(),
       ]);
@@ -38,6 +38,7 @@ export default async function handler(
         display_name: meta.display_name ?? null,
         email: session.user.email ?? null,
         monthly_budget: row?.monthly_budget ?? null,
+        certificate_show_details: row?.certificate_show_details ?? false,
       });
     } catch (error) {
       console.error("Error fetching profile:", error);
@@ -46,7 +47,8 @@ export default async function handler(
   }
 
   if (req.method === "PUT") {
-    const { name, display_name, monthly_budget } = req.body;
+    const { name, display_name, monthly_budget, certificate_show_details } =
+      req.body;
 
     try {
       // Only touch the metadata keys actually supplied.
@@ -59,6 +61,17 @@ export default async function handler(
         const { error } = await supabaseAdmin.auth.admin.updateUserById(userId, {
           user_metadata: meta,
         });
+        if (error) throw error;
+      }
+
+      if (certificate_show_details !== undefined) {
+        const { error } = await supabaseAdmin.from("users").upsert(
+          {
+            id: userId,
+            certificate_show_details: Boolean(certificate_show_details),
+          },
+          { onConflict: "id" },
+        );
         if (error) throw error;
       }
 

@@ -16,6 +16,7 @@ import MobileDebtDetail from "@/components/mobile/MobileDebtDetail";
 import GetInTouch from "@/components/GetInTouch";
 import { useContacts } from "@/lib/hooks/useContacts";
 import { useProfile } from "@/lib/hooks/useProfile";
+import Certificate from "@/components/Certificate";
 import { useCreditor } from "@/lib/hooks/useCreditor";
 import Seo from "@/components/Seo";
 
@@ -200,6 +201,17 @@ export default function DebtDetailPage() {
         >
           ← Back
         </button>
+
+        {/* Cleared: say so before anything else on the page. */}
+        {debt.amount_owed <= 0 && (
+          <div className="mb-6">
+            <Certificate
+              debt={debt}
+              payments={payments}
+              showDetails={profile.certificate_show_details}
+            />
+          </div>
+        )}
 
         {/* Main card */}
         <div className="bg-white border border-mint-200 rounded-2xl p-6 mb-6 shadow-sm">

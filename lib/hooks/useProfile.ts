@@ -5,6 +5,8 @@ export type Profile = {
   display_name: string | null;
   email: string | null;
   monthly_budget: number | null;
+  /** Whether a cleared-debt certificate names the company and the amount. */
+  certificate_show_details: boolean;
 };
 
 const EMPTY: Profile = {
@@ -12,6 +14,7 @@ const EMPTY: Profile = {
   display_name: null,
   email: null,
   monthly_budget: null,
+  certificate_show_details: false,
 };
 
 export function useProfile() {

@@ -26,6 +26,7 @@ export default function SettingsPage() {
   useEffect(() => {
     setName(profile.name ?? "");
     setDisplayName(profile.display_name ?? "");
+    setShowCertDetails(profile.certificate_show_details);
     if (profile.monthly_budget !== null) {
       setMonthlyBudget(String(profile.monthly_budget));
     }
@@ -47,6 +48,7 @@ export default function SettingsPage() {
 
   const [monthlyBudget, setMonthlyBudget] = useState("");
   const [budgetSaved, setBudgetSaved] = useState(false);
+  const [showCertDetails, setShowCertDetails] = useState(false);
 
   const [showChangePassword, setShowChangePassword] = useState(false);
   const [newPassword, setNewPassword] = useState("");
@@ -328,6 +330,52 @@ export default function SettingsPage() {
                 </button>
               </div>
             </div>
+          </div>
+
+          {/* Certificates */}
+          <div className="bg-white border border-mint-200 rounded-2xl p-5 md:p-6 mb-6 shadow-sm">
+            <h2 className="text-lg font-semibold text-sage-800 mb-2">
+              Certificates
+            </h2>
+            <p className="text-sage-500 text-sm mb-5">
+              When a debt is cleared, Mirian makes you something you can keep or
+              share. This decides how much of it is on there.
+            </p>
+
+            <label className="flex items-start gap-3 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={showCertDetails}
+                onChange={(e) => {
+                  const next = e.target.checked;
+                  setShowCertDetails(next);
+                  /* Saved straight away: a switch with its own Save button is
+                     one more thing to remember, and this is reversible. */
+                  fetch("/api/users/profile", {
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ certificate_show_details: next }),
+                  }).catch(() => setShowCertDetails(!next));
+                }}
+                className="mt-1 w-5 h-5 shrink-0 accent-brand"
+              />
+              <span>
+                <span className="block text-sm font-semibold text-sage-800">
+                  Show the company name and the amounts
+                </span>
+                <span className="block text-sm text-sage-500 mt-1">
+                  {showCertDetails
+                    ? "Your certificates will say things like “Barclaycard: gone” and show what you paid off."
+                    : "Your certificates will say “One debt: gone”, with no company name and no figures."}
+                </span>
+              </span>
+            </label>
+
+            <p className="text-xs text-sage-500 mt-4">
+              Off by default. A certificate naming the company and the amount is
+              lovely on a fridge, and not always something you want in a group
+              chat.
+            </p>
           </div>
 
           {/* Your data — download or delete */}
