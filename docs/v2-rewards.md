@@ -32,19 +32,77 @@ If that cannot be guaranteed by whoever fulfils it, the physical version does no
 
 ## What gets rewarded
 
-Anchor to things that **certainly** happen, and happen early. The debt-free date may be four years
-out and it moves every time a payment lands, so a trophy for it is lovely and almost nobody collects
-one this year.
+Anchor to things that **certainly** happen, and happen early.
 
-| Milestone | Why it works |
+### The rule that makes this not a streak
+
+Every award counts something that can only go up. Nothing resets, nothing is
+lost, nothing can be failed:
+
+- **Days since you started.** Elapsed time, not attendance.
+- **Payments logged**, cumulative.
+- **Months with something in them**, counted, never consecutive.
+
+"100 days with Mirian" is a fact about being here. "100 day streak" is a thing
+you can lose on day 101. Same numbers, opposite emotional contract, and only
+one of them belongs in this app.
+
+### The ladder
+
+Starts in week one, because ADHD motivation falls off a cliff and the award
+that matters most is the one arriving before the novelty wears off.
+
+| When | What it says | Form |
+| --- | --- | --- |
+| First debt added | You started | certificate |
+| First payment logged | One logged | certificate |
+| 30 days | A month in | certificate |
+| 60 days | Two months | certificate |
+| 100 days | 100 days of showing up | **sticker** |
+| 200 days | 200 days | certificate |
+| 1 year | A year of this | **sticker** |
+| 500 days | 500 days | certificate |
+| 2 years | Two years | **sticker** |
+| First debt cleared | [name]: gone | certificate, already built |
+| Debt free | The big one | **trophy or pin** |
+
+### Coming back
+
+**Any payment logged after a month away.** Repeatable, every time, no limit.
+
+Returning after a gap is the hardest single thing for a PDA or ADHD brain, and
+nobody rewards it because every other app is busy punishing the gap. A reward
+you earn *by* having faltered first is the precise opposite of a streak, and
+it is probably the most important one on this page.
+
+Never worded as though the gap needed excusing. "Back again" rather than
+"welcome back, we missed you", which implies someone was being watched.
+
+### The brave things
+
+Not everything worth marking is about time or money.
+
+| What they did | Why it counts |
 | --- | --- |
-| First payment logged | Happens in week one. The moment the app becomes a habit or doesn't. |
-| 100 days of recording | Far enough to mean something, near enough to reach. |
-| First debt cleared | The genuinely big one, and it happens to most people long before the last. |
-| Debt free | The trophy. Rare, so it can be nicer. |
+| First message to a creditor | The frightening one, much harder than logging a number |
+| Asked for interest to be frozen | Advocating for themselves, using the template |
+| Filled in their year | Backfilled past months, which takes real effort |
+| Set up an arrangement | Turned "needs setting up" into "in place" |
 
-Nothing is ever taken away, and no milestone is ever missed — these are things that have happened,
-not targets to hit. A reward you can fail to earn is a streak with better manners.
+### Never reward amounts
+
+No "£1,000 paid off" awards. Someone paying £20 a month would never qualify
+while someone paying £300 collects the set, and the first person is likelier
+to need the encouragement. Time and action are fair; money is not.
+
+## How they're shown
+
+**Only what has happened.** Never a locked or greyed-out award, never "3 more
+days!". A page of unearned badges is a to-do list, and a to-do list is a
+demand.
+
+On a page somebody chooses to visit. No badge count on the dashboard, no dot
+on a nav item, nothing that nags from the corner of the screen.
 
 ## Ship the free version first
 
