@@ -104,13 +104,22 @@ user_email_prefs (or columns on public.users)
 - The privacy notice needs a line about reminder emails, what triggers them, and how to stop them.
 - The unsubscribe link must work for the life of the account, including after someone stops paying.
 
-## Open questions
+## Decided (Hannah, 2026-10-19)
 
-- **Does "Log that payment" in the email open a prefilled form?** It would remove the "go and find
-  the thing" step, which is often the real barrier rather than forgetting. It needs a signed link
-  that proves identity without a password, which is a small piece of security design in itself.
-- **What does the first one say?** The first reminder somebody ever receives sets the tone for every
-  one after it. Worth writing by hand rather than generating.
-- **Should a quiet month trigger anything at all?** Tempting, and probably no. Somebody who hasn't
-  logged in for two months may be avoiding it, and an email is the last thing that helps. The app
-  being there when they come back is the kinder answer.
+- **"Log that payment" opens a prefilled form.** It removes the "go and find the thing" step, which
+  is usually the real barrier rather than forgetting.
+  **The link must never perform the action.** In September, corporate mail scanners auto-clicked the
+  confirmation links in Mirian's signup emails, which is how those spam accounts ended up confirmed
+  and apparently signed in. A link that logged a payment directly would have scanners logging
+  payments for people. Signed token, short-lived, opens a form, needs a tap to save.
+- **The first email leads with the win, then offers one thing.** "Your debt-free day is 12 March
+  2029" is a fact that reads as a gift. Then *one* feature, chosen for where that person is, not a
+  list: a list of features in an email is homework, and homework is a demand.
+- **A quiet month triggers nothing.** Somebody who hasn't logged in for two months may be avoiding
+  it, and an email is the last thing that helps. The answer to being forgotten is not a nag; it's
+  something that arrives in the post because they did something good. See [[v2-rewards]].
+
+## Still open
+
+- **What exactly does the first one say?** Worth writing by hand rather than generating. The first
+  reminder somebody ever receives sets the tone for every one after it.
