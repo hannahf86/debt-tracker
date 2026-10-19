@@ -181,7 +181,7 @@ export default function MobileDashboard({
             <ProgressBar
               percent={projection.percentCleared}
               height={10}
-              label={`${projection.percentCleared}% of your total debt cleared`}
+              label={`${projection.percentCleared}% cleared since you joined`}
             />
           </div>
           <span className="font-display text-base font-extrabold text-brand tabular-nums">
@@ -203,10 +203,10 @@ export default function MobileDashboard({
         <ProgressBar
           percent={projection.percentCleared}
           height={10}
-          label={`${projection.percentCleared}% of your total debt cleared`}
+          label={`${projection.percentCleared}% cleared since you joined`}
         />
         <div className="flex justify-between mt-2.5 text-xs text-sage-500">
-          <span>{projection.percentCleared}% cleared</span>
+          <span>{projection.percentCleared}% since you joined</span>
           <span>
             {debts.length} {debts.length === 1 ? "debt" : "debts"} open
           </span>

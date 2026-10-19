@@ -190,6 +190,11 @@ export default function DashboardPage() {
               {projection.percentCleared}%
             </span>
           </div>
+          {/* Says which of the two figures this is. The bar tracks the balance
+              moving since signup; "Paid so far" counts every payment ever
+              logged. Both are right, and without this line they look like
+              they disagree. */}
+          <p className="text-xs text-sage-500 mt-2">cleared since you joined</p>
         </div>
       </div>
 
@@ -341,17 +346,29 @@ export default function DashboardPage() {
           </div>
 
           <div className="bg-white border border-mint-200 rounded-xl p-6 shadow-sm">
+            {/* "Paid so far", not "Debt cleared": this counts every payment
+                ever logged, including backfilled ones from before signup,
+                which by design don't move the balance. Calling it "cleared"
+                implied it should reconcile with Total debt, and it never
+                will. */}
             <p className="caps-label mb-3">
-              Debt cleared <span className="normal-case">so far</span>
+              Paid <span className="normal-case">so far</span>
             </p>
             <p className="font-display text-3xl font-bold text-sage-800">
               £{Math.round(trackerData.totalPaid).toLocaleString()}
             </p>
-            <p className="text-xs text-sage-500 mt-2">
-              {trackerData.totalPaid > 0
-                ? "Amazing work — keep going"
-                : "Every bit counts"}
-            </p>
+            {trackerData.totalPaid > Math.round(projection.totalCleared) ? (
+              <p className="text-xs text-sage-500 mt-2">
+                £{Math.round(projection.totalCleared).toLocaleString()} of that
+                since you joined
+              </p>
+            ) : (
+              <p className="text-xs text-sage-500 mt-2">
+                {trackerData.totalPaid > 0
+                  ? "Amazing work, keep going"
+                  : "Every bit counts"}
+              </p>
+            )}
           </div>
         </div>
 
