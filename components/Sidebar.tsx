@@ -7,6 +7,7 @@ import {
   LayoutDashboard,
   CalendarRange,
   CreditCard,
+  Sparkles,
   Settings,
   Plus,
   LogOut,
@@ -20,6 +21,7 @@ const navItems = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/tracker", label: "Tracker", icon: CalendarRange },
   { href: "/debts", label: "Debts", icon: CreditCard },
+  { href: "/rewards", label: "Rewards", icon: Sparkles },
   { href: "/settings", label: "Settings", icon: Settings },
 ];
 

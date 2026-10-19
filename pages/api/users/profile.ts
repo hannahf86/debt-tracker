@@ -37,6 +37,7 @@ export default async function handler(
         name: meta.name ?? null,
         display_name: meta.display_name ?? null,
         email: session.user.email ?? null,
+        created_at: authUser?.user?.created_at ?? null,
         monthly_budget: row?.monthly_budget ?? null,
         certificate_show_details: row?.certificate_show_details ?? false,
       });

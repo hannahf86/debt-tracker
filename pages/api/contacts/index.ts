@@ -38,7 +38,33 @@ export default async function handler(
   const userId = session.user.id;
 
   if (req.method === "GET") {
-    const { debtId } = req.query;
+    const { debtId, all } = req.query;
+
+    /* The rewards page needs everything this person has sent, not one debt's
+       worth. Scoped by user_id through their own debts, so it can't reach
+       anybody else's. */
+    if (all === "1") {
+      const { data: debts } = await supabaseAdmin
+        .from("debts")
+        .select("id")
+        .eq("user_id", userId);
+
+      const ids = (debts ?? []).map((d) => d.id);
+      if (ids.length === 0) return res.status(200).json([]);
+
+      const { data, error } = await supabaseAdmin
+        .from("contact_log")
+        .select("*")
+        .in("debt_id", ids)
+        .order("sent_at", { ascending: false });
+
+      if (error) {
+        // The table may not exist yet on an older database.
+        console.error("Error listing contacts:", error.message);
+        return res.status(200).json([]);
+      }
+      return res.status(200).json(data ?? []);
+    }
 
     if (!debtId || typeof debtId !== "string") {
       return res.status(400).json({ error: "Debt ID required" });

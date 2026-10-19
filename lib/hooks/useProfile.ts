@@ -5,6 +5,8 @@ export type Profile = {
   display_name: string | null;
   email: string | null;
   monthly_budget: number | null;
+  /** When the account was made, for "days since you started". */
+  created_at: string | null;
   /** Whether a cleared-debt certificate names the company and the amount. */
   certificate_show_details: boolean;
 };
@@ -14,6 +16,7 @@ const EMPTY: Profile = {
   display_name: null,
   email: null,
   monthly_budget: null,
+  created_at: null,
   certificate_show_details: false,
 };
 
